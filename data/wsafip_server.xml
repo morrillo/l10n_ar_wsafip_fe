@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data noupdate="True">
+
+        <record model='wsafip.server' id='wsfe_prod'>
+            <field name='name'>Factura Electrónica</field>
+            <field name='code'>wsfe</field>
+	    <field name='class'>produccion</field>
+	    <field name='url'>http://servicios1.afip.gov.ar/wsfe/service.asmx</field>
+	</record>
+
+        <record model='wsafip.server' id='wsfe_homo'>
+            <field name='name'>Factura Electrónica</field>
+            <field name='code'>wsfe</field>
+	    <field name='class'>homologacion</field>
+	    <field name='url'>https://wswhomo.afip.gov.ar/wsfe/service.asmx</field>
+	</record>
+
+    </data>
+</openerp>
