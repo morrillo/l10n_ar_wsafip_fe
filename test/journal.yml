@@ -18,6 +18,8 @@
     type: 'sale'
     view_id: account.account_journal_bank_view
     afip_authorization_id: authorization_ar_0
+    afip_document_class_id: !ref {model: afip.document_class, search: "[('name','=','FACTURAS B')]"}
+    afip_point_of_sale: 1
 
 - Check status of connection.
 - !python {model: account.journal}: |

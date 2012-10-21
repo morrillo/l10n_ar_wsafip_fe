@@ -49,9 +49,9 @@ class invoice(osv.osv):
         """
         Details = {}
         Auths = {}
-        import pdb; pdb.set_trace()
         for inv in self.browse(cr, uid, ids):
-            auth = inv.journal_id.afip_authorization_id
+            journal = inv.journal_id
+            auth = journal.afip_authorization_id
 
             # Only process if set to connect to afip
             if not auth: continue
@@ -65,40 +65,45 @@ class invoice(osv.osv):
             if auth.status not in  [ 'Connected', 'Shifted Clock' ]: continue
 
             # New invoice detail
-            Detalle = FEDetalleRequest()
+            Detalle = FEAutRequestSoapIn().new_Fer().new_Fedr().new_FEDetalleRequest()
+
             # Partner data
-            if inv.parter_id.vat and inv.partner_id.vat[:2] == 'ar':
+            if inv.partner_id.vat and inv.partner_id.vat[:2] == 'ar':
                 # CUIT
                 Detalle.set_element_tipo_doc(80)
                 Detalle.set_element_nro_doc(int(inv.parter_id.vat[2:]))
-            elif inv.parter_id.vat and inv.partner_id.vat[:2] != 'ar':
+            elif inv.partner_id.vat and inv.partner_id.vat[:2] != 'ar':
                 # CUIT for country
                 raise NotImplemented
             else:
                 # Consumidor final. No lleno estos datos.
-                pass
+                Detalle.set_element_tipo_doc(80)
+                Detalle.set_element_nro_doc(99999999999)
 
             # Document information
-            Detalle.set_element_tipo_cbte(auth.afip_document_class_id.code) # Factura B  
-            Detalle.set_element_punto_vta(auth.afip_point_of_sale)
+            Detalle.set_element_tipo_cbte(journal.afip_document_class_id.code)
+            Detalle.set_element_punto_vta(journal.afip_point_of_sale)
             # Comprobantes???
             Detalle.set_element_cbt_desde(1)
             Detalle.set_element_cbt_hasta(1)
             # Values: REVISAR!!!
-            Detalle.set_element_imp_total(inv.amount_total) # 8000 * 1.21
+            Detalle.set_element_imp_total(inv.amount_total)
             Detalle.set_element_imp_tot_conc(0)
-            Detalle.set_element_imp_neto(inv.amount_untaxed) # 8000 * 1.00
-            Detalle.set_element_impto_liq(inv.amount_tax) # 8000 * 0.21
+            Detalle.set_element_imp_neto(inv.amount_untaxed)
+            Detalle.set_element_impto_liq(inv.amount_tax)
             Detalle.set_element_impto_liq_rni(0)
             Detalle.set_element_imp_op_ex(0)
             # Dates
-            Detalle.set_element_fecha_cbte(inv.date_invoice.strftime('%Y%m%d'))
-            Detalle.set_element_fecha_venc_pago(inv.date_due.strftime('%Y%m%d'))
+            Detalle.set_element_fecha_cbte(inv.date_invoice.replace('-',''))
+            if inv.date_due:
+                Detalle.set_element_fecha_venc_pago(inv.date_due.replace('-',''))
             # For service type
             if inv.afip_service_start:
                 Detalle.set_element_fecha_serv_desde(inv.afip_service_start)
                 Detalle.set_element_fecha_serv_hasta(inv.afip_service_end)
                 is_service = True
+            else:
+                is_service = False
 
             # Store detail
             name = ("<%s>_!" if is_service else "<%s>") % auth.name
@@ -128,6 +133,8 @@ class invoice(osv.osv):
             Fer.Fedr = Fedr
 
             request.Fer = Fer
+
+            import pdb; pdb.set_trace()
 
             response = get_bind(auth.server_id).FEAutRequest(request)
 

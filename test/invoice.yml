@@ -1,0 +1,35 @@
+- Install Generic Chart Argentina template
+- !record {model: wizard.multi.charts.accounts, id: ri_chart_wizard }:
+    chart_template_id: l10n_ar_chart_generic.ri_a_root
+
+- Create accounts
+- !python {model: wizard.multi.charts.accounts}: |
+    self.execute(cr, uid, [ref('ri_chart_wizard')])
+
+- Check if TAX exists as tax.
+- !assert {model: account.tax, search: "[('name','=','IVA Ventas 21%')]", string: Check Account Exists}:
+  - type == 'percent'
+
+- Create a simple invoice type A
+- !record {model: account.invoice, id: invoice_ar_0}:
+    account_id: account.a_recv
+    address_contact_id: base.res_partner_address_zen
+    address_invoice_id: base.res_partner_address_zen
+    company_id: base.main_company
+    currency_id: base.EUR
+    date_invoice: !eval time.strftime('%Y-%m-%d')
+    invoice_line:
+      - account_id: account.a_sale
+        name: '[PC3] Medium PC'
+        price_unit: 900.0
+        quantity: 10.0
+        product_id: product.product_product_pc3
+        uos_id: product.product_uom_unit
+        invoice_line_tax_id: !ref {model: account.tax, search: "[('name','=','IVA Ventas 21%')]"}
+    journal_id: fe_journal_0
+    partner_id: base.res_partner_3
+    reference_type: none        
+
+- Check invoice
+- !python {model: account.invoice}: |
+    self.action_retrieve_cae(cr, uid, [ref('invoice_ar_0')])
