@@ -3,6 +3,11 @@
     name: CT Moldeo Interactive L
     vat: ar30712007288
 
+- Batch Sequence
+- !record {model: ir.sequence, id: fe_sequence_0}:
+    name: FE Web Service AFIP Sequence
+    code: ws_afip_sequence
+
 - In order to test afip webservices append an FE service instance
 - !record {model: wsafip.authorization, id: authorization_ar_0}:
     name: Moldeo Interactive FE
@@ -10,6 +15,7 @@
     logging_id: l10n_ar_wsafip.wsaa_homo
     server_id: wsfe_homo
     certificate: cert_ar_0
+    batch_sequence_id: fe_sequence_0
 
 - Create a journal for Electronic Invoice.
 - !record {model: account.journal, id: fe_journal_0}:

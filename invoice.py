@@ -33,14 +33,20 @@ class invoice(osv.osv):
 
     _inherit = "account.invoice"
     _columns = {
-        'afip_status': fields.selection([
-            ('nocae', 'No CAE'),
-            ('valid', 'Valid'),
-            ('invalid', 'Invalid'),
+        'afip_result': fields.selection([
+            ('', 'No CAE'),
+            ('A', 'Accepted'),
+            ('R', 'Rejected'),
         ], 'Status', help='This status is asigned by the AFIP. If * No CAE * status mean you have no generate this invoice by '),
         'afip_service_start': fields.date(u'Service Start Date'),
         'afip_service_end': fields.date(u'Service End Date'),
-        'cae': fields.char(u'Código de Autorización Electrónico', size=24, readonly=True),
+        'afip_batch_number': fields.integer('Batch Number'),
+        'afip_cae': fields.char(u'Código de Autorización Electrónico', size=24, readonly=True),
+        'afip_motive': fields.text('Error motive'), # Hay una tabla con texto para cargar.
+    }
+
+    _defaults = {
+        'afip_result': '',
     }
 
     def action_retrieve_cae(self, cr, uid, ids, *args):
@@ -49,6 +55,7 @@ class invoice(osv.osv):
         """
         Details = {}
         Auths = {}
+        Invoice = {}
         for inv in self.browse(cr, uid, ids):
             journal = inv.journal_id
             auth = journal.afip_authorization_id
@@ -67,6 +74,10 @@ class invoice(osv.osv):
             # New invoice detail
             Detalle = FEAutRequestSoapIn().new_Fer().new_Fedr().new_FEDetalleRequest()
 
+            # Take the last number of the "number".
+            # Could not work if you dont use '/' as delimiter or if the number is not a postfix.
+            invoice_number = int(inv.number.split('/')[-1])
+
             # Partner data
             if inv.partner_id.vat and inv.partner_id.vat[:2] == 'ar':
                 # CUIT
@@ -83,9 +94,9 @@ class invoice(osv.osv):
             # Document information
             Detalle.set_element_tipo_cbte(journal.afip_document_class_id.code)
             Detalle.set_element_punto_vta(journal.afip_point_of_sale)
-            # Comprobantes???
-            Detalle.set_element_cbt_desde(1)
-            Detalle.set_element_cbt_hasta(1)
+            # Invoice number. Could not work if you print more than one page for an invoice.
+            Detalle.set_element_cbt_desde(invoice_number)
+            Detalle.set_element_cbt_hasta(invoice_number)
             # Values: REVISAR!!!
             Detalle.set_element_imp_total(inv.amount_total)
             Detalle.set_element_imp_tot_conc(0)
@@ -111,6 +122,7 @@ class invoice(osv.osv):
                 Details[name] = []
                 Auths[name] = auth
             Details[name].append(Detalle)
+            Invoice[invoice_number] = inv
 
         # Now work for authority entities and send request.
         req_id = 0
@@ -118,12 +130,15 @@ class invoice(osv.osv):
             auth = Auths[name]
             details = Details[name]
 
+            seq_id = self.pool.get('ir.sequence').get_id(cr, uid, auth.batch_sequence_id.id)
+            batch_id = int(seq_id)
+
             request = FEAutRequestSoapIn()
             request = auth.set_auth_request(request)
 
             Fer = request.new_Fer()
             Fecr = Fer.new_Fecr()
-            Fecr.set_element_id(req_id) # Request id
+            Fecr.set_element_id(batch_id) # Request id
             Fecr.set_element_cantidadreg(len(details))
             Fecr.set_element_presta_serv(1 if name[-3:] == '>_!' else 0)
             Fer.Fecr = Fecr
@@ -134,19 +149,38 @@ class invoice(osv.osv):
 
             request.Fer = Fer
 
-            import pdb; pdb.set_trace()
-
             response = get_bind(auth.server_id).FEAutRequest(request)
 
             if response._FEAutRequestResult._RError._percode == 0:
-                import pdb; pdb.set_trace()
+                # Not error
+                for i in range(response._FEAutRequestResult._FecResp._cantidadreg):
+                    response_id = response._FEAutRequestResult._FecResp._id # ID de lote.
+                    r = response._FEAutRequestResult._FedResp._FEDetalleResponse[i]
+                    self.write(cr, uid, Invoice[r._cbt_desde].id, 
+                               {'afip_cae': int(r._cae),
+                                'afip_batch_number':response_id,
+                                'afip_result': r._resultado,
+                                'afip_motive': r._motivo,
+                               })
             else:
-                import pdb; pdb.set_trace()
-
+                # Error
+                response_id = response._FEAutRequestResult._FecResp._id # ID de lote.
+                response_cuit = response._FEAutRequestResult._FecResp._cuit
+                response_fecha_cae = response._FEAutRequestResult._FecResp._fecha_cae
+                response_cant_reg = response._FEAutRequestResult._FecResp._cantidadreg
+                response_resultado = response._FEAutRequestResult._FecResp._resultado
+                response_motivo = response._FEAutRequestResult._FecResp._motivo
+                response_reproceso = response._FEAutRequestResult._FecResp._reproceso
+                for i in range(response._FEAutRequestResult._FecResp._cantidadreg):
+                    r = response._FEAutRequestResult._FedResp._FEDetalleResponse[i]
+                    self.write(cr, uid, Invoice[r._cbt_desde].id, 
+                               {'afip_batch_number':response_id,
+                                'status': 'invalid',
+                                'afip_result': r._resultado,
+                                'afip_motive': r._motivo,
+                               })
         pass
 
 invoice()
-
-
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

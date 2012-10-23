@@ -32,4 +32,9 @@
 
 - Check invoice
 - !python {model: account.invoice}: |
+    # Workflow standard
+    self.action_date_assign(cr, uid, [ref('invoice_ar_0')])
+    self.action_move_create(cr, uid, [ref('invoice_ar_0')]) # Todavía no lo valido y voy a crear los movimientos?
+    self.action_number(cr, uid, [ref('invoice_ar_0')])
     self.action_retrieve_cae(cr, uid, [ref('invoice_ar_0')])
+
