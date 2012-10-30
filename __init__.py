@@ -19,6 +19,7 @@
 #
 ##############################################################################
 
+import wsfe_error
 import document_class
 import invoice
 import journal

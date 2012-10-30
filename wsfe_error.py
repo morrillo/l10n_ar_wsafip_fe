@@ -18,35 +18,15 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-{
-    'name':     'Argentina - Web Services de Factura Electrónica del AFIP',
-    'version':  '0.1',
-    'author':   'OpenERP - Team de Localización Argentina',
-    'category': 'Localization/Argentina',
-    'website':  'https://launchpad.net/~openerp-l10n-ar-localization',
-    'license':  'AGPL-3',
-    'description': """
-API e GUI para acceder a las Web Services de Factura Electrónica de la AFIP
-""",
-    'depends': [
-        'l10n_ar_wsafip',
-        'l10n_ar_invoice',
-    ],
-    'init_xml': [
-        'data/afip.document_class.csv',
-        'data/afip.wsfe_error.csv',
-    ],
-    'demo_xml': [],
-    'test': [
-        'test/test_key.yml',
-        'test/journal.yml',
-        'test/invoice.yml',
-    ],
-    'update_xml': [
-        'data/wsafip_server.xml',
-    ],
-    'active': False,
-    'installable': True,
-}
+from osv import fields, osv
+
+class wsfe_error(osv.osv):
+    _name = 'afip.wsfe_error'
+    _columns = {
+        'name': fields.char('Name', size=64),
+        'code': fields.char('Code', size=2),
+        'description': fields.text('Description'),
+    }
+wsfe_error()
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

@@ -17,10 +17,20 @@
     certificate: cert_ar_0
     batch_sequence_id: fe_sequence_0
 
-- Create a journal for Electronic Invoice.
-- !record {model: account.journal, id: fe_journal_0}:
-    name: Test de Factura Electronica
-    code: FETEST
+- Create a journal for Electronic Invoice. Invoice type A.
+- !record {model: account.journal, id: fe_journal_a_0}:
+    name: Test de Factura Electronica A
+    code: FETESTA
+    type: 'sale'
+    view_id: account.account_journal_bank_view
+    afip_authorization_id: authorization_ar_0
+    afip_document_class_id: !ref {model: afip.document_class, search: "[('name','=','FACTURAS A')]"}
+    afip_point_of_sale: 1
+
+- Create a journal for Electronic Invoice. Invoice type B.
+- !record {model: account.journal, id: fe_journal_b_0}:
+    name: Test de Factura Electronica B
+    code: FETESTB
     type: 'sale'
     view_id: account.account_journal_bank_view
     afip_authorization_id: authorization_ar_0
@@ -29,10 +39,20 @@
 
 - Check status of connection.
 - !python {model: account.journal}: |
-    data = self.read(cr, uid, ref('fe_journal_0'))
+    data = self.read(cr, uid, ref('fe_journal_a_0'))
 
 - Check status of connection.
-- !assert {model: account.journal, id: fe_journal_0, string: Connection must happen}:
+- !assert {model: account.journal, id: fe_journal_a_0, string: Connection must happen}:
+   - afip_state == 'connected' 
+   - afip_items_available > 0
+   - afip_items_generated >= 0
+
+- Check status of connection.
+- !python {model: account.journal}: |
+    data = self.read(cr, uid, ref('fe_journal_b_0'))
+
+- Check status of connection.
+- !assert {model: account.journal, id: fe_journal_b_0, string: Connection must happen}:
    - afip_state == 'connected' 
    - afip_items_available > 0
    - afip_items_generated >= 0

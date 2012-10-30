@@ -16,25 +16,32 @@
     address_contact_id: base.res_partner_address_zen
     address_invoice_id: base.res_partner_address_zen
     company_id: base.main_company
-    currency_id: base.EUR
+    currency_id: base.ARS
     date_invoice: !eval time.strftime('%Y-%m-%d')
     invoice_line:
       - account_id: account.a_sale
         name: '[PC3] Medium PC'
         price_unit: 900.0
-        quantity: 10.0
+        quantity: 5.0
         product_id: product.product_product_pc3
         uos_id: product.product_uom_unit
         invoice_line_tax_id: !ref {model: account.tax, search: "[('name','=','IVA Ventas 21%')]"}
-    journal_id: fe_journal_0
+    journal_id: fe_journal_a_0
     partner_id: base.res_partner_3
-    reference_type: none        
+    reference_type: none
 
 - Check invoice
 - !python {model: account.invoice}: |
     # Workflow standard
     self.action_date_assign(cr, uid, [ref('invoice_ar_0')])
-    self.action_move_create(cr, uid, [ref('invoice_ar_0')]) # Todavía no lo valido y voy a crear los movimientos?
+    self.action_move_create(cr, uid, [ref('invoice_ar_0')]) # Todavía no lo valido y voy a crear los movimientos? Es raro.
     self.action_number(cr, uid, [ref('invoice_ar_0')])
     self.action_retrieve_cae(cr, uid, [ref('invoice_ar_0')])
+
+- Check CAE invoice number
+- !assert {model: account.invoice, id: invoice_ar_0, string: CAE has been assigned}:
+    - afip_cae != ''
+    - afip_batch_number == 1
+    - afip_result == 'A'
+    - afip_error_id.description == 'Sin errores'
 

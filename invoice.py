@@ -24,6 +24,16 @@ from stub.Service_client import *
 from stub.Service_types import *
 import netsvc
 
+# Tabla de Codigo de Documentos por tipo de Facturas
+_FACT_A = [ 1, 2, 3, 4, 5, ]
+_FACT_B = [ 6, 7, 8, 9, 10, ]
+_FACT_C = [ 11, 12, 13, 15, 16, ]
+_FACT_E = [ 19, 20, 21, 22, ]
+_FACT_M = [ 51, 52, 53, 54, 55, ]
+_TIQU_A = [ 81 ]
+_TIQU_B = [ 82 ]
+_TIQU_X = [ 83 ]
+
 class invoice(osv.osv):
     # Class members to send messages to the logger system.
     _logger = netsvc.Logger()
@@ -42,7 +52,7 @@ class invoice(osv.osv):
         'afip_service_end': fields.date(u'Service End Date'),
         'afip_batch_number': fields.integer('Batch Number'),
         'afip_cae': fields.char(u'Código de Autorización Electrónico', size=24, readonly=True),
-        'afip_motive': fields.text('Error motive'), # Hay una tabla con texto para cargar.
+        'afip_error_id': fields.many2one('afip.wsfe_error', 'Error'),
     }
 
     _defaults = {
@@ -53,12 +63,30 @@ class invoice(osv.osv):
         """
         Contact to the AFIP to get a CAE number.
         """
+        wsfe_error_obj = self.pool.get('afip.wsfe_error')
+
         Details = {}
         Auths = {}
         Invoice = {}
         for inv in self.browse(cr, uid, ids):
             journal = inv.journal_id
             auth = journal.afip_authorization_id
+
+            # Validate invoices.
+            # - Anonymous mean: tipo_doc=99 y nro_doc=0
+            # - if class B or C and total <= 1000 then could be an anonymous partner.
+            # - if class B or C and total > 1000 then could not be an anonymous partner.
+            # - if class A or M or E can't be anonymous partner.
+            if journal.afip_document_class_id.code in _FACT_B + _FACT_C:
+                if inv.partner_id.vat == False and inv.amount_total < 1000:
+                    raise osv.except_osv(_('Error'), _('You cant generate an anonymous invoice with more than 1000.-$ for this type of document.'))
+            elif journal.afip_document_class_id.code in _FACT_A + _FACT_M:
+                if inv.partner_id.vat == False:
+                    raise osv.except_osv(_('Error'), _('You cant generate an anonymous invoice for this type of document.'))
+ 
+
+            
+
 
             # Only process if set to connect to afip
             if not auth: continue
@@ -88,8 +116,10 @@ class invoice(osv.osv):
                 raise NotImplemented
             else:
                 # Consumidor final. No lleno estos datos.
-                Detalle.set_element_tipo_doc(80)
-                Detalle.set_element_nro_doc(99999999999)
+                #import pdb; pdb.set_trace()
+                #Detalle.set_element_tipo_doc(80)
+                #Detalle.set_element_nro_doc(99999999999)
+                pass
 
             # Document information
             Detalle.set_element_tipo_cbte(journal.afip_document_class_id.code)
@@ -156,11 +186,14 @@ class invoice(osv.osv):
                 for i in range(response._FEAutRequestResult._FecResp._cantidadreg):
                     response_id = response._FEAutRequestResult._FecResp._id # ID de lote.
                     r = response._FEAutRequestResult._FedResp._FEDetalleResponse[i]
+
+                    afip_error_id = wsfe_error_obj.search(cr, uid, [('code','=',r._motivo)]).pop()
+
                     self.write(cr, uid, Invoice[r._cbt_desde].id, 
                                {'afip_cae': int(r._cae),
                                 'afip_batch_number':response_id,
                                 'afip_result': r._resultado,
-                                'afip_motive': r._motivo,
+                                'afip_error_id': afip_error_id,
                                })
             else:
                 # Error
@@ -173,11 +206,14 @@ class invoice(osv.osv):
                 response_reproceso = response._FEAutRequestResult._FecResp._reproceso
                 for i in range(response._FEAutRequestResult._FecResp._cantidadreg):
                     r = response._FEAutRequestResult._FedResp._FEDetalleResponse[i]
+
+                    afip_error_id = wsfe_error_obj.search(cr, uid, [('code','=',r._motivo)]).pop()
+
                     self.write(cr, uid, Invoice[r._cbt_desde].id, 
                                {'afip_batch_number':response_id,
                                 'status': 'invalid',
                                 'afip_result': r._resultado,
-                                'afip_motive': r._motivo,
+                                'afip_error_id': afip_error_id,
                                })
         pass
 
