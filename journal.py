@@ -38,7 +38,9 @@ class account_journal(osv.osv):
         r={}
         for journal in self.browse(cr, uid, ids):
             auth = journal.afip_authorization_id
-            if auth.server_id.code != 'wsfe':
+            if not auth:
+                r[journal.id] = 'not available'
+            elif auth.server_id.code != 'wsfe':
                 r[journal.id] = 'authorization_service_error'
             else:
                 # Try to login just one time.
@@ -66,7 +68,7 @@ class account_journal(osv.osv):
         for journal in self.browse(cr, uid, ids):
             r[journal.id] = False
             auth = journal.afip_authorization_id
-            if auth.server_id.code == 'wsfe':
+            if auth and auth.server_id.code == 'wsfe':
                 auth.login()
                 if auth.status in  [ 'Connected', 'Shifted Clock' ]:
                     request = FERecuperaQTYRequestSoapIn()
@@ -93,7 +95,7 @@ class account_journal(osv.osv):
         for journal in self.browse(cr, uid, ids):
             r[journal.id] = False
             auth = journal.afip_authorization_id
-            if auth.server_id.code == 'wsfe':
+            if auth and auth.server_id.code == 'wsfe':
                 auth.login()
                 if auth.status in  [ 'Connected', 'Shifted Clock' ]:
                     request = FERecuperaLastCMPRequestSoapIn()
@@ -123,11 +125,11 @@ class account_journal(osv.osv):
     _columns = {
         'afip_authorization_id': fields.many2one('wsafip.authorization', 'Web Service AFIP Authorization',
                             help="Which service authorization must be used to connecto to AFIP."),
-        'afip_state': fields.function(_get_afip_state, 'AFIP State',method=True, 
+        'afip_state': fields.function(_get_afip_state, string='AFIP State',method=True, 
                             help="Connect to the AFIP and check is service is avilable."),
-        'afip_items_available': fields.function(_get_afip_items_available, 'Number of Invoices Available',method=True, 
+        'afip_items_available': fields.function(_get_afip_items_available, string='Number of Invoices Available',method=True, 
                             help="Connect to the AFIP and check how many invoices are avaible to print."),
-        'afip_items_generated': fields.function(_get_afip_items_generated, 'Number of Invoices Generated',method=True, 
+        'afip_items_generated': fields.function(_get_afip_items_generated, string='Number of Invoices Generated',method=True, 
                             help="Connect to the AFIP and check how many invoices was generated."),
     }
 account_journal()

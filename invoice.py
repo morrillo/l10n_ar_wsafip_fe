@@ -55,9 +55,9 @@ class invoice(osv.osv):
         ], 'Status', help='This status is asigned by the AFIP. If * No CAE * status mean you have no generate this invoice by '),
         'afip_service_start': fields.date(u'Service Start Date'),
         'afip_service_end': fields.date(u'Service End Date'),
-        'afip_batch_number': fields.integer('Batch Number'),
+        'afip_batch_number': fields.integer('Batch Number', readonly=True),
         'afip_cae': fields.char(u'Código de Autorización Electrónico', size=24, readonly=True),
-        'afip_error_id': fields.many2one('afip.wsfe_error', 'Error'),
+        'afip_error_id': fields.many2one('afip.wsfe_error', 'Error', readonly=True),
     }
 
     _defaults = {
