@@ -23,6 +23,7 @@ from cache_bind import get_bind
 from stub.Service_client import *
 from stub.Service_types import *
 import netsvc
+import re
 
 # Tabla de Codigo de Documentos por tipo de Facturas
 _FACT_A = [ 1, 2, 3, 4, 5, ]
@@ -33,6 +34,10 @@ _FACT_M = [ 51, 52, 53, 54, 55, ]
 _TIQU_A = [ 81 ]
 _TIQU_B = [ 82 ]
 _TIQU_X = [ 83 ]
+
+# Number Filter
+re_number = re.compile(r'\d{8}')
+
 
 class invoice(osv.osv):
     # Class members to send messages to the logger system.
@@ -72,22 +77,6 @@ class invoice(osv.osv):
             journal = inv.journal_id
             auth = journal.afip_authorization_id
 
-            # Validate invoices.
-            # - Anonymous mean: tipo_doc=99 y nro_doc=0
-            # - if class B or C and total <= 1000 then could be an anonymous partner.
-            # - if class B or C and total > 1000 then could not be an anonymous partner.
-            # - if class A or M or E can't be anonymous partner.
-            if journal.afip_document_class_id.code in _FACT_B + _FACT_C:
-                if inv.partner_id.vat == False and inv.amount_total < 1000:
-                    raise osv.except_osv(_('Error'), _('You cant generate an anonymous invoice with more than 1000.-$ for this type of document.'))
-            elif journal.afip_document_class_id.code in _FACT_A + _FACT_M:
-                if inv.partner_id.vat == False:
-                    raise osv.except_osv(_('Error'), _('You cant generate an anonymous invoice for this type of document.'))
- 
-
-            
-
-
             # Only process if set to connect to afip
             if not auth: continue
             
@@ -103,14 +92,14 @@ class invoice(osv.osv):
             Detalle = FEAutRequestSoapIn().new_Fer().new_Fedr().new_FEDetalleRequest()
 
             # Take the last number of the "number".
-            # Could not work if you dont use '/' as delimiter or if the number is not a postfix.
-            invoice_number = int(inv.number.split('/')[-1])
+            # Could not work if your number have not 8 digits.
+            invoice_number = int(re_number.search(inv.number).group())
 
             # Partner data
             if inv.partner_id.vat and inv.partner_id.vat[:2] == 'ar':
                 # CUIT
                 Detalle.set_element_tipo_doc(80)
-                Detalle.set_element_nro_doc(int(inv.parter_id.vat[2:]))
+                Detalle.set_element_nro_doc(int(inv.partner_id.vat[2:]))
             elif inv.partner_id.vat and inv.partner_id.vat[:2] != 'ar':
                 # CUIT for country
                 raise NotImplemented
@@ -122,8 +111,8 @@ class invoice(osv.osv):
                 pass
 
             # Document information
-            Detalle.set_element_tipo_cbte(journal.afip_document_class_id.code)
-            Detalle.set_element_punto_vta(journal.afip_point_of_sale)
+            Detalle.set_element_tipo_cbte(journal.journal_class_id.afip_code)
+            Detalle.set_element_punto_vta(journal.point_of_sale)
             # Invoice number. Could not work if you print more than one page for an invoice.
             Detalle.set_element_cbt_desde(invoice_number)
             Detalle.set_element_cbt_hasta(invoice_number)
@@ -216,6 +205,10 @@ class invoice(osv.osv):
                                 'afip_error_id': afip_error_id,
                                })
         pass
+
+    def action_number(self, cr, uid, ids, *args):
+        super(invoice, self).action_number(cr, uid, ids, *args)
+        self.action_retrieve_cae(cr, uid, ids, *args)
 
 invoice()
 

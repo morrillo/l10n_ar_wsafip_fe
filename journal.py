@@ -123,8 +123,6 @@ class account_journal(osv.osv):
     _columns = {
         'afip_authorization_id': fields.many2one('wsafip.authorization', 'Web Service AFIP Authorization',
                             help="Which service authorization must be used to connecto to AFIP."),
-        'afip_point_of_sale': fields.integer('Number of Point of Sale asigned by AFIP'),
-        'afip_document_class_id': fields.many2one('afip.document_class', 'Type of AFIP Document'),
         'afip_state': fields.function(_get_afip_state, 'AFIP State',method=True, 
                             help="Connect to the AFIP and check is service is avilable."),
         'afip_items_available': fields.function(_get_afip_items_available, 'Number of Invoices Available',method=True, 
