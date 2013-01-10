@@ -45,7 +45,7 @@ class account_journal(osv.osv):
             else:
                 # Try to login just one time.
                 auth.login()
-                if auth.status not in  [ 'Connected', 'Shifted Clock' ]:
+                if auth.state not in  [ 'connected', 'clockshifted' ]:
                     r[journal.id] = 'connection_error'
                 else:
                     request = FEDummySoapIn()
@@ -70,7 +70,7 @@ class account_journal(osv.osv):
             auth = journal.afip_authorization_id
             if auth and auth.server_id.code == 'wsfe':
                 auth.login()
-                if auth.status in  [ 'Connected', 'Shifted Clock' ]:
+                if auth.state in  [ 'connected', 'clockshifted' ]:
                     request = FERecuperaQTYRequestSoapIn()
                     request = auth.set_auth_request(request)
                     response = get_bind(auth.server_id).FERecuperaQTYRequest(request)
@@ -97,7 +97,7 @@ class account_journal(osv.osv):
             auth = journal.afip_authorization_id
             if auth and auth.server_id.code == 'wsfe':
                 auth.login()
-                if auth.status in  [ 'Connected', 'Shifted Clock' ]:
+                if auth.state in  [ 'connected', 'clockshifted' ]:
                     request = FERecuperaLastCMPRequestSoapIn()
                     request = auth.set_auth_request(request)
                     argTCMP = request.new_argTCMP()

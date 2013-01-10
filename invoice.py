@@ -52,7 +52,7 @@ class invoice(osv.osv):
             ('', 'No CAE'),
             ('A', 'Accepted'),
             ('R', 'Rejected'),
-        ], 'Status', help='This status is asigned by the AFIP. If * No CAE * status mean you have no generate this invoice by '),
+        ], 'Status', help='This state is asigned by the AFIP. If * No CAE * state mean you have no generate this invoice by '),
         'afip_service_start': fields.date(u'Service Start Date'),
         'afip_service_end': fields.date(u'Service End Date'),
         'afip_batch_number': fields.integer('Batch Number', readonly=True),
@@ -86,7 +86,7 @@ class invoice(osv.osv):
             auth.login() # Login if nescesary.
             
             # Ignore if cant connect to server.
-            if auth.status not in  [ 'Connected', 'Shifted Clock' ]: continue
+            if auth.state not in  [ 'connected', 'clockshifted' ]: continue
 
             # New invoice detail
             Detalle = FEAutRequestSoapIn().new_Fer().new_Fedr().new_FEDetalleRequest()
@@ -108,6 +108,7 @@ class invoice(osv.osv):
                 #import pdb; pdb.set_trace()
                 #Detalle.set_element_tipo_doc(80)
                 #Detalle.set_element_nro_doc(99999999999)
+                raise NotImplemented
                 pass
 
             # Document information
@@ -178,6 +179,9 @@ class invoice(osv.osv):
 
                     afip_error_id = wsfe_error_obj.search(cr, uid, [('code','=',r._motivo)]).pop()
 
+                    if r._cbt_desde not in Invoice:
+                        raise osv.except_osv(_('Not syncroniced Sequence'), _('Document sequence is not syncronized with AFIP. Afip return %i as valid.' % (r._cbt_desde)))
+
                     self.write(cr, uid, Invoice[r._cbt_desde].id, 
                                {'afip_cae': int(r._cae),
                                 'afip_batch_number':response_id,
@@ -200,7 +204,7 @@ class invoice(osv.osv):
 
                     self.write(cr, uid, Invoice[r._cbt_desde].id, 
                                {'afip_batch_number':response_id,
-                                'status': 'invalid',
+                                'state': 'invalid',
                                 'afip_result': r._resultado,
                                 'afip_error_id': afip_error_id,
                                })
