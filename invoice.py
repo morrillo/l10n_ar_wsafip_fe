@@ -22,6 +22,7 @@ from osv import fields, osv
 from cache_bind import get_bind
 from stub.Service_client import *
 from stub.Service_types import *
+from tools.translate import _
 import netsvc
 import re
 
@@ -130,8 +131,8 @@ class invoice(osv.osv):
                 Detalle.set_element_fecha_venc_pago(inv.date_due.replace('-',''))
             # For service type
             if inv.afip_service_start:
-                Detalle.set_element_fecha_serv_desde(inv.afip_service_start)
-                Detalle.set_element_fecha_serv_hasta(inv.afip_service_end)
+                Detalle.set_element_fecha_serv_desde(inv.afip_service_start.replace('-',''))
+                Detalle.set_element_fecha_serv_hasta(inv.afip_service_end.replace('-',''))
                 is_service = True
             else:
                 is_service = False
@@ -190,24 +191,29 @@ class invoice(osv.osv):
                                })
             else:
                 # Error
-                response_id = response._FEAutRequestResult._FecResp._id # ID de lote.
-                response_cuit = response._FEAutRequestResult._FecResp._cuit
-                response_fecha_cae = response._FEAutRequestResult._FecResp._fecha_cae
-                response_cant_reg = response._FEAutRequestResult._FecResp._cantidadreg
-                response_resultado = response._FEAutRequestResult._FecResp._resultado
-                response_motivo = response._FEAutRequestResult._FecResp._motivo
-                response_reproceso = response._FEAutRequestResult._FecResp._reproceso
-                for i in range(response._FEAutRequestResult._FecResp._cantidadreg):
-                    r = response._FEAutRequestResult._FedResp._FEDetalleResponse[i]
+                if response._FEAutRequestResult._FecResp is not None:
+                    response_id = response._FEAutRequestResult._FecResp._id # ID de lote.
+                    response_cuit = response._FEAutRequestResult._FecResp._cuit
+                    response_fecha_cae = response._FEAutRequestResult._FecResp._fecha_cae
+                    response_cant_reg = response._FEAutRequestResult._FecResp._cantidadreg
+                    response_resultado = response._FEAutRequestResult._FecResp._resultado
+                    response_motivo = response._FEAutRequestResult._FecResp._motivo
+                    response_reproceso = response._FEAutRequestResult._FecResp._reproceso
+                    for i in range(response._FEAutRequestResult._FecResp._cantidadreg):
+                        r = response._FEAutRequestResult._FedResp._FEDetalleResponse[i]
 
-                    afip_error_id = wsfe_error_obj.search(cr, uid, [('code','=',r._motivo)]).pop()
+                        afip_error_id = wsfe_error_obj.search(cr, uid, [('code','=',r._motivo)]).pop()
 
-                    self.write(cr, uid, Invoice[r._cbt_desde].id, 
-                               {'afip_batch_number':response_id,
-                                'state': 'invalid',
-                                'afip_result': r._resultado,
-                                'afip_error_id': afip_error_id,
-                               })
+                        self.write(cr, uid, Invoice[r._cbt_desde].id, 
+                                   {'afip_batch_number':response_id,
+                                    'state': 'invalid',
+                                    'afip_result': r._resultado,
+                                    'afip_error_id': afip_error_id,
+                                   })
+                raise osv.except_osv(_('AFIP error'),
+                                     _('[%i] %s') % 
+                                     (response._FEAutRequestResult._RError._percode,
+                                      response._FEAutRequestResult._RError._perrmsg))
         pass
 
     def action_number(self, cr, uid, ids, *args):

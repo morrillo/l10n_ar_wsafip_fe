@@ -24,9 +24,10 @@ to the server.
 """
 from sslhttps import HTTPSConnectionSSLVersion
 from stub.Service_client import *
+import sys
 
 PROXY_SIZE=5
-TRACE_FILE=None # To DEBUG: sys.stdout
+TRACE_FILE=sys.stdout
 
 ServiceSoap=ServiceLocator().getServiceSoap
 

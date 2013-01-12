@@ -7,15 +7,12 @@
             <field name="inherit_id" ref="account.view_account_journal_form" />
             <field name="type">form</field>
             <field name="arch" type="xml">
-	      <page string="General Information" position="inside">
-                  <group colspan="2" col="2">
-		  <separator string="AFIP" colspan="4"/>
+	      <field name="point_of_sale" position="after">
 		  <field name='afip_authorization_id'/>
 		  <field name='afip_state'/>
 		  <field name='afip_items_generated'/>
 		  <field name='afip_items_available'/>
-		  </group>
-	      </page>
+	      </field>
             </field>
         </record>
   </data>
