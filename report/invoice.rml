@@ -182,8 +182,8 @@
             <para style="seller"><b>Fecha de Emisión: </b>[[ formatLang(o.date_invoice, date=True) ]]</para>
             <spacer length="0.31cm"/>
             <para style="seller"><b>CUIT: </b>[[ company.partner_id.printed_vat ]]</para>
-            <para style="seller"><b>Ingresos Brutos: </b>[[ company.partner_id.afip_iibb ]]</para>
-            <para style="seller"><b>Fecha de Inicio de Actividades: </b>[[ company.parner_id.afip_act_start ]]</para>
+            <para style="seller"><b>Ingresos Brutos: </b>[[ company.partner_id.iibb ]]</para>
+            <para style="seller"><b>Fecha de Inicio de Actividades: </b>[[ formatLang(company.partner_id.start_date, date=True) ]]</para>
             <nextFrame name="docclass_section"/>
             <para style="document_class"><b>[[ o.journal_id.journal_class_id.document_class ]]</b></para>
             <para style="document_class_code">cod. [[ o.journal_id.journal_class_id.afip_code ]]</para>
