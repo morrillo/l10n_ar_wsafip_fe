@@ -14,6 +14,7 @@
 	      <field name="move_id" position="after">
 		  <field name='afip_batch_number'/>
 		  <field name='afip_cae'/>
+		  <field name='afip_cae_due'/>
 		  <field name='afip_error_id'/>
 	      </field>
             </field>

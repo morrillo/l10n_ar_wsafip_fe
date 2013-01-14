@@ -19,10 +19,26 @@
 #
 ##############################################################################
 
-import wsfe_error
-import document_class
-import invoice
-import journal
-import report
+import time
+from report import report_sxw
+
+class account_invoice(report_sxw.rml_parse):
+    def __init__(self, cr, uid, name, context):
+        super(account_invoice, self).__init__(cr, uid, name, context=context)
+        self.localcontext.update({
+            'time': time,
+            'copies': ['ORIGINAL','DUPLICADO','TRIPLICADO'],
+        })
+
+from netsvc import Service
+del Service._services['report.account.invoice']
+
+report_sxw.report_sxw(
+    'report.account.invoice',
+    'account.invoice',
+    'addons/l10n_ar_wsafip_fe/report/invoice.rml',
+    parser=account_invoice,
+    header=False
+)
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

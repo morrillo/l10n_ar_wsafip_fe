@@ -58,6 +58,7 @@ class invoice(osv.osv):
         'afip_service_end': fields.date(u'Service End Date'),
         'afip_batch_number': fields.integer('Batch Number', readonly=True),
         'afip_cae': fields.char(u'Código de Autorización Electrónico', size=24, readonly=True),
+        'afip_cae_due': fields.date(u'Fecha de vencimiento del CAE', readonly=True),
         'afip_error_id': fields.many2one('afip.wsfe_error', 'Error', readonly=True),
     }
 
@@ -185,6 +186,7 @@ class invoice(osv.osv):
 
                     self.write(cr, uid, Invoice[r._cbt_desde].id, 
                                {'afip_cae': int(r._cae),
+                                'afip_cae_due': r._fecha_vto,
                                 'afip_batch_number':response_id,
                                 'afip_result': r._resultado,
                                 'afip_error_id': afip_error_id,

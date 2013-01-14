@@ -1,0 +1,298 @@
+<?xml version="1.0"?>
+<document filename="test.pdf">
+    <template pageSize="(21cm,29.7cm)"
+        title="Comprobante Impreso de Factura Electrónica para Argentina"
+        author="Team de Localización Argentina"
+        allowSplitting="0"
+        topMargin="0"
+        bottomMargin="0"
+        showBoundary="0"
+        >
+        <pageTemplate id="wsafip_fe">
+            <frame id="header_section"      x1="00.522cm"  y1="27.926cm" width="20.010cm"  height="00.988cm" />
+            <frame id="seller_section"      x1="00.522cm"  y1="23.749cm" width="10.019cm"  height="02.205cm" />
+            <frame id="docinfo_section"     x1="11.513cm"  y1="23.749cm" width="09.019cm"  height="04.205cm" />
+            <frame id="docclass_section"    x1="09.645cm"  y1="26.551cm" width="01.693cm"  height="01.403cm" />
+            <frame id="date_section"        x1="00.522cm"  y1="22.556cm" width="20.010cm"  height="00.600cm" />
+            <frame id="buyer_section"       x1="00.522cm"  y1="20.000cm" width="20.010cm"  height="03.000cm" />
+            <frame id="detail_section"      x1="00.522cm"  y1="09.200cm" width="20.010cm"  height="10.568cm" />
+            <frame id="comment_section"     x1="00.522cm"  y1="05.814cm" width="13.000cm"  height="03.415cm" />
+            <frame id="total_section"       x1="13.522cm"  y1="05.814cm" width="07.010cm"  height="03.415cm" />
+            <frame id="footer_section"      x1="00.522cm"  y1="01.526cm" width="20.010cm"  height="04.203cm" />
+            <pageGraphics>
+                <fill color="white"/>
+                <stroke color="black"/>
+                <rect x="00.522cm" y="27.926cm" width="20.010cm" height="00.988cm" fill="yes" stroke="yes"/>
+                <rect x="00.522cm" y="23.749cm" width="10.005cm" height="04.205cm" fill="yes" stroke="yes"/>
+                <rect x="10.527cm" y="23.749cm" width="10.005cm" height="04.205cm" fill="yes" stroke="yes"/>
+                <rect x="09.645cm" y="26.551cm" width="01.693cm" height="01.403cm" fill="yes" stroke="yes"/>
+                <rect x="00.522cm" y="22.916cm" width="20.010cm" height="00.776cm" fill="yes" stroke="yes"/>
+                <rect x="00.522cm" y="20.000cm" width="20.010cm" height="03.000cm" fill="yes" stroke="yes"/>
+                <rect x="00.522cm" y="05.814cm" width="20.010cm" height="03.415cm" fill="yes" stroke="yes"/>
+                <!--rect x="00.522cm" y="01.526cm" width="20.010cm" height="04.203cm" fill="yes" stroke="yes"/-->
+                <image x="01.000cm" y="25.749cm" width="6.0cm" height="2.0cm" >[[ company.logo or removeParentNode('image') ]]</image>
+            </pageGraphics>
+        </pageTemplate>
+    </template>
+    <stylesheet>
+        <paraStyle name='header'
+            fontName='Helvetica'
+            fontSize='12'
+            spaceBefore='0'
+            alignment='CENTER'
+            />
+        <paraStyle name='document_class'
+            fontName='Helvetica'
+            fontSize='18'
+            leading='22'
+            spaceBefore='0'
+            spaceAfter='0'
+            alignment='CENTER'
+            />
+        <paraStyle name='document_class_code'
+            fontName='Helvetica'
+            fontSize='6'
+            leading='0'
+            spaceBefore='0'
+            spaceAfter='0'
+            alignment='CENTER'
+            />
+        <paraStyle name='seller'
+            fontName='Helvetica'
+            fontSize='7'
+            leftIndent='0px'
+            spaceAfter='0px'
+            spaceBefore='0px'
+            />
+        <paraStyle name='totals'
+            fontName='Helvetica'
+            fontSize='7'
+            leftIndent='0px'
+            spaceAfter='0px'
+            spaceBefore='0px'
+            alignment='right'
+            />
+        <paraStyle name='dates'
+            fontName='Helvetica'
+            fontSize='7'
+            leftIndent='0px'
+            spaceAfter='0px'
+            spaceBefore='0px'
+            />
+        <paraStyle name='foot'
+            fontName='Helvetica'
+            fontSize='7'
+            leftIndent='0px'
+            spaceAfter='0px'
+            spaceBefore='0px'
+            alignment='center'
+            />
+        <paraStyle name='big'
+            fontName='Helvetica'
+            fontSize='16'
+            spaceBefore='0'
+            />
+        <paraStyle name='body'
+            fontName='Helvetica'
+            fontSize='9'
+            leftIndent='0px'
+            spaceAfter='0px'
+            spaceBefore='0px'
+            />
+        <paraStyle name='body-bold'
+            fontName='Helvetica-Bold'
+            fontSize='9'
+            leftIndent='0px'
+            spaceAfter='0px'
+            spaceBefore='0px'
+            />
+        <paraStyle name='details'
+            fontName='Helvetica'
+            fontSize='9'
+            leftIndent='0px'
+            spaceAfter='0px'
+            spaceBefore='0px'
+            />
+        <paraStyle name='tiny'
+            fontName='Helvetica'
+            fontSize='8'
+            leftIndent='0px'
+            spaceAfter='0px'
+            spaceBefore='0px'
+            />
+        <paraStyle name='tiny-bold'
+            fontName='Helvetica-Bold'
+            fontSize='8'
+            leftIndent='0px'
+            spaceAfter='0px'
+            spaceBefore='0px'
+            />
+        <paraStyle name='number'
+            fontName='Helvetica'
+            fontSize='9'
+            />
+        <blockTableStyle id="Details">
+            <blockValign value="TOP" start="0,0" stop="0,-1"/>
+            <blockValign value="TOP" start="1,0" stop="1,-1"/>
+            <blockValign value="TOP" start="2,0" stop="2,-1"/>
+            <blockValign value="TOP" start="3,0" stop="3,-1"/>
+            <blockValign value="TOP" start="4,0" stop="4,-1"/>
+            <blockAlignment value="CENTER" start="0,0" stop="-1,0"/>
+            <blockAlignment value="RIGHT"  start="0,1" stop="0,-1"/>
+            <blockAlignment value="LEFT"   start="1,1" stop="1,-1"/>
+            <blockAlignment value="RIGHT"  start="2,1" stop="2,-1"/>
+            <blockAlignment value="LEFT"   start="3,1" stop="3,-1"/>
+            <blockAlignment value="RIGHT"  start="4,1" stop="-1,-1"/>
+            <blockBackground colorName="silver" start="0,0" stop="-1,0"/>
+            <lineStyle kind="GRID" colorName="black" start="0,0" stop="-1,0"/>
+            <blockFont name="Helvetica-Bold" size="8" start="0,0" stop="-1,0"/>
+            <blockFont name="Helvetica" size="8" start="0,1" stop="-1,-1"/>
+        </blockTableStyle>
+        <blockTableStyle id="Total">
+            <blockValign value="BOTTOM" start="0,0" stop="-1,-1"/>
+        </blockTableStyle>
+        <blockTableStyle id="Footer">
+            <!--lineStyle kind="GRID" colorName="gray" start="0,0" stop="-1,-1"/-->
+            <blockValign value="TOP" start="0,0" stop="-1,-1"/>
+            <blockAlignment value="CENTER"  start="0,0" stop="-1,-1"/>
+            <blockFont name="Helvetica" size="7" start="0,0" stop="-1,-1"/>
+        </blockTableStyle>
+    </stylesheet>
+    <story>
+        <para>[[ repeatIn(objects,'o') ]]</para>
+        <para>[[ setLang(o.partner_id.lang) ]]</para>
+        <!-- ORIGINAL -->
+        <section>
+            <para>[[ repeatIn(copies,'document_copy') ]]</para>
+            <nextFrame>[[ (document_copy == 'ORIGINAL' and removeParentNode('nextFrame')) or '']]</nextFrame>
+            <para style="header">[[ document_copy ]]</para>
+            <nextFrame name="seller_section"/>
+            <para style="seller"><b>Razón Social: </b>[[ company.name ]].</para>
+            <para style="seller"><b>Domicilio Comercial: </b>
+            [[ company.partner_id.address and company.partner_id.address[0].street or '[ERROR!]' ]] 
+            [[ company.partner_id.address and company.partner_id.address[0].street2 or '' ]], 
+            [[ ', '.join([ company.partner_id.address and company.partner_id.address[0].city or '',
+            company.partner_id.address and company.partner_id.address[0].state_id and company.partner_id.address[0].state_id.name or '',
+            company.partner_id.address and company.partner_id.address[0].country_id and company.partner_id.address[0].country_id.name or '' ] )]].</para>
+            <para style="seller"><b>Condición frente al IVA: </b>[[ company.partner_id.responsability_id.name ]].</para>
+            <nextFrame name="docinfo_section"/>
+            <para style="document_class"><b>[[ o.journal_id.journal_class_id.name.split('[')[0] ]]</b></para>
+            <spacer length="0.5cm"/>
+            <para style="seller"><b>Punto de Venta: </b>[[ '%04i' % o.journal_id.point_of_sale ]] - <b>Comp. Nro: </b>[[ o.number ]]</para>
+            <para style="seller"><b>Fecha de Emisión: </b>[[ formatLang(o.date_invoice, date=True) ]]</para>
+            <spacer length="0.31cm"/>
+            <para style="seller"><b>CUIT: </b>[[ company.partner_id.printed_vat ]]</para>
+            <para style="seller"><b>Ingresos Brutos: </b>[[ company.partner_id.afip_iibb ]]</para>
+            <para style="seller"><b>Fecha de Inicio de Actividades: </b>[[ company.parner_id.afip_act_start ]]</para>
+            <nextFrame name="docclass_section"/>
+            <para style="document_class"><b>[[ o.journal_id.journal_class_id.document_class ]]</b></para>
+            <para style="document_class_code">cod. [[ o.journal_id.journal_class_id.afip_code ]]</para>
+            <nextFrame name="date_section"/>
+            <blockTable rowHeights="0.750" colWidths="6cm,6cm,6cm">
+                <tr>
+                <td><para style="dates"><b>Periodo Facturado Desde: </b>[[ formatLang(o.afip_service_start, date=True) ]]</para></td>
+                <td><para style="dates"><b>Hasta: </b>[[ formatLang(o.afip_service_end, date=True) ]]</para></td>
+                <td><para style="dates"><b>Fecha de Vto. para el pago: </b>[[ formatLang(o.date_due, date=True) ]]</para></td>
+                </tr>
+            </blockTable>
+            <nextFrame name="buyer_section"/>
+            <blockTable colWidths="9cm,9cm">
+                <tr>
+                <td><para style="seller"><b>CUIT: </b>[[ o.partner_id.printed_vat ]]</para></td>
+                <td><para style="seller"><b>Nombre y Apellido / Razón Social: </b>[[ o.partner_id.name ]]</para></td>
+                </tr>
+                <tr>
+                <td><para style="seller"><b>Condición frente al IVA: </b>[[ o.partner_id.responsability_id.name ]]</para></td>
+                <td><para style="seller"><b>Domicilio: </b>
+                [[ o.partner_id.address and o.partner_id.address[0].street or '[ERROR!]' ]] 
+                [[ o.partner_id.address and o.partner_id.address[0].street2 or '' ]], 
+                [[ ', '.join([ o.partner_id.address and o.partner_id.address[0].city or '',
+                o.partner_id.address and o.partner_id.address[0].state_id and o.partner_id.address[0].state_id.name or '',
+                o.partner_id.address and o.partner_id.address[0].country_id and o.partner_id.address[0].country_id.name or '' ] )]].</para></td>
+                <para style="seller"><b>Condición frente al IVA: </b>[[ o.partner_id.responsability_id.name ]].</para>
+                </tr>
+                <tr>
+                <td><para style="seller"><b>Condición de venta: </b>[[  ]]</para></td>
+                <td><para style="seller"><b>Nro. Remito: </b>[[  ]]</para></td>
+                </tr>
+            </blockTable>
+            <nextFrame name="detail_section"/>
+            <section>
+                <para style="body">[[ repeatIn(o.invoice_line,'l') ]]</para>
+                <blockTable colWidths="2cm,6cm,2cm,2cm,2cm,2cm,2cm,2cm" style="Details">
+                    <tr>
+                        <td>Código</td>
+                        <td>Producto/Servicio</td>
+                        <td>Cantidad</td>
+                        <td>U.Medida</td>
+                        <td>Precio Unit.</td>
+                        <td>% Bonif.</td>
+                        <td>Imp. Bonif.</td>
+                        <td>Subtotal</td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>[[ l.name ]][[ l.note ]]</td>
+                        <td>[[ formatLang(l.quantity) ]]</td>
+                        <td>[[ l.uos_id.name ]]</td>
+                        <td>[[ formatLang(l.price_unit_not_vat_included) ]]
+                        [[ (o.journal_id.code[3] in [ 'A' ] or removeParentNode('td')) and '' ]]</td>
+                        <td>[[ formatLang(l.price_unit_vat_included) ]]
+                        [[ (not o.journal_id.code[3] in [ 'A' ] or removeParentNode('td')) and '' ]]</td>
+                        <td>[[ formatLang(l.price_subtotal_not_vat_included) ]]
+                        [[ (o.journal_id.code[3] in [ 'A' ] or removeParentNode('td')) and '' ]]</td>
+                        <td></td>
+                        <td></td>
+                        <td>[[ formatLang(l.price_subtotal_vat_included) ]]
+                        [[ (not o.journal_id.code[3] in [ 'A' ] or removeParentNode('td')) and '' ]]</td>
+                    </tr>
+                </blockTable>
+            </section>
+            <nextFrame name="comment_section"/>
+            <para style="seller">El presente documento expresa su monto en [[ o.currency_id.name ]].</para>
+            <nextFrame name="total_section"/>
+            <blockTable rowHeights="2.7cm" colWidths="5cm,2cm" style="Total">
+                <tr>
+                    <td>
+                        <para style="totals"><b>Subtotal:</b> [[ o.currency_id.symbol ]]</para>
+                        <para style="totals"><b>IVA 21:</b> [[ o.currency_id.symbol ]]</para>
+                        <para style="totals"><b>Importe Otros Tributos:</b> [[ o.currency_id.symbol ]]</para>
+                        <para style="totals"><b>Total:</b> [[ o.currency_id.symbol ]] </para>
+                    </td>
+                    <td>
+                        <para style="totals">[[ formatLang(o.amount_untaxed) ]]</para>
+                        <para style="totals">[[ formatLang(o.amount_tax) ]]</para>
+                        <para style="totals">[[ formatLang(o.amount_tax) ]]</para>
+                        <para style="totals">[[ formatLang(o.amount_total) ]]</para>
+                    </td>
+                </tr>
+            </blockTable>
+            <nextFrame name="footer_section"/>
+            <blockTable rowHeights="1.0cm,1.0cm,0.5cm" colWidths="9cm,2cm,6cm,3cm" style="Footer">
+                <tr>
+                    <td><para style='foot' alignment='left'><b>Comprobante [[ o.afip_cae and '' or 'No' ]] Autorizado.</b></para>
+                        <para style='foot' alignment='left'>Comprobante generado usando <a href='http://www.openerp.com/'>OpenERP</a>.</para></td>
+                    <td>Pág. 1/1</td>
+                    <td><para style='foot' alignment='right'><b>CAE N°:</b></para>
+                        <para style='foot' alignment='right'><b>Fecha Vto. CAE:</b></para></td>
+                    <td><para style='foot' alignment='left' >[[ o.afip_cae ]]</para>
+                        <para style='foot' alignment='left' >[[ formatLang(o.afip_cae_due, date=True) ]]</para></td>
+                </tr>
+                <tr>
+                    <td alignment='center'><barCode code="i2of5" quiet="1" bearers="0" ratio="3.0" width="9cm" height="1.0cm" checksum="10">[[ company.partner_id.vat[2:] ]][[ '%02i' % o.journal_id.journal_class_id.afip_code ]][[ '%04i' % o.journal_id.point_of_sale ]][[ o.afip_cae ]][[ o.afip_cae_due ]]</barCode></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td alignment='center'>[[ company.partner_id.vat[2:] ]][[ '%02i' % o.journal_id.journal_class_id.afip_code ]][[ '%04i' % o.journal_id.point_of_sale ]][[ o.afip_cae ]][[ o.afip_cae_due ]]</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </blockTable>
+        </section>
+    </story>
+</document>
+<!-- vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4
+     -->
