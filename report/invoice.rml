@@ -280,7 +280,7 @@
             <nextFrame name="footer_section"/>
             <blockTable rowHeights="1.0cm,1.0cm,0.5cm" colWidths="9cm,2cm,6cm,3cm" style="Footer">
                 <tr>
-                    <td><para style='foot' alignment='left'><b>Comprobante [[ o.afip_cae and '' or 'No' ]] Autorizado.</b></para>
+                    <td><para style='foot' alignment='left'><b>Comprobante[[ (o.afip_cae and ' ') or 'No ' ]] Autorizado.</b></para>
                         <para style='foot' alignment='left'>Comprobante generado usando <a href='http://www.openerp.com/'>OpenERP</a>.</para></td>
                     <td>Pág. 1/1</td>
                     <td><para style='foot' alignment='right'><b>CAE N°:</b></para>
