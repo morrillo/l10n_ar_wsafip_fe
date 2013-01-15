@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp><data>
+
+    <record id="group_wsafip_fe_admin" model="res.groups">
+        <field name="name">AFIP Electronic Invoice Manager</field>
+    </record>
+
+    <record id="group_wsafip_fe_user" model="res.groups" context="{'noadmin':True}">
+        <field name="name">AFIP Electronic Invoice User</field>
+    </record>
+
+</data></openerp>
+
+

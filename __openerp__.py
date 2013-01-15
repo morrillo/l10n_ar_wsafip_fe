@@ -51,6 +51,8 @@ API e GUI para acceder a las Web Services de Factura Electrónica de la AFIP
         'data/invoice_view.xml',
         'data/journal_view.xml',
         'data/reports.xml',
+        'security/wsafip_fe_security.xml',
+        'security/ir.model.access.csv',
     ],
     'active': False,
     'installable': True,

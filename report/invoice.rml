@@ -150,6 +150,9 @@
         </blockTableStyle>
         <blockTableStyle id="Total">
             <blockValign value="BOTTOM" start="0,0" stop="-1,-1"/>
+            <blockAlignment value="RIGHT" start="0,0" stop="-1,-1"/>
+            <blockFont name="Helvetica-Bold" size="7" start="0,0" stop="0,-1"/>
+            <blockFont name="Helvetica" size="7" start="1,0" stop="1,-1"/>
         </blockTableStyle>
         <blockTableStyle id="Footer">
             <!--lineStyle kind="GRID" colorName="gray" start="0,0" stop="-1,-1"/-->
@@ -236,11 +239,11 @@
                         <td>[[ formatLang(l.quantity) ]]</td>
                         <td>[[ l.uos_id.name ]]</td>
                         <td>[[ formatLang(l.price_unit_not_vat_included) ]]
-                        [[ (o.journal_id.code[3] in [ 'A' ] or removeParentNode('td')) and '' ]]</td>
+                        [[ (o.journal_id.code[3] in ['A'] or removeParentNode('td')) and '' ]]</td>
                         <td>[[ formatLang(l.price_unit_vat_included) ]]
-                        [[ (not o.journal_id.code[3] in [ 'A' ] or removeParentNode('td')) and '' ]]</td>
+                        [[ (not o.journal_id.code[3] in ['A'] or removeParentNode('td')) and '' ]]</td>
                         <td>[[ formatLang(l.price_subtotal_not_vat_included) ]]
-                        [[ (o.journal_id.code[3] in [ 'A' ] or removeParentNode('td')) and '' ]]</td>
+                        [[ (o.journal_id.code[3] in ['A'] or removeParentNode('td')) and '' ]]</td>
                         <td></td>
                         <td></td>
                         <td>[[ formatLang(l.price_subtotal_vat_included) ]]
@@ -251,21 +254,28 @@
             <nextFrame name="comment_section"/>
             <para style="seller">El presente documento expresa su monto en [[ o.currency_id.name ]].</para>
             <nextFrame name="total_section"/>
-            <blockTable rowHeights="2.7cm" colWidths="5cm,2cm" style="Total">
-                <tr>
-                    <td>
-                        <para style="totals"><b>Subtotal:</b> [[ o.currency_id.symbol ]]</para>
-                        <para style="totals"><b>IVA 21:</b> [[ o.currency_id.symbol ]]</para>
-                        <para style="totals"><b>Importe Otros Tributos:</b> [[ o.currency_id.symbol ]]</para>
-                        <para style="totals"><b>Total:</b> [[ o.currency_id.symbol ]] </para>
-                    </td>
-                    <td>
-                        <para style="totals">[[ formatLang(o.amount_untaxed) ]]</para>
-                        <para style="totals">[[ formatLang(o.amount_tax) ]]</para>
-                        <para style="totals">[[ formatLang(o.amount_tax) ]]</para>
-                        <para style="totals">[[ formatLang(o.amount_total) ]]</para>
-                    </td>
-                </tr>
+            <blockTable rowHeights="2.9cm" colWidths="7.5cm">
+            <tr> <td vAlign="bottom" topPadding="0cm" bottomPadding="0cm" rightPadding="0cm" leftPadding="0cm">
+                <blockTable rowHeights="0.5cm" colWidths="5cm,2cm" style="Total">
+                    <tr>
+                        <td>Subtotal: [[ o.currency_id.symbol ]]</td>
+                        <td>[[ formatLang(o.amount_total) ]]</td>
+                    </tr>
+                    <tr>
+                        <td>IVA 21: [[ o.currency_id.symbol ]]
+                            [[ (o.journal_id.code[3] in ('A') or removeParentNode('tr')) and '' ]]</td>
+                        <td>[[ formatLang(o.amount_tax) ]]</td>
+                    </tr>
+                    <tr>
+                        <td>Importe Otros Tributos: [[ o.currency_id.symbol ]]</td>
+                        <td>[[ formatLang(0) ]]</td>
+                    </tr>
+                    <tr>
+                        <td>Total: [[ o.currency_id.symbol ]]</td>
+                        <td>[[ formatLang(o.amount_total) ]]</td>
+                    </tr>
+                </blockTable>
+            </td> </tr>
             </blockTable>
             <nextFrame name="footer_section"/>
             <blockTable rowHeights="1.0cm,1.0cm,0.5cm" colWidths="9cm,2cm,6cm,3cm" style="Footer">
