@@ -204,12 +204,19 @@ class invoice(osv.osv):
 
                     afip_error_id = wsfe_error_obj.search(cr, uid, [('code','=',r._motivo)]).pop()
 
+                    if r._cbt_desde not in Invoice:
+                        # Esto deberia ser un mensaje al usuario, asi termina de procesar todas las facturas.
+                        raise osv.except_osv(_('Sincronization ERROR'), _('This request is generated with an old or different id. Please, resync Ids.'))
+                        continue
+
                     self.write(cr, uid, Invoice[r._cbt_desde].id, 
                                {'afip_batch_number':response_id,
                                 'state': 'draft',
                                 'afip_result': r._resultado,
                                 'afip_error_id': afip_error_id,
                                })
+
+                # Esto deberia ser un mensaje al usuario, asi termina de procesar todas las facturas.
                 raise osv.except_osv(_('AFIP error'),
                                      _('[%i] %s') % 
                                      (response._FEAutRequestResult._RError._percode,
