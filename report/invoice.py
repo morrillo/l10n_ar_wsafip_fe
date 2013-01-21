@@ -21,23 +21,28 @@
 
 import time
 from report import report_sxw
+from l10n_ar_invoice.report.invoice import ar_account_invoice
 
-class account_invoice(report_sxw.rml_parse):
+class fe_account_invoice(ar_account_invoice):
+
+    def _is_electronic(self, o):
+        r = True if o.journal_id.afip_authorization_id else False
+        return r
+    
     def __init__(self, cr, uid, name, context):
-        super(account_invoice, self).__init__(cr, uid, name, context=context)
+        super(fe_account_invoice, self).__init__(cr, uid, name, context=context)
         self.localcontext.update({
-            'time': time,
-            'copies': ['ORIGINAL','DUPLICADO','TRIPLICADO'],
+            'is_electronic': self._is_electronic,
         })
 
-from netsvc import Service
-del Service._services['report.account.invoice']
+#from netsvc import Service
+#del Service._services['report.account.invoice_fe']
 
 report_sxw.report_sxw(
-    'report.account.invoice',
+    'report.account.invoice_fe',
     'account.invoice',
     'addons/l10n_ar_wsafip_fe/report/invoice.rml',
-    parser=account_invoice,
+    parser=fe_account_invoice,
     header=False
 )
 

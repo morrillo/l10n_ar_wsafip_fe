@@ -17,17 +17,17 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
 -->
 <openerp>
-	<data noupdate="0">
-	        <report
-			auto="False"
-			id="account.account_invoices_fe"
-			model="account.invoice"
-			name="account.invoice_fe"
-			rml="l10n_ar_wsafip_fe/report/invoice.rml"
-			string="Electronic Invoices"
-                        header="False"
-			attachment="(object.state in ('open','paid')) and ('DOC'+(object.number or '').replace('/',''))"
-			attachment_use="1"/>
-	</data>
+    <data>
+        <record id="account.act_open" model="workflow.activity">
+            <field name="wkf_id" ref="account.wkf"/>
+            <field name="name">open</field>
+	    <field name="action">afip_validation()
+action_date_assign()
+action_move_create()
+action_number()
+action_retrieve_cae()
+write({'state':'open'})</field>
+            <field name="kind">function</field>
+        </record>
+    </data>
 </openerp>
-

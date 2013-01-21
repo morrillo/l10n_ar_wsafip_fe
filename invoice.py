@@ -182,7 +182,8 @@ class invoice(osv.osv):
                     afip_error_id = wsfe_error_obj.search(cr, uid, [('code','=',r._motivo)]).pop()
 
                     if r._cbt_desde not in Invoice:
-                        raise osv.except_osv(_('Not syncroniced Sequence'), _('Document sequence is not syncronized with AFIP. Afip return %i as valid.' % (r._cbt_desde)))
+                        logger(netsvc.LOG_ERROR, _('Document sequence is not syncronized with AFIP. Afip return %i as valid.') % r._cbt_desde)
+                        return False
 
                     self.write(cr, uid, Invoice[r._cbt_desde].id, 
                                {'afip_cae': r._cae,
@@ -205,9 +206,8 @@ class invoice(osv.osv):
                     afip_error_id = wsfe_error_obj.search(cr, uid, [('code','=',r._motivo)]).pop()
 
                     if r._cbt_desde not in Invoice:
-                        # Esto deberia ser un mensaje al usuario, asi termina de procesar todas las facturas.
-                        raise osv.except_osv(_('Sincronization ERROR'), _('This request is generated with an old or different id. Please, resync Ids.'))
-                        continue
+                        logger(netsvc.LOG_ERROR, _('Document sequence is not syncronized with AFIP. Afip return %i as valid.') % r._cbt_desde)
+                        return False
 
                     self.write(cr, uid, Invoice[r._cbt_desde].id, 
                                {'afip_batch_number':response_id,
@@ -222,10 +222,6 @@ class invoice(osv.osv):
                                      (response._FEAutRequestResult._RError._percode,
                                       response._FEAutRequestResult._RError._perrmsg))
         pass
-
-    def action_number(self, cr, uid, ids, *args):
-        super(invoice, self).action_number(cr, uid, ids, *args)
-        self.action_retrieve_cae(cr, uid, ids, *args)
 
 invoice()
 
