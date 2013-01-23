@@ -208,7 +208,7 @@ class invoice(osv.osv):
                     r = response._FEAutRequestResult._FedResp._FEDetalleResponse[i]
 
                     if r._cbt_desde not in Invoice:
-                        logger(netsvc.LOG_ERROR, _('Document sequence is not syncronized with AFIP. Afip return %i as valid.') % r._cbt_desde)
+                        self.logger(netsvc.LOG_ERROR, _('Document sequence is not syncronized with AFIP. Afip return %i as valid.') % r._cbt_desde)
                         return False
 
                     afip_error_ids = wsfe_error_obj.search(cr, uid, [('code','in',r._motivo.split(';'))])
@@ -221,7 +221,7 @@ class invoice(osv.osv):
 
                 # Esto deberia ser un mensaje al usuario, asi termina de procesar todas las facturas.
                 raise osv.except_osv(_('AFIP error'),
-                                     _('[%i] %s.<br/>\n %s.\n') % 
+                                     _('Ocurriró un error en el AFIP (%i: %s).<br/>\n %s.\n') % 
                                      (response._FEAutRequestResult._RError._percode,
                                       response._FEAutRequestResult._RError._perrmsg,
                                       '<br/>\n'.join(error_message),
