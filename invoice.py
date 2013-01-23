@@ -221,10 +221,10 @@ class invoice(osv.osv):
 
                 # Esto deberia ser un mensaje al usuario, asi termina de procesar todas las facturas.
                 raise osv.except_osv(_('AFIP error'),
-                                     _('[%i] %s.\n %s') % 
+                                     _('[%i] %s.<br/>\n %s.\n') % 
                                      (response._FEAutRequestResult._RError._percode,
                                       response._FEAutRequestResult._RError._perrmsg,
-                                      '\n'.join(error_message),
+                                      '<br/>\n'.join(error_message),
                                      ))
         pass
 
