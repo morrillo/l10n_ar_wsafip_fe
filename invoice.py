@@ -213,7 +213,7 @@ class invoice(osv.osv):
 
                     afip_error_ids = wsfe_error_obj.search(cr, uid, [('code','in',r._motivo.split(';'))])
                     afip_error = wsfe_error_obj.browse(cr, uid, afip_error_ids)
-                    afip_message = '; '.join([ err.name for err in afip_error ])
+                    afip_message = '; '.join([ err.description for err in afip_error ])
 
                     error_message = _('Invoice %s: %s.') % (r._cbt_desde, afip_message)
 
