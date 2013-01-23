@@ -201,7 +201,7 @@ class invoice(osv.osv):
                 response_motivo = response._FEAutRequestResult._FecResp._motivo
                 response_reproceso = response._FEAutRequestResult._FecResp._reproceso
 
-                logger(netsvc.LOG_ERROR, _('AFIP dont approve some document. Global Reason: %s') % response_motivo)
+                self.logger(netsvc.LOG_ERROR, _('AFIP dont approve some document. Global Reason: %s') % response_motivo)
 
                 error_message = []
                 for i in range(response._FEAutRequestResult._FecResp._cantidadreg):
@@ -217,7 +217,7 @@ class invoice(osv.osv):
 
                     error_message = _('Invoice %s: %s.') % (r.fecha_cbt_desde, afip_message)
 
-                    logger(netsvc.LOG_ERROR, _('AFIP dont approve the document %s-%s. Reason: %s.') % (r._cbt_desde, r._cbt_hasta, afip_message))
+                    self.logger(netsvc.LOG_ERROR, _('AFIP dont approve the document %s-%s. Reason: %s.') % (r._cbt_desde, r._cbt_hasta, afip_message))
 
                 # Esto deberia ser un mensaje al usuario, asi termina de procesar todas las facturas.
                 raise osv.except_osv(_('AFIP error'),
