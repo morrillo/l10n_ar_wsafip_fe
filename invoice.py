@@ -215,7 +215,7 @@ class invoice(osv.osv):
                     afip_error = wsfe_error_obj.browse(cr, uid, afip_error_ids)
                     afip_message = '; '.join([ err.name for err in afip_error ])
 
-                    error_message = _('Invoice %s: %s.') % (r.fecha_cbt_desde, afip_message)
+                    error_message = _('Invoice %s: %s.') % (r._cbt_desde, afip_message)
 
                     self.logger(netsvc.LOG_ERROR, _('AFIP dont approve the document %s-%s. Reason: %s.') % (r._cbt_desde, r._cbt_hasta, afip_message))
 
