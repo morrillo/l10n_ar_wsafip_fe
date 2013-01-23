@@ -23,7 +23,7 @@
 <openerp>
     <data>
 
-        <record id="view_afip.wsfe_error_form" model="ir.ui.view">
+        <record id="view_wsfe_error_form" model="ir.ui.view">
             <field name="name">wsfe_error.form</field>
             <field name="model">afip.wsfe_error</field>
             <field name="type">form</field>
@@ -36,7 +36,7 @@
             </field>
         </record>
 
-        <record id="view_afip.wsfe_error_tree" model="ir.ui.view">
+        <record id="view_wsfe_error_tree" model="ir.ui.view">
             <field name="name">wsfe_error.tree</field>
             <field name="model">afip.wsfe_error</field>
             <field name="type">tree</field>
