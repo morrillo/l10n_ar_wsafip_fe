@@ -192,6 +192,10 @@ class invoice(osv.osv):
                         self.logger(netsvc.LOG_ERROR, _('Expected sequences: %s.') % repr(Invoice.keys()))
                         continue
 
+                    if r._cae is None:
+                        self.logger(netsvc.LOG_ERROR, _('Document have not CAE assigned.'))
+                        return False 
+
                     self.write(cr, uid, Invoice[r._cbt_desde].id, 
                                {'afip_cae': r._cae,
                                 'afip_cae_due': r._fecha_vto,
