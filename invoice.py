@@ -200,27 +200,32 @@ class invoice(osv.osv):
                 response_resultado = response._FEAutRequestResult._FecResp._resultado
                 response_motivo = response._FEAutRequestResult._FecResp._motivo
                 response_reproceso = response._FEAutRequestResult._FecResp._reproceso
+
+                logger(netsvc.LOG_ERROR, _('AFIP dont approve some document. Global Reason: %s') % response_motivo)
+
+                error_message = []
                 for i in range(response._FEAutRequestResult._FecResp._cantidadreg):
                     r = response._FEAutRequestResult._FedResp._FEDetalleResponse[i]
-
-                    afip_error_id = wsfe_error_obj.search(cr, uid, [('code','=',r._motivo)]).pop()
 
                     if r._cbt_desde not in Invoice:
                         logger(netsvc.LOG_ERROR, _('Document sequence is not syncronized with AFIP. Afip return %i as valid.') % r._cbt_desde)
                         return False
 
-                    self.write(cr, uid, Invoice[r._cbt_desde].id, 
-                               {'afip_batch_number':response_id,
-                                'state': 'draft',
-                                'afip_result': r._resultado,
-                                'afip_error_id': afip_error_id,
-                               })
+                    afip_error_ids = wsfe_error_obj.search(cr, uid, [('code','in',r._motivo.split(';'))])
+                    afip_error = wsfe_error_obj.browse(cr, uid, afip_error_ids)
+                    afip_message = '; '.join([ err.name for err in afip_error ])
+
+                    error_message = _('Invoice %s: %s.') % (r.fecha_cbt_desde, afip_message)
+
+                    logger(netsvc.LOG_ERROR, _('AFIP dont approve the document %s-%s. Reason: %s.') % (r._cbt_desde, r._cbt_hasta, afip_message))
 
                 # Esto deberia ser un mensaje al usuario, asi termina de procesar todas las facturas.
                 raise osv.except_osv(_('AFIP error'),
-                                     _('[%i] %s') % 
+                                     _('[%i] %s.\n %s') % 
                                      (response._FEAutRequestResult._RError._percode,
-                                      response._FEAutRequestResult._RError._perrmsg))
+                                      response._FEAutRequestResult._RError._perrmsg,
+                                      '\n'.join(error_message),
+                                     ))
         pass
 
 invoice()

@@ -42,8 +42,12 @@ class HTTPSConnectionSSLVersion(httplib.HTTPConnection):
 
         def connect(self):
             "Connect to a host on a given (SSL) port."
-            sock = socket.create_connection((self.host, self.port),
+            # Fix error for python 2.6
+            try:
+                sock = socket.create_connection((self.host, self.port),
                                             self.timeout, self.source_address)
+            except:
+                sock = socket.create_connection((self.host, self.port), self.timeout)
             if self._tunnel_host:
                 self.sock = sock
                 self._tunnel()
