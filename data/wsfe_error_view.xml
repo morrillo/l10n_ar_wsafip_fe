@@ -56,7 +56,7 @@
             <field name="view_mode">tree,form</field>
         </record>
 
-        <menuitem name="Electronic Invoice Errors" action="act_afip.wsfe_error" id="menu_action_afip.wsfe_error" parent="l10n_ar_wsafip.menu_wsafip"/>
+        <menuitem name="Electronic Invoice Errors" action="act_afip.wsfe_error" id="menu_action_wsfe_error" parent="l10n_ar_wsafip.menu_wsafip"/>
 
     </data>
 </openerp>
