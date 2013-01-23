@@ -175,22 +175,29 @@ class invoice(osv.osv):
 
             if response._FEAutRequestResult._RError._percode == 0 and response._FEAutRequestResult._FecResp._resultado in [ 'P', 'A' ]:
                 # Not error
+                error_message = []
                 for i in range(response._FEAutRequestResult._FecResp._cantidadreg):
                     response_id = response._FEAutRequestResult._FecResp._id # ID de lote.
                     r = response._FEAutRequestResult._FedResp._FEDetalleResponse[i]
 
-                    afip_error_id = wsfe_error_obj.search(cr, uid, [('code','=',r._motivo)]).pop()
+                    afip_error_ids = wsfe_error_obj.search(cr, uid, [('code','in',r._motivo.split(';'))])
+                    afip_error = wsfe_error_obj.browse(cr, uid, afip_error_ids)
+                    afip_message = '; '.join([ err.description for err in afip_error ])
+                    error_message.append(_('Invoice %s: %s.') % (r._cbt_desde, afip_message))
+
+                    self.logger(netsvc.LOG_ERROR, _('Processed document %s-%s. AFIP message: %s.') % (r._cbt_desde, r._cbt_hasta, afip_message))
 
                     if r._cbt_desde not in Invoice:
-                        logger(netsvc.LOG_ERROR, _('Document sequence is not syncronized with AFIP. Afip return %i as valid.') % r._cbt_desde)
-                        return False
+                        self.logger(netsvc.LOG_ERROR, _('Document sequence is not syncronized with AFIP. Afip return %i as valid.') % r._cbt_desde)
+                        self.logger(netsvc.LOG_ERROR, _('Expected sequences: %s.') % repr(Invoice.keys()))
+                        continue
 
                     self.write(cr, uid, Invoice[r._cbt_desde].id, 
                                {'afip_cae': r._cae,
                                 'afip_cae_due': r._fecha_vto,
                                 'afip_batch_number':response_id,
                                 'afip_result': r._resultado,
-                                'afip_error_id': afip_error_id,
+                                'afip_error_id': afip_error_ids[0],
                                })
             else:
                 response_id = response._FEAutRequestResult._FecResp._id # ID de lote.
@@ -207,17 +214,17 @@ class invoice(osv.osv):
                 for i in range(response._FEAutRequestResult._FecResp._cantidadreg):
                     r = response._FEAutRequestResult._FedResp._FEDetalleResponse[i]
 
-                    if r._cbt_desde not in Invoice:
-                        self.logger(netsvc.LOG_ERROR, _('Document sequence is not syncronized with AFIP. Afip return %i as valid.') % r._cbt_desde)
-                        return False
-
                     afip_error_ids = wsfe_error_obj.search(cr, uid, [('code','in',r._motivo.split(';'))])
                     afip_error = wsfe_error_obj.browse(cr, uid, afip_error_ids)
                     afip_message = '; '.join([ err.description for err in afip_error ])
-
                     error_message.append(_('Invoice %s: %s.') % (r._cbt_desde, afip_message))
 
                     self.logger(netsvc.LOG_ERROR, _('AFIP dont approve the document %s-%s. Reason: %s.') % (r._cbt_desde, r._cbt_hasta, afip_message))
+
+                    if r._cbt_desde not in Invoice:
+                        self.logger(netsvc.LOG_ERROR, _('Document sequence is not syncronized with AFIP. Afip return %i as valid.') % r._cbt_desde)
+                        self.logger(netsvc.LOG_ERROR, _('Expected sequences: %s.') % repr(Invoice.keys()))
+                        return False
 
                 # Esto deberia ser un mensaje al usuario, asi termina de procesar todas las facturas.
                 raise osv.except_osv(_('AFIP error'),
