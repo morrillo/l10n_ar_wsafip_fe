@@ -87,7 +87,6 @@ class account_journal(osv.osv):
                         ))
         return r
 
-
     def _get_afip_items_generated(self, cr, uid, ids, fields_name, arg, context=None):
         if context is None:
             context={}
