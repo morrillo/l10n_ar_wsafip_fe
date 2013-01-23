@@ -31,8 +31,11 @@ class HTTPSConnectionSSLVersion(httplib.HTTPConnection):
         def __init__(self, host, port=None, key_file=None, cert_file=None,
                      strict=None, timeout=socket._GLOBAL_DEFAULT_TIMEOUT,
                      source_address=None, ssl_version=ssl.PROTOCOL_TLSv1):
-            httplib.HTTPConnection.__init__(self, host, port, strict, timeout,
-                                    source_address)
+            # Fix error for python 2.6
+            if source_addres is not None:
+                super(HTTPSConnectionSSLVersion, self).__init__(host, port, strict, timeout, source_address)
+            else:
+                super(HTTPSConnectionSSLVersion, self).__init__(host, port, strict, timeout)
             self.key_file = key_file
             self.cert_file = cert_file
             self.ssl_version = ssl_version
