@@ -203,7 +203,13 @@ class invoice(osv.osv):
                                 'afip_result': r._resultado,
                                 'afip_error_id': afip_error_ids[0],
                                })
-            else:
+            elif response._FEAutRequestResult._FecResp is None:
+                raise osv.except_osv(_('AFIP error'),
+                                     _(u'Ocurrió un error en el AFIP (%i): %s') % 
+                                     (response._FEAutRequestResult._RError._percode,
+                                      response._FEAutRequestResult._RError._perrmsg,
+                                     ))
+            elif response._FEAutRequestResult._FecResp is not None:
                 response_id = response._FEAutRequestResult._FecResp._id # ID de lote.
                 response_cuit = response._FEAutRequestResult._FecResp._cuit
                 response_fecha_cae = response._FEAutRequestResult._FecResp._fecha_cae
@@ -232,7 +238,7 @@ class invoice(osv.osv):
 
                 # Esto deberia ser un mensaje al usuario, asi termina de procesar todas las facturas.
                 raise osv.except_osv(_('AFIP error'),
-                                     _('Ocurriró un error en el AFIP (%i: %s).<br/>\n %s.\n') % 
+                                     _(u'Ocurriró un error en el AFIP (%i: %s).<br/>\n %s.\n') % 
                                      (response._FEAutRequestResult._RError._percode,
                                       response._FEAutRequestResult._RError._perrmsg,
                                       '<br/>\n'.join(error_message),
