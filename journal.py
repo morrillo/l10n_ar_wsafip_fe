@@ -23,15 +23,12 @@ from stub.Service_client import *
 from stub.Service_types import *
 from tools.translate import _
 from cache_bind import get_bind
-import netsvc
+import logging
+
+_logger = logging.getLogger(__name__)
+_schema = logging.getLogger(__name__ + '.schema')
 
 class account_journal(osv.osv):
-    # Class members to send messages to the logger system.
-    _logger = netsvc.Logger()
-
-    def logger(self, log, msg):
-        self._logger.notifyChannel('addons.'+self._name, log, msg)
-
     def _get_afip_state(self, cr, uid, ids, fields_name, arg, context=None):
         if context is None:
             context={}
@@ -77,7 +74,7 @@ class account_journal(osv.osv):
                     if response._FERecuperaQTYRequestResult._RError._percode == 0:
                         r[journal.id] = response._FERecuperaQTYRequestResult._qty._value
                     else:
-                        self.logger(netsvc.LOG_ERROR,'RESPONSE:afip_items_available:%i:\n%s' % (
+                        _logger.error('RESPONSE:afip_items_available:%i:\n%s' % (
                             response._FERecuperaQTYRequestResult._RError._percode,
                             response._FERecuperaQTYRequestResult._RError._perrmsg
                         ))
@@ -107,7 +104,7 @@ class account_journal(osv.osv):
                     if response._FERecuperaLastCMPRequestResult._RError._percode == 0:
                         r[journal.id] = response._FERecuperaLastCMPRequestResult._cbte_nro
                     else:
-                        self.logger(netsvc.LOG_ERROR,'RESPONSE:afip_items_available:%i:\n%s' %  (
+                        _logger.error('RESPONSE:afip_items_available:%i:\n%s' %  (
                             response._FERecuperaQTYRequestResult._RError._percode,
                             response._FERecuperaQTYRequestResult._RError._perrmsg
                         ))
@@ -117,18 +114,15 @@ class account_journal(osv.osv):
                         ))
         return r
 
-    def _get_afip_items_generated(self, cr, uid, ids, fields_name, arg, context=None):
-        pass
-
     _inherit = "account.journal"
     _columns = {
         'afip_authorization_id': fields.many2one('wsafip.authorization', 'Web Service AFIP Authorization',
                             help="Which service authorization must be used to connecto to AFIP."),
-        'afip_state': fields.function(_get_afip_state, string='AFIP State',method=True, 
+        'afip_state': fields.function(_get_afip_state, type='char', string='AFIP State',method=True, 
                             help="Connect to the AFIP and check is service is avilable."),
-        'afip_items_available': fields.function(_get_afip_items_available, string='Number of Invoices Available',method=True, 
+        'afip_items_available': fields.function(_get_afip_items_available, type='integer', string='Number of Invoices Available',method=True, 
                             help="Connect to the AFIP and check how many invoices are avaible to print."),
-        'afip_items_generated': fields.function(_get_afip_items_generated, string='Number of Invoices Generated',method=True, 
+        'afip_items_generated': fields.function(_get_afip_items_generated, type='integer', string='Number of Invoices Generated',method=True, 
                             help="Connect to the AFIP and check how many invoices was generated."),
     }
 account_journal()

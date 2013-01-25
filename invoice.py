@@ -23,8 +23,11 @@ from cache_bind import get_bind
 from stub.Service_client import *
 from stub.Service_types import *
 from tools.translate import _
-import netsvc
 import re
+import logging
+
+_logger = logging.getLogger(__name__)
+_schema = logging.getLogger(__name__ + '.schema')
 
 # Tabla de Codigo de Documentos por tipo de Facturas
 _FACT_A = [ 1, 2, 3, 4, 5, ]
@@ -41,12 +44,6 @@ re_number = re.compile(r'\d{8}')
 
 
 class invoice(osv.osv):
-    # Class members to send messages to the logger system.
-    _logger = netsvc.Logger()
-
-    def logger(self, log, msg):
-        self._logger.notifyChannel('addons.'+self._name, log, msg)
-
     _inherit = "account.invoice"
     _columns = {
         'afip_result': fields.selection([
@@ -185,15 +182,15 @@ class invoice(osv.osv):
                     afip_message = '; '.join([ err.description for err in afip_error ])
                     error_message.append(_('Invoice %s: %s.') % (r._cbt_desde, afip_message))
 
-                    self.logger(netsvc.LOG_ERROR, _('Processed document %s-%s. AFIP message: %s.') % (r._cbt_desde, r._cbt_hasta, afip_message))
+                    _logger.error(_('Processed document %s-%s. AFIP message: %s.') % (r._cbt_desde, r._cbt_hasta, afip_message))
 
                     if r._cbt_desde not in Invoice:
-                        self.logger(netsvc.LOG_ERROR, _('Document sequence is not syncronized with AFIP. Afip return %i as valid.') % r._cbt_desde)
-                        self.logger(netsvc.LOG_ERROR, _('Expected sequences: %s.') % repr(Invoice.keys()))
+                        _logger.error(_('Document sequence is not syncronized with AFIP. Afip return %i as valid.') % r._cbt_desde)
+                        _logger.error(_('Expected sequences: %s.') % repr(Invoice.keys()))
                         continue
 
                     if r._cae is None:
-                        self.logger(netsvc.LOG_ERROR, _('Document have not CAE assigned.'))
+                        _logger.error(_('Document have not CAE assigned.'))
                         return False 
 
                     self.write(cr, uid, Invoice[r._cbt_desde].id, 
@@ -218,7 +215,7 @@ class invoice(osv.osv):
                 response_motivo = response._FEAutRequestResult._FecResp._motivo
                 response_reproceso = response._FEAutRequestResult._FecResp._reproceso
 
-                self.logger(netsvc.LOG_ERROR, _('AFIP dont approve some document. Global Reason: %s') % response_motivo)
+                _logger.error(_('AFIP dont approve some document. Global Reason: %s') % response_motivo)
 
                 error_message = []
                 for i in range(response._FEAutRequestResult._FecResp._cantidadreg):
@@ -229,11 +226,11 @@ class invoice(osv.osv):
                     afip_message = '; '.join([ err.description for err in afip_error ])
                     error_message.append(_('Invoice %s: %s.') % (r._cbt_desde, afip_message))
 
-                    self.logger(netsvc.LOG_ERROR, _('AFIP dont approve the document %s-%s. Reason: %s.') % (r._cbt_desde, r._cbt_hasta, afip_message))
+                    _logger.error(_('AFIP dont approve the document %s-%s. Reason: %s.') % (r._cbt_desde, r._cbt_hasta, afip_message))
 
                     if r._cbt_desde not in Invoice:
-                        self.logger(netsvc.LOG_ERROR, _('Document sequence is not syncronized with AFIP. Afip return %i as valid.') % r._cbt_desde)
-                        self.logger(netsvc.LOG_ERROR, _('Expected sequences: %s.') % repr(Invoice.keys()))
+                        _logger.error(_('Document sequence is not syncronized with AFIP. Afip return %i as valid.') % r._cbt_desde)
+                        _logger.error(_('Expected sequences: %s.') % repr(Invoice.keys()))
                         return False
 
                 # Esto deberia ser un mensaje al usuario, asi termina de procesar todas las facturas.

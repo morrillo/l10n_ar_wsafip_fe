@@ -4,8 +4,7 @@
         <record id="view_account_journal_afip_form" model="ir.ui.view">
             <field name="model">account.journal</field>
 	    <field name="name">account.journal.afip.form</field>
-            <field name="inherit_id" ref="account.view_account_journal_form" />
-            <field name="type">form</field>
+            <field name="inherit_id" ref="l10n_ar_invoice.view_account_journal_ar_form" />
             <field name="arch" type="xml">
 	      <field name="point_of_sale" position="after">
 		  <field name='afip_authorization_id'/>

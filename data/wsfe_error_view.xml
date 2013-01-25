@@ -26,9 +26,8 @@
         <record id="view_wsfe_error_form" model="ir.ui.view">
             <field name="name">wsfe_error.form</field>
             <field name="model">afip.wsfe_error</field>
-            <field name="type">form</field>
             <field name="arch" type="xml">
-		    <form>
+		    <form string="AFIP Web service Error">
                     <field name="name"/>
                     <field name="code"/>
                     <field name="description"/>
@@ -39,9 +38,8 @@
         <record id="view_wsfe_error_tree" model="ir.ui.view">
             <field name="name">wsfe_error.tree</field>
             <field name="model">afip.wsfe_error</field>
-            <field name="type">tree</field>
             <field name="arch" type="xml">
-		        <tree>
+		        <tree string="AFIP Web service Error">
                     <field name="name"/>
                     <field name="code"/>
                 </tree>
