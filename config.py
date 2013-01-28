@@ -78,6 +78,10 @@ class l10n_ar_wsafip_fe_config(osv.osv_memory):
                     'certificate': ws.certificate_id.id,
                     'batch_sequence_id': seq_id,
                 })
+            else:
+                auth_id = auth_ids[0]
+
+            journal_obj.write(cr, uid, self.items, { 'afip_authorization_id': auth_id })
             
         return True
 

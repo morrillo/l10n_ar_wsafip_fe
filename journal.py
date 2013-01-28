@@ -41,21 +41,24 @@ class account_journal(osv.osv):
                 r[journal.id] = 'authorization_service_error'
             else:
                 # Try to login just one time.
-                auth.login()
-                if auth.state not in  [ 'connected', 'clockshifted' ]:
-                    r[journal.id] = 'connection_error'
-                else:
-                    request = FEDummySoapIn()
-                    response = get_bind(auth.server_id).FEDummy(request)
-                    if response._FEDummyResult._authserver == 'OK':
-                        r[journal.id] = 'connected'
+                try:
+                    auth.login()
+                    if auth.state not in  [ 'connected', 'clockshifted' ]:
+                        r[journal.id] = 'connection_error'
                     else:
-                        if response._FEDummyResult._appserver != 'OK':
-                            r[journal.id] = 'connected_but_appserver_error'
-                        elif response._FEDummyResult._dbserver != 'OK':
-                            r[journal.id] = 'connected_but_dbserver_error'
+                        request = FEDummySoapIn()
+                        response = get_bind(auth.server_id).FEDummy(request)
+                        if response._FEDummyResult._authserver == 'OK':
+                            r[journal.id] = 'connected'
                         else:
-                            r[journal.id] = 'connected_but_servers_error'
+                            if response._FEDummyResult._appserver != 'OK':
+                                r[journal.id] = 'connected_but_appserver_error'
+                            elif response._FEDummyResult._dbserver != 'OK':
+                                r[journal.id] = 'connected_but_dbserver_error'
+                            else:
+                                r[journal.id] = 'connected_but_servers_error'
+                except:
+                    pass
         return r
 
     def _get_afip_items_available(self, cr, uid, ids, fields_name, arg, context=None):
@@ -66,22 +69,25 @@ class account_journal(osv.osv):
             r[journal.id] = False
             auth = journal.afip_authorization_id
             if auth and auth.server_id.code == 'wsfe':
-                auth.login()
-                if auth.state in  [ 'connected', 'clockshifted' ]:
-                    request = FERecuperaQTYRequestSoapIn()
-                    request = auth.set_auth_request(request)
-                    response = get_bind(auth.server_id).FERecuperaQTYRequest(request)
-                    if response._FERecuperaQTYRequestResult._RError._percode == 0:
-                        r[journal.id] = response._FERecuperaQTYRequestResult._qty._value
-                    else:
-                        _logger.error('RESPONSE:afip_items_available:%i:\n%s' % (
-                            response._FERecuperaQTYRequestResult._RError._percode,
-                            response._FERecuperaQTYRequestResult._RError._perrmsg
-                        ))
-                        raise osv.except_osv(_('Error in Response'), _('Following error back from server: (%i) %s') % (
-                            response._FERecuperaQTYRequestResult._RError._percode,
-                            response._FERecuperaQTYRequestResult._RError._perrmsg
-                        ))
+                try:
+                    auth.login()
+                    if auth.state in  [ 'connected', 'clockshifted' ]:
+                        request = FERecuperaQTYRequestSoapIn()
+                        request = auth.set_auth_request(request)
+                        response = get_bind(auth.server_id).FERecuperaQTYRequest(request)
+                        if response._FERecuperaQTYRequestResult._RError._percode == 0:
+                            r[journal.id] = response._FERecuperaQTYRequestResult._qty._value
+                        else:
+                            _logger.error('RESPONSE:afip_items_available:%i:\n%s' % (
+                                response._FERecuperaQTYRequestResult._RError._percode,
+                                response._FERecuperaQTYRequestResult._RError._perrmsg
+                            ))
+                            raise osv.except_osv(_('Error in Response'), _('Following error back from server: (%i) %s') % (
+                                response._FERecuperaQTYRequestResult._RError._percode,
+                                response._FERecuperaQTYRequestResult._RError._perrmsg
+                            ))
+                except:
+                    pass
         return r
 
     def _get_afip_items_generated(self, cr, uid, ids, fields_name, arg, context=None):
@@ -92,26 +98,29 @@ class account_journal(osv.osv):
             r[journal.id] = False
             auth = journal.afip_authorization_id
             if auth and auth.server_id.code == 'wsfe':
-                auth.login()
-                if auth.state in  [ 'connected', 'clockshifted' ]:
-                    request = FERecuperaLastCMPRequestSoapIn()
-                    request = auth.set_auth_request(request)
-                    argTCMP = request.new_argTCMP()
-                    argTCMP.set_element_PtoVta(journal.afip_point_of_sale)
-                    argTCMP.set_element_TipoCbte(journal.afip_document_class_id.code)
-                    request.ArgTCMP = argTCMP
-                    response = get_bind(auth.server_id).FERecuperaLastCMPRequest(request)
-                    if response._FERecuperaLastCMPRequestResult._RError._percode == 0:
-                        r[journal.id] = response._FERecuperaLastCMPRequestResult._cbte_nro
-                    else:
-                        _logger.error('RESPONSE:afip_items_available:%i:\n%s' %  (
-                            response._FERecuperaQTYRequestResult._RError._percode,
-                            response._FERecuperaQTYRequestResult._RError._perrmsg
-                        ))
-                        raise osv.except_osv(_('Error in Response'), _('Following error back from server: (%i) %s') % (
-                            response._FERecuperaQTYRequestResult._RError._percode,
-                            response._FERecuperaQTYRequestResult._RError._perrmsg
-                        ))
+                try:
+                    auth.login()
+                    if auth.state in  [ 'connected', 'clockshifted' ]:
+                        request = FERecuperaLastCMPRequestSoapIn()
+                        request = auth.set_auth_request(request)
+                        argTCMP = request.new_argTCMP()
+                        argTCMP.set_element_PtoVta(journal.afip_point_of_sale)
+                        argTCMP.set_element_TipoCbte(journal.afip_document_class_id.code)
+                        request.ArgTCMP = argTCMP
+                        response = get_bind(auth.server_id).FERecuperaLastCMPRequest(request)
+                        if response._FERecuperaLastCMPRequestResult._RError._percode == 0:
+                            r[journal.id] = response._FERecuperaLastCMPRequestResult._cbte_nro
+                        else:
+                            _logger.error('RESPONSE:afip_items_available:%i:\n%s' %  (
+                                response._FERecuperaQTYRequestResult._RError._percode,
+                                response._FERecuperaQTYRequestResult._RError._perrmsg
+                            ))
+                            raise osv.except_osv(_('Error in Response'), _('Following error back from server: (%i) %s') % (
+                                response._FERecuperaQTYRequestResult._RError._percode,
+                                response._FERecuperaQTYRequestResult._RError._perrmsg
+                            ))
+                except:
+                    pass
         return r
 
     _inherit = "account.journal"
