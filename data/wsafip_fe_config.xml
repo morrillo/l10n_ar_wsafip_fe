@@ -53,7 +53,7 @@
 
         <record id="wsafip_fe_config_todo" model="ir.actions.todo">
             <field name="action_id" ref="action_wsafip_fe_config"/>
-            <field name="sequence">30</field>
+            <field name="sequence">40</field>
             <field name="restart">always</field>
         </record>
 
