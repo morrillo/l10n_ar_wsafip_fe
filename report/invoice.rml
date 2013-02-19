@@ -127,11 +127,11 @@
                     <tr>
                     <td><para style="seller"><b>Condición frente al IVA: </b>[[ o.partner_id.responsability_id.name ]]</para></td>
                     <td><para style="seller"><b>Domicilio: </b>
-                    [[ o.partner_id.address and o.partner_id.address[0].street or '[ERROR!]' ]] 
-                    [[ o.partner_id.address and o.partner_id.address[0].street2 or '' ]], 
-                    [[ ', '.join([ o.partner_id.address and o.partner_id.address[0].city or '',
-                    o.partner_id.address and o.partner_id.address[0].state_id and o.partner_id.address[0].state_id.name or '',
-                    o.partner_id.address and o.partner_id.address[0].country_id and o.partner_id.address[0].country_id.name or '' ] )]].</para></td>
+                    [[ o.address_invoice_id and o.address_invoice_id.street or '[ERROR!]' ]] 
+                    [[ o.address_invoice_id and o.address_invoice_id.street2 or '' ]], 
+                    [[ ', '.join([ o.address_invoice_id and o.address_invoice_id.city or '',
+                    o.address_invoice_id and o.address_invoice_id.state_id and o.address_invoice_id.state_id.name or '',
+                    o.address_invoice_id and o.address_invoice_id.country_id and o.address_invoice_id.country_id.name or '' ] )]].</para></td>
                     <para style="seller"><b>Condición frente al IVA: </b>[[ o.partner_id.responsability_id.name ]].</para>
                     </tr>
                     <tr>

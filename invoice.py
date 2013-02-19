@@ -63,6 +63,20 @@ class invoice(osv.osv):
         'afip_result': '',
     }
 
+    def action_increment_batch(self, cr, uid, ids, *args):
+        """
+        Increment batch number groupping by afip authority server.
+        """
+        auths = []
+        invoices = {}
+        for inv in self.browse(cr, uid, ids):
+            auth = inv.journal_id.afip_authorization_id
+            auths.append(auth)
+            invoices[auth.id] = invoices.get(auth.id, []) + [inv.id]
+
+        for auth in auths:
+            self.write(cr, uid, invoices[auth.id], { 'afip_batch_number': int(auth.batch_sequence_id.get_id()) })
+
     def action_retrieve_cae(self, cr, uid, ids, *args):
         """
         Contact to the AFIP to get a CAE number.
@@ -72,6 +86,7 @@ class invoice(osv.osv):
         Details = {}
         Auths = {}
         Invoice = {}
+        BatchNum = {}
         for inv in self.browse(cr, uid, ids):
             journal = inv.journal_id
             auth = journal.afip_authorization_id
@@ -142,6 +157,7 @@ class invoice(osv.osv):
                 Auths[name] = auth
             Details[name].append(Detalle)
             Invoice[invoice_number] = inv
+            BatchNum[name] = inv.afip_batch_number
 
         # Now work for authority entities and send request.
         req_id = 0
@@ -149,7 +165,7 @@ class invoice(osv.osv):
             auth = Auths[name]
             details = Details[name]
 
-            seq_id = self.pool.get('ir.sequence').get_id(cr, uid, auth.batch_sequence_id.id)
+            seq_id = BatchNum[name]
             batch_id = int(seq_id)
 
             request = FEAutRequestSoapIn()
