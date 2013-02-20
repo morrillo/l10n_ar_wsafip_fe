@@ -35,9 +35,6 @@ class fe_account_invoice(ar_account_invoice):
             'is_electronic': self._is_electronic,
         })
 
-#from netsvc import Service
-#del Service._services['report.account.invoice_fe']
-
 report_sxw.report_sxw(
     'report.account.invoice_fe',
     'account.invoice',
