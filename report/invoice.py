@@ -20,7 +20,7 @@
 ##############################################################################
 
 import time
-from report import report_sxw
+from openerp.report import report_sxw
 from l10n_ar_invoice.report.invoice import ar_account_invoice
 
 class fe_account_invoice(ar_account_invoice):
