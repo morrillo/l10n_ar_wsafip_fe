@@ -20,15 +20,8 @@
     <data>
         <record id="account.act_open" model="workflow.activity">
             <field name="wkf_id" ref="account.wkf"/>
-            <field name="name">next_batch_number</field>
-            <field name="action">action_increment_batch()</field>
-            <field name="kind">function</field>
-        </record>
-
-        <record id="account.act_postopen" model="workflow.activity">
-            <field name="wkf_id" ref="account.wkf"/>
             <field name="name">open</field>
-	    <field name="action">afip_validation()
+	        <field name="action">afip_validation()
 action_date_assign()
 action_move_create()
 action_number()
@@ -36,11 +29,10 @@ action_retrieve_cae()
 write({'state':'open'})</field>
             <field name="kind">function</field>
         </record>
-
-        <record id="t_preopen_postopen" model="workflow.transition">
-            <field name="act_from" ref="account.act_open"/>
-            <field name="act_to" ref="account.act_postopen"/>
-            <field name="condition">True</field>
+        <record id="account.t4" model="workflow.transition">
+            <field name="act_from" ref="account.act_draft"/>
+            <field name="act_to" ref="account.act_open"/>
+            <field name="condition">valid_batch()</field>
         </record>
     </data>
 </openerp>

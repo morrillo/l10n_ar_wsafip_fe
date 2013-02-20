@@ -1,14 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<openerp><data>
+<openerp>
+	<data>
+        <record id="group_wsafip_fe_user" model="res.groups" context="{'noadmin':True}">
+            <field name="name">AFIP Electronic Invoice User</field>
+            <field name="category_id" ref="base.module_category_accounting_and_finance"/>
+            <field name="implied_ids" eval="[(4, ref('l10n_ar_wsafip.group_wsafip_user'))]"/>
+        </record>
 
-    <record id="group_wsafip_fe_admin" model="res.groups">
-        <field name="name">AFIP Electronic Invoice Manager</field>
-    </record>
-
-    <record id="group_wsafip_fe_user" model="res.groups" context="{'noadmin':True}">
-        <field name="name">AFIP Electronic Invoice User</field>
-    </record>
-
-</data></openerp>
-
-
+        <record id="group_wsafip_fe_admin" model="res.groups">
+            <field name="name">AFIP Electronic Invoice Manager</field>
+            <field name="category_id" ref="l10n_ar_invoice.module_category_l10n_ar"/>
+            <field name="implied_ids" eval="[(4,ref('l10n_ar_wsafip.group_wsafip_admin'))]"/>
+        </record>
+    </data>
+</openerp>
+<!-- vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4
+     -->
