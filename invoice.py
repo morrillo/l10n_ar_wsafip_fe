@@ -18,7 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-from osv import fields, osv
+from openerp.osv import fields, osv
 from cache_bind import get_bind
 from stub.Service_client import *
 from stub.Service_types import *
