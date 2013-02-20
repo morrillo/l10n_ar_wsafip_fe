@@ -21,7 +21,7 @@
 from openerp.osv import fields, osv
 from stub.Service_client import *
 from stub.Service_types import *
-from tools.translate import _
+from openerp.tools.translate import _
 from cache_bind import get_bind
 import logging
 
