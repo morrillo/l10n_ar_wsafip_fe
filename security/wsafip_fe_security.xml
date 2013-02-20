@@ -9,7 +9,7 @@
 
         <record id="group_wsafip_fe_admin" model="res.groups">
             <field name="name">AFIP Electronic Invoice Manager</field>
-            <field name="category_id" ref="l10n_ar.module_category_l10n_ar"/>
+            <field name="category_id" ref="l10n_ar_wsafip.module_category_l10n_ar_wsafip"/>
             <field name="implied_ids" eval="[(4,ref('l10n_ar_wsafip.group_wsafip_admin'))]"/>
         </record>
     </data>
