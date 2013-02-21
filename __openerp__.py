@@ -20,7 +20,7 @@
 ##############################################################################
 {
     'name':     'Argentina - Web Services de Factura Electrónica del AFIP',
-    'version':  '0.1',
+    'version':  '2.7.155',
     'author':   'OpenERP - Team de Localización Argentina',
     'category': 'Localization/Argentina',
     'website':  'https://launchpad.net/~openerp-l10n-ar-localization',
