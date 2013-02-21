@@ -23,12 +23,15 @@
             <field name="name">account.journal.afip.form</field>
             <field name="inherit_id" ref="l10n_ar_invoice.view_account_journal_ar_form" />
             <field name="arch" type="xml">
-                <field name="point_of_sale" position="after">
-                    <field name='afip_authorization_id'/>
-                    <field name='afip_state'/>
-                    <field name='afip_items_generated'/>
-                    <field name='afip_items_available'/>
-                </field>
+                <page string="AFIP" position="inside">
+                    <group colspan="2" col="2">
+                        <separator string="Web Services" colspan="4"/>
+                        <field name='afip_authorization_id'/>
+                        <field name='afip_state'/>
+                        <field name='afip_items_generated'/>
+                        <field name='afip_items_available'/>
+                    </group>
+                </page>
             </field>
         </record>
   </data>
