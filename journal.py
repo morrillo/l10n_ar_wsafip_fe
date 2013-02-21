@@ -104,8 +104,8 @@ class account_journal(osv.osv):
                         request = FERecuperaLastCMPRequestSoapIn()
                         request = auth.set_auth_request(request)
                         argTCMP = request.new_argTCMP()
-                        argTCMP.set_element_PtoVta(journal.afip_point_of_sale)
-                        argTCMP.set_element_TipoCbte(journal.afip_document_class_id.code)
+                        argTCMP.set_element_PtoVta(journal.point_of_sale)
+                        argTCMP.set_element_TipoCbte(journal.journal_class_id.afip_code)
                         request.ArgTCMP = argTCMP
                         response = get_bind(auth.server_id).FERecuperaLastCMPRequest(request)
                         if response._FERecuperaLastCMPRequestResult._RError._percode == 0:
