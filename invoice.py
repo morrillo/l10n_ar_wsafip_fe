@@ -71,7 +71,10 @@ class invoice(osv.osv):
         invoices = {}
         for inv in self.browse(cr, uid, ids):
             auth = inv.journal_id.afip_authorization_id
-            if auth: continue
+            if not auth: continue
+            if auth.afip_items_generated + 1 != inv.journal_id.sequence_id.number_next:
+                raise osv.except_osv(_(u'Syncronization Error'),
+                                     _(u'La AFIP espera que el próximo número de secuencia sea %i, pero el sistema indica que será %i. Hable inmediatamente con su administrador del sistema para resolver este problema.') % (auth.afip_items_generated + 1, inv.journal_id.sequence_id.number_next))
             auths.append(auth)
             invoices[auth.id] = invoices.get(auth.id, []) + [inv.id]
 
