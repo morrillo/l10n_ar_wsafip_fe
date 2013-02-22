@@ -50,6 +50,11 @@
         <paraStyle name='tiny'      fontName='Helvetica' fontSize='6' leftIndent='0px' spaceAfter='0px' spaceBefore='0px' />
         <paraStyle name='tiny-bold' fontName='Helvetica-Bold' fontSize='6' leftIndent='0px' spaceAfter='0px' spaceBefore='0px' />
         <paraStyle name='number'    fontName='Helvetica' fontSize='9' />
+        <blockTableStyle id="Client">
+            <blockValign value="TOP" start="0,0" stop="-1,-1"/>
+            <blockTopPadding length="0.04cm" start="0,0" stop="-1,-1"/>
+            <blockBottomPadding  length="0.04cm" start="0,0" stop="-1,-1"/>
+        </blockTableStyle>
         <blockTableStyle id="Details">
             <blockValign value="MIDDLE" start="0,0" stop="0,-1"/>
             <blockValign value="BOTTOM" start="0,1" stop="-1,-1"/>
@@ -70,7 +75,6 @@
             <blockFont name="Helvetica" size="7" start="1,0" stop="1,-1"/>
         </blockTableStyle>
         <blockTableStyle id="Footer">
-            <!--lineStyle kind="GRID" colorName="gray" start="0,0" stop="-1,-1"/-->
             <blockValign value="TOP" start="0,0" stop="-1,-1"/>
             <blockFont name="Helvetica" size="7" start="0,0" stop="-1,-1"/>
             <blockRightPadding length="0.04cm" start="2,0" stop="-1,-1"/>
@@ -119,10 +123,10 @@
                     </tr>
                 </blockTable>
                 <nextFrame name="buyer_section"/>
-                <blockTable colWidths="9cm,9cm">
+                <blockTable colWidths="9cm,9cm" style="Client">
                     <tr>
                     <td><para style="seller"><b>[[ o.partner_id.document_type.name ]] : </b>[[ o.partner_id.document_number ]]</para></td>
-                    <td><para style="seller"><b>Nombre y Apellido / Razón Social: </b>[[ o.partner_id.name ]]</para></td>
+                    <td><para style="seller"><b>Nombre y Apellido / Razón Social: </b>[[ o.partner_id.name[:50] ]]</para></td>
                     </tr>
                     <tr>
                     <td><para style="seller"><b>Condición frente al IVA: </b>[[ o.partner_id.responsability_id.name ]]</para></td>
@@ -174,7 +178,7 @@
                             <td>[[ formatLang(o.amount_untaxed) if is_class(o, 'A') else formatLang(o.amount_total) ]]</td>
                         </tr>
                         <tr>
-                            <td>[[ (is_class(o, 'A') or removeParentNode('tr')) and '' ]] IVA 21%: [[ o.currency_id.symbol ]]</td>
+                            <td>[[ (is_class(o, 'A') or removeParentNode('tr')) and '' ]] IVA: [[ o.currency_id.symbol ]]</td>
                             <td>[[ formatLang(o.amount_tax) ]]</td>
                         </tr>
                         <tr>
