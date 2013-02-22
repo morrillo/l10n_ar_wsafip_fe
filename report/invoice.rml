@@ -92,19 +92,19 @@
             <nextFrame name="seller_section"/>
                 <para style="seller"><b>Razón Social: </b>[[ company.name ]].</para>
                 <para style="seller"><b>Domicilio Comercial: </b>
-                [[ company.partner_id.address and company.partner_id.address[0].street or '[ERROR!]' ]] 
-                [[ company.partner_id.address and company.partner_id.address[0].street2 or '' ]], 
-                [[ ', '.join([ company.partner_id.address and company.partner_id.address[0].city or '',
-                company.partner_id.address and company.partner_id.address[0].state_id and company.partner_id.address[0].state_id.name or '',
-                company.partner_id.address and company.partner_id.address[0].country_id and company.partner_id.address[0].country_id.name or '' ] )]].</para>
+                [[ company.partner_id.street or '[ERROR!]' ]] 
+                [[ company.partner_id.street2 or '' ]], 
+                [[ ', '.join([ company.partner_id.city or '',
+                company.partner_id.state_id and company.partner_id.state_id.name or '',
+                company.partner_id.country_id and company.partner_id.country_id.name or '' ] )]].</para>
                 <para style="seller"><b>Condición frente al IVA: </b>[[ company.partner_id.responsability_id.name ]].</para>
             <nextFrame name="docinfo_section"/>
                 <para style="document_class"><b>[[ o.journal_id.journal_class_id.name.split('[')[0] ]]</b></para>
                 <spacer length="0.5cm"/>
-                <para style="seller"><b>Punto de Venta: </b>[[ '%04i' % o.journal_id.point_of_sale ]] - <b>Comp. Nro: </b>[[ o.number[-8:] ]]</para>
+                <para style="seller"><b>Punto de Venta: </b>[[ '%04i' % o.journal_id.point_of_sale ]] - <b>Comp. Nro: </b>[[ o.number and o.number[-8:] or '00000000' ]]</para>
                 <para style="seller"><b>Fecha de Emisión: </b>[[ formatLang(o.date_invoice, date=True) ]]</para>
                 <spacer length="0.31cm"/>
-                <para style="seller"><b>CUIT: </b>[[ company.partner_id.printed_vat ]]</para>
+                <para style="seller"><b>[[ company.partner_id.document_type.name ]]: </b>[[ company.partner_id.document_number ]]</para>
                 <para style="seller"><b>Ingresos Brutos: </b>[[ company.partner_id.iibb ]]</para>
                 <para style="seller"><b>Fecha de Inicio de Actividades: </b>[[ formatLang(company.partner_id.start_date, date=True) ]]</para>
                 <nextFrame name="docclass_section"/>
@@ -121,21 +121,21 @@
                 <nextFrame name="buyer_section"/>
                 <blockTable colWidths="9cm,9cm">
                     <tr>
-                    <td><para style="seller"><b>CUIT: </b>[[ o.partner_id.printed_vat ]]</para></td>
+                    <td><para style="seller"><b>[[ o.partner_id.document_type.name ]] : </b>[[ o.partner_id.document_number ]]</para></td>
                     <td><para style="seller"><b>Nombre y Apellido / Razón Social: </b>[[ o.partner_id.name ]]</para></td>
                     </tr>
                     <tr>
                     <td><para style="seller"><b>Condición frente al IVA: </b>[[ o.partner_id.responsability_id.name ]]</para></td>
                     <td><para style="seller"><b>Domicilio: </b>
-                    [[ o.address_invoice_id and o.address_invoice_id.street or '[ERROR!]' ]] 
-                    [[ o.address_invoice_id and o.address_invoice_id.street2 or '' ]], 
-                    [[ ', '.join([ o.address_invoice_id and o.address_invoice_id.city or '',
-                    o.address_invoice_id and o.address_invoice_id.state_id and o.address_invoice_id.state_id.name or '',
-                    o.address_invoice_id and o.address_invoice_id.country_id and o.address_invoice_id.country_id.name or '' ] )]].</para></td>
+                    [[ o.partner_id and o.partner_id.street or '[ERROR!]' ]] 
+                    [[ o.partner_id and o.partner_id.street2 or '' ]], 
+                    [[ ', '.join([ o.partner_id and o.partner_id.city or '',
+                    o.partner_id and o.partner_id.state_id and o.partner_id.state_id.name or '',
+                    o.partner_id and o.partner_id.country_id and o.partner_id.country_id.name or '' ] )]].</para></td>
                     <para style="seller"><b>Condición frente al IVA: </b>[[ o.partner_id.responsability_id.name ]].</para>
                     </tr>
                     <tr>
-                    <td><para style="seller"><b>Condición de venta: </b>[[  ]]</para></td>
+                    <td><para style="seller"><b>Condición de venta: </b> Efectivo </para></td>
                     <td><para style="seller"><b>Nro. Remito: </b>[[ o.origin if o.afip_service_start is None else '-' ]]</para></td>
                     </tr>
                 </blockTable>
@@ -153,7 +153,7 @@
                             <td>Subtotal</td>
                         </tr>
                         <tr>
-                            <td><para name="small">[[ l.name ]][[ l.note ]]</para></td>
+                            <td><para style="small">[[ l.product_id and '[%s] ' % l.product_id.name or '']][[ l.name ]]</para></td>
                             <td>[[ formatLang(l.quantity) ]]</td>
                             <td>[[ l.uos_id.name ]]</td>
                             <td>[[ formatLang(l.price_calc(use_vat=not is_class(o, 'A'), quantity=1, discount=0)[l.id]) ]]</td>
@@ -193,20 +193,22 @@
                     <tr>
                         <td><para style='foot' alignment='left'><b>Comprobante[[ (o.afip_cae and ' ') or ' No ' ]]Autorizado.</b></para>
                             <para style='foot' alignment='left'>Verifique la validez del comprobante accediendo a <a href='http://www.afip.gob.ar/genericos/consultacae/Default.aspx'>http://www.afip.gob.ar/genericos/consultacae/Default.aspx</a></para>
+                            <section>
                             <para style='foot' alignment='left'><b>Información Bancaria</b></para>
-                            <para style='foot' alignment='left'>CBU: <i>[[ o.partner_bank_id.acc_number ]]</i></para>
-                            <para style='foot' alignment='left'>Entidad Bancaria: <i>[[ o.partner_bank_id.bank.name ]]</i></para>
+                            <para style='foot' alignment='left'>CBU: <i>[[ o.partner_bank_id and o.partner_bank_id.acc_number or removeParentNode('section')]]</i></para>
+                            <para style='foot' alignment='left'>Entidad Bancaria: <i>[[ o.partner_bank_id and o.partner_bank_id.bank.name ]]</i></para>
+                            </section>
                         </td>
                         <td></td>
-                        <td><para style='foot' alignment='right'><b>CAE N°:</b></para>
-                            <para style='foot' alignment='right'><b>Fecha Vto. CAE:</b></para></td>
+                        <td><para style='foot' alignment='right'><b>CAE N° :</b></para>
+                            <para style='foot' alignment='right'><b>Fecha Vto. CAE :</b></para></td>
                         <td><para style='foot' alignment='left'>[[ o.afip_cae or '-' ]]</para>
                             <para style='foot' alignment='left'>[[ formatLang(o.afip_cae_due, date=True) or '-' ]]</para></td>
                     </tr>
                     <tr>
                         <td alignment='center'>
                             <barCode code="i2of5" xdim="0.0450" quiet="1" bearers="0" ratio="3.0" checksum="10">[[ company.partner_id.vat[2:] ]][[ '%02i' % o.journal_id.journal_class_id.afip_code ]][[ '%04i' % o.journal_id.point_of_sale ]][[ o.afip_cae or '-' ]][[ flatdate(o.afip_cae_due) or '-' ]]</barCode>
-                            <para style='tiny' alignment='center'>[[ company.partner_id.vat[2:] ]][[ '%02i' % o.journal_id.journal_class_id.afip_code ]][[ '%04i' % o.journal_id.point_of_sale ]][[ o.afip_cae or '-' ]][[ flatdate(o.afip_cae_due)) if o.afip_cae_due is not None else '-' ]]*</para>
+                            <para style='tiny' alignment='center'>[[ company.partner_id.vat[2:] ]][[ '%02i' % o.journal_id.journal_class_id.afip_code ]][[ '%04i' % o.journal_id.point_of_sale ]][[ o.afip_cae or '-' ]][[ flatdate(o.afip_cae_due) if o.afip_cae_due is not None else '-' ]]*</para>
                         </td>
                         <td><para style='foot' alignment='center'>Pág. 1/1</para></td>
                         <td><para style='foot' alignment='right'>Comprobante generado por</para> </td>
