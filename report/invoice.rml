@@ -223,8 +223,8 @@
                     </tr>
                     <tr>
                         <td alignment='center'>
-                            <barCode code="i2of5" xdim="0.0450" quiet="1" bearers="0" ratio="3.0" checksum="10">[[ company.partner_id.vat[2:] ]][[ '%02i' % o.journal_id.journal_class_id.afip_code ]][[ '%04i' % o.journal_id.point_of_sale ]][[ o.afip_cae or '-' ]][[ flatdate(o.afip_cae_due) or '-' ]]</barCode>
-                            <para style='tiny' alignment='center'>[[ company.partner_id.vat[2:] ]][[ '%02i' % o.journal_id.journal_class_id.afip_code ]][[ '%04i' % o.journal_id.point_of_sale ]][[ o.afip_cae or '-' ]][[ flatdate(o.afip_cae_due) if o.afip_cae_due is not None else '-' ]]*</para>
+                            <barCode code="i2of5" quiet="1" bearers="0" checksum="10" barWidth="0.85" >[[ company.partner_id.vat[2:] ]][[ '%02i' % o.journal_id.journal_class_id.afip_code ]][[ '%04i' % o.journal_id.point_of_sale ]][[ o.afip_cae or 14*'0' ]][[ o.afip_cae_due!='False' and flatdate(o.afip_cae_due) or 8*'0' ]]</barCode>
+                            <para style='tiny' alignment='center'>[[ company.partner_id.vat[2:] ]][[ '%02i' % o.journal_id.journal_class_id.afip_code ]][[ '%04i' % o.journal_id.point_of_sale ]][[ o.afip_cae or 14*'0' ]][[ o.afip_cae_due!='False' and flatdate(o.afip_cae_due) or 8*'0' ]]-</para>
                         </td>
                         <td><para style='foot' alignment='center'>Pág. 1/1</para></td>
                         <td><para style='foot' alignment='right'>Comprobante generado por</para> </td>
