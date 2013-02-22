@@ -76,7 +76,6 @@
             <blockAlignment value="RIGHT"  start="1,1" stop="2,-1"/>
             <blockAlignment value="LEFT"   start="2,1" stop="3,-1"/>
             <blockAlignment value="RIGHT"  start="3,1" stop="-1,-1"/>
-            <blockBackground colorName="silver" start="0,0" stop="-1,0"/>
             <blockFont name="Helvetica" size="8" start="0,0" stop="-1,-1"/>
         </blockTableStyle>
         <blockTableStyle id="Total">
