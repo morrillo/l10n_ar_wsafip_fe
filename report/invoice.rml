@@ -55,7 +55,7 @@
             <blockTopPadding length="0.04cm" start="0,0" stop="-1,-1"/>
             <blockBottomPadding  length="0.04cm" start="0,0" stop="-1,-1"/>
         </blockTableStyle>
-        <blockTableStyle id="Details">
+        <blockTableStyle id="DetailsHeader">
             <blockValign value="MIDDLE" start="0,0" stop="0,-1"/>
             <blockValign value="BOTTOM" start="0,1" stop="-1,-1"/>
             <blockAlignment value="CENTER" start="0,0" stop="-1,0"/>
@@ -67,6 +67,17 @@
             <lineStyle kind="GRID" colorName="black" start="0,0" stop="-1,0"/>
             <blockFont name="Helvetica-Bold" size="8" start="0,0" stop="-1,0"/>
             <blockFont name="Helvetica" size="8" start="0,1" stop="-1,-1"/>
+        </blockTableStyle>
+        <blockTableStyle id="Details">
+            <blockValign value="MIDDLE" start="0,0" stop="0,-1"/>
+            <blockValign value="BOTTOM" start="0,1" stop="-1,-1"/>
+            <blockAlignment value="CENTER" start="0,0" stop="-1,0"/>
+            <blockAlignment value="LEFT"   start="0,1" stop="1,-1"/>
+            <blockAlignment value="RIGHT"  start="1,1" stop="2,-1"/>
+            <blockAlignment value="LEFT"   start="2,1" stop="3,-1"/>
+            <blockAlignment value="RIGHT"  start="3,1" stop="-1,-1"/>
+            <blockBackground colorName="silver" start="0,0" stop="-1,0"/>
+            <blockFont name="Helvetica" size="8" start="0,0" stop="-1,-1"/>
         </blockTableStyle>
         <blockTableStyle id="Total">
             <blockValign value="MIDDLE" start="0,0" stop="-1,-1"/>
@@ -144,18 +155,20 @@
                     </tr>
                 </blockTable>
                 <nextFrame name="detail_section"/>
+                <blockTable colWidths="8cm,2cm,2cm,2cm,2cm,2cm,2cm" style="DetailsHeader">
+                    <tr>
+                        <td>Producto/Servicio</td>
+                        <td>Cantidad</td>
+                        <td>U.Medida</td>
+                        <td>Precio Unit.</td>
+                        <td>% Bonif.</td>
+                        <td>Imp. Bonif.</td>
+                        <td>Subtotal</td>
+                    </tr>
+                </blockTable>
                 <section>
                     <para style="body">[[ repeatIn(o.invoice_line,'l') ]]</para>
                     <blockTable colWidths="8cm,2cm,2cm,2cm,2cm,2cm,2cm" style="Details">
-                        <tr>
-                            <td>Producto/Servicio</td>
-                            <td>Cantidad</td>
-                            <td>U.Medida</td>
-                            <td>Precio Unit.</td>
-                            <td>% Bonif.</td>
-                            <td>Imp. Bonif.</td>
-                            <td>Subtotal</td>
-                        </tr>
                         <tr>
                             <td><para style="small">[[ l.product_id and '[%s] ' % l.product_id.name or '']][[ l.name ]]</para></td>
                             <td>[[ formatLang(l.quantity) ]]</td>
