@@ -117,20 +117,13 @@ class invoice(osv.osv):
             invoice_number = int(re_number.search(inv.number).group())
 
             # Partner data
-            if inv.partner_id.vat and inv.partner_id.vat[:2].lower() == 'ar':
+            if inv.partner_id.document_type and inv.partner_id.document_number:
                 # CUIT
-                Detalle.set_element_tipo_doc(80)
-                Detalle.set_element_nro_doc(int(inv.partner_id.vat[2:]))
-            elif inv.partner_id.vat and inv.partner_id.vat[:2].lower() != 'ar':
-                # CUIT for country
-                raise NotImplemented
+                Detalle.set_element_tipo_doc(inv.partner_id.document_type.afip_code)
+                Detalle.set_element_nro_doc(int(inv.partner_id.document_number))
             else:
-                # Consumidor final. No lleno estos datos.
-                #import pdb; pdb.set_trace()
-                #Detalle.set_element_tipo_doc(80)
-                #Detalle.set_element_nro_doc(99999999999)
-                raise NotImplemented
-                pass
+                raise osv.except_osv(_(u'Invoice error'),
+                                     _(u'Need document information for invoice.'))
 
             # Document information
             Detalle.set_element_tipo_cbte(journal.journal_class_id.afip_code)
