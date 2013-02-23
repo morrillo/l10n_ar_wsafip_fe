@@ -117,11 +117,11 @@ class invoice(osv.osv):
             invoice_number = int(re_number.search(inv.number).group())
 
             # Partner data
-            if inv.partner_id.vat and inv.partner_id.vat[:2] == 'ar':
+            if inv.partner_id.vat and inv.partner_id.vat[:2].lower() == 'ar':
                 # CUIT
                 Detalle.set_element_tipo_doc(80)
                 Detalle.set_element_nro_doc(int(inv.partner_id.vat[2:]))
-            elif inv.partner_id.vat and inv.partner_id.vat[:2] != 'ar':
+            elif inv.partner_id.vat and inv.partner_id.vat[:2].lower() != 'ar':
                 # CUIT for country
                 raise NotImplemented
             else:

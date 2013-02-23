@@ -169,7 +169,7 @@
                     <para style="body">[[ repeatIn(o.invoice_line,'l') ]]</para>
                     <blockTable colWidths="8cm,2cm,2cm,2cm,2cm,2cm,2cm" style="Details">
                         <tr>
-                            <td><para style="small">[[ l.product_id and '[%s] ' % l.product_id.name or '']][[ l.name ]]</para></td>
+                            <td><para style="small">[[ l.name ]]</para></td>
                             <td>[[ formatLang(l.quantity) ]]</td>
                             <td>[[ l.uos_id.name ]]</td>
                             <td>[[ formatLang(l.price_calc(use_vat=not is_class(o, 'A'), quantity=1, discount=0)[l.id]) ]]</td>
