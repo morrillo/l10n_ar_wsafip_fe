@@ -269,10 +269,10 @@ class invoice(osv.osv):
             'model': 'account.invoice',
             'form': self.read(cr, uid, ids[0], context=context)
         }
-        import pdb; pdb.set_trace()
+        is_electronic = bool(self.browse(cr, uid, ids[0]).journal_id.afip_authorization_id)
         return {
             'type': 'ir.actions.report.xml',
-            'report_name': 'account.invoice_fe' if datas['form']['afip_authorization_id'] else 'account.invoice',
+            'report_name': 'account.invoice_fe' if is_electronic else 'account.invoice',
             'datas': datas,
             'nodestroy' : True
         }
