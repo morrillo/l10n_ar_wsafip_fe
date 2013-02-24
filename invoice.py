@@ -54,9 +54,9 @@ class invoice(osv.osv):
         'afip_service_start': fields.date(u'Service Start Date'),
         'afip_service_end': fields.date(u'Service End Date'),
         'afip_batch_number': fields.integer('Batch Number', readonly=True),
-        'afip_cae': fields.char(u'Código de Autorización Electrónico', size=24, readonly=True),
-        'afip_cae_due': fields.date(u'Fecha de vencimiento del CAE', readonly=True),
-        'afip_error_id': fields.many2one('afip.wsfe_error', 'Error', readonly=True),
+        'afip_cae': fields.char(u'CAE number', size=24, readonly=True),
+        'afip_cae_due': fields.date(u'CAE due', readonly=True),
+        'afip_error_id': fields.many2one('afip.wsfe_error', 'AFIP Status', readonly=True),
     }
 
     _defaults = {
@@ -123,7 +123,7 @@ class invoice(osv.osv):
                 Detalle.set_element_nro_doc(int(inv.partner_id.document_number))
             else:
                 raise osv.except_osv(_(u'Invoice error'),
-                                     _(u'Need document information for invoice.'))
+                                     _(u'The customer needs to identify with a document to billing.'))
 
             # Document information
             Detalle.set_element_tipo_cbte(journal.journal_class_id.afip_code)
