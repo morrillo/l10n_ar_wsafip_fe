@@ -42,6 +42,12 @@ _TIQU_X = [ 83 ]
 # Number Filter
 re_number = re.compile(r'\d{8}')
 
+# Functions to list parents names.
+def _get_parents(child, parents=[]):
+    if child is None:
+        return parents
+    else:
+        return parents + [ child.name ] + _get_parents(child.parent_id)
 
 class invoice(osv.osv):
     _inherit = "account.invoice"
@@ -65,52 +71,170 @@ class invoice(osv.osv):
 
     def valid_batch(self, cr, uid, ids, *args):
         """
-        Increment batch number groupping by afip authority server.
+        Increment batch number groupping by afip connection server.
         """
-        auths = []
+        conns = []
         invoices = {}
         for inv in self.browse(cr, uid, ids):
-            auth = inv.journal_id.afip_authorization_id
-            if not auth: continue
+            conn = inv.journal_id.afip_connection_id
+            if not conn: continue
             if inv.journal_id.afip_items_generated + 1 != inv.journal_id.sequence_id.number_next:
                 raise osv.except_osv(_(u'Syncronization Error'),
                                      _(u'La AFIP espera que el próximo número de secuencia sea %i, pero el sistema indica que será %i. Hable inmediatamente con su administrador del sistema para resolver este problema.') %
                                      (inv.journal_id.afip_items_generated + 1, inv.journal_id.sequence_id.number_next))
-            auths.append(auth)
-            invoices[auth.id] = invoices.get(auth.id, []) + [inv.id]
+            conns.append(conn)
+            invoices[conn.id] = invoices.get(conn.id, []) + [inv.id]
 
-        for auth in auths:
-            self.write(cr, uid, invoices[auth.id], { 'afip_batch_number': int(auth.batch_sequence_id.get_id()) })
+        for conn in conns:
+            prefix = conn.batch_sequence_id.prefix or ''
+            suffix = conn.batch_sequence_id.suffix or ''
+            sid_re = re.compile('%s(\d*)%s' % (prefix, suffix))
+            sid = conn.batch_sequence_id.get_id()
+            self.write(cr, uid, invoices[conn.id], {
+                'afip_batch_number': int(sid_re.search(sid).group(1)),
+            })
 
         return True
+
+    def get_related_invoices(self, cr, uid, ids, *args):
+        """
+        List related invoice information to fill CbtesAsoc
+        """
+        r = {}
+        _ids = [ids] if isinstance(ids, int) else ids
+
+        for inv in self.browse(cr, uid, _ids):
+            rel_inv_ids = self.search(cr, uid, [('origin','=',inv.number)])
+            r[inv.id] = {}
+            for rel_inv in self.browse(cr, uid, rel_inv_ids):
+                journal = rel_inv.journal_id
+                r[inv.id].append({
+                    'Tipo': journal.journal_class_id.afip_code,
+                    'PtoVta': journal.point_of_sale,
+                    'Nro': rel_inv.invoice_number,
+                })
+
+        return r[ids] if isinstance(ids, int) else r
+
+    def get_taxes(self, cr, uid, ids, *args):
+        r = {}
+        _ids = [ids] if isinstance(ids, int) else ids
+
+        for inv in self.browse(cr, uid, _ids):
+            pass
+
+        return r[ids] if isinstance(ids, int) else r
+
+    def get_vat(self, cr, uid, ids, *args):
+        r = {}
+        _ids = [ids] if isinstance(ids, int) else ids
+
+        for inv in self.browse(cr, uid, _ids):
+            pass
+
+        return r[ids] if isinstance(ids, int) else r
+
+    def get_optionals(self, cr, uid, ids, *args):
+        r = {}
+        _ids = [ids] if isinstance(ids, int) else ids
+
+        for inv in self.browse(cr, uid, _ids):
+            pass
+
+        return r[ids] if isinstance(ids, int) else r
 
     def action_retrieve_cae(self, cr, uid, ids, *args):
         """
         Contact to the AFIP to get a CAE number.
         """
         wsfe_error_obj = self.pool.get('afip.wsfe_error')
+        conn_obj = self.pool.get('wsafip.connection')
+        serv_obj = self.pool.get('wsafip.server')
+        currency_obj = self.pool.get('res.currency')
+
+        Servers = {}
+        Requests = {}
+        import pdb; pdb.set_trace()
+        for inv in self.browse(cr, uid, ids):
+            journal = inv.journal_id
+            conn = journal.afip_connection_id
+
+            # Only process if set to connect to afip
+            if not conn: continue
+            
+            # Ignore invoice if connection server is not type WSFE.
+            if conn.server_id.code != 'wsfe': continue
+
+            Servers[conn.id] = conn.server_id.id
+
+            # Take the last number of the "number".
+            # Could not work if your number have not 8 digits.
+            invoice_number = int(re_number.search(inv.number).group())
+
+            # Calculate concept
+            # 1: Productos
+            # 2: Servicios
+            # 3: Productos y Servicios
+            product_types = set([ line.product_id.type for line in inv.invoice_line ])
+            if product_types == set(['consu']):
+                concept = 1
+            if product_types == set(['service']):
+                concept = 2
+            if product_types == set(['consu','service']):
+                concept = 3
+
+            _f_date = lambda d: d and d.replace('-','')
+
+            # Build request dictionary
+            if conn.id not in Requests: Requests[conn.id] = []
+            Requests[conn.id].append({
+                'CbteTipo': journal.journal_class_id.afip_code,
+                'PtoVta': journal.point_of_sale,
+                'Concepto': concept,
+                'DocTipo': inv.partner_id.document_type.afip_code,
+                'DocNro': int(inv.partner_id.document_number),
+                'CbteDesde': invoice_number,
+                'CbteHasta': invoice_number,
+                'CbteFch': _f_date(inv.date_invoice),
+                'ImpTotal': inv.amount_total,
+                'ImpTotConc': inv.amount_untaxed,
+                'ImpNeto': inv.amount_untaxed,
+                'ImpOpEx': inv.compute_all(line_filter=lambda line: len(line.invoice_line_tax_id)==0)['amount_total'],
+                'ImpIVA': inv.compute_all(tax_filter=lambda tax: 'IVA' in _get_parents(tax.tax_code_id))['amount_tax'],
+                'ImpTrib': inv.compute_all(tax_filter=lambda tax: 'IVA' not in _get_parents(tax.tax_code_id))['amount_tax'],
+                'FchServDesde': _f_date(inv.afip_service_start),
+                'FchServHasta': _f_date(inv.afip_service_end),
+                'FchVtoPago': _f_date(inv.date_due),
+                'MonId': inv.currency_id.afip_code,
+                'MonCotiz': currency_obj.compute(cr, uid, inv.currency_id.id, inv.company_id.currency_id.id, 1.),
+                'CbtesAsoc': get_related_invoices(cr, uid, inv.id),
+                'Tributos': self.get_taxes(cr, uid, inv.id),
+                'IVA': self.get_vat(cr, uid, inv.id),
+                'Opcionales': self.get_optionals(cr, uid, inv.id),
+            })
+            import pdb; pdb.set_trace()
+
+        for c_id, r in Requests.items():
+            conn_obj.wsfe_get_cae(cr, uid, [c_id], r)
+
+    def _do_request(self, request_dict):
 
         Details = {}
         Auths = {}
         Invoice = {}
         BatchNum = {}
-        for inv in self.browse(cr, uid, ids):
-            journal = inv.journal_id
-            auth = journal.afip_authorization_id
 
-            # Only process if set to connect to afip
-            if not auth: continue
-            
-            # Ignore invoice if connection server is not type WSFE.
-            if auth.server_id.code != 'wsfe': continue
+        if False:
+            # New invoice request, header and details
+            Request = FECAESolicitarSoapIn().new_FeCAEReq()
+            Header  = Request.new_FeCabReq()
+            Details = Request.new_FeDetReq()
+            Detail  = Details.new_FECAEDetRequest() # One for invoice
 
-            auth.login() # Login if nescesary.
-            
-            # Ignore if cant connect to server.
-            if auth.state not in  [ 'connected', 'clockshifted' ]: continue
-
-            # New invoice detail
-            Detalle = FEAutRequestSoapIn().new_Fer().new_Fedr().new_FEDetalleRequest()
+            # Create header
+            Header.set_element_CantReg(1)
+            Header.set_element_CbteTipo(journal.journal_class_id.afip_code)
+            Header.set_element_PtoVta(journal.point_of_sale)
 
             # Take the last number of the "number".
             # Could not work if your number have not 8 digits.
@@ -276,6 +400,52 @@ class invoice(osv.osv):
             'datas': datas,
             'nodestroy' : True
         }
+
+    def afip_get_currency_code(self, cr, uid, ids, currency_id, context=None):
+        """
+        Take the AFIP currency code. If not set update database.
+        """
+        currency_obj = self.pool.get('res.currency')
+
+        afip_code = currency_obj.read(cr, uid, currency_id, ['afip_code'], context=context)
+
+        if not afip_code['afip_code']:
+            self.afip_update_currency(cr, uid, ids, context=context)
+
+            afip_code = currency_obj.read(cr, uid, currency_id, ['afip_code'], context=context)
+
+        return afip_code['afip_code']
+
+    def afip_update_currency(self, cr, uid, ids, context=None):
+        """
+        Update currency codes from AFIP database.
+        """
+        currency_obj = self.pool.get('res.currency')
+
+        for inv in self.browse(cr, uid, ids[:1], context=context):
+            journal = inv.journal_id
+            auth = journal.afip_authorization_id
+
+            # Only process if set to connect to afip
+            if not auth: continue
+            
+            # Ignore invoice if connection server is not type WSFE.
+            if auth.server_id.code != 'wsfe': continue
+
+            auth.login() # Login if nescesary.
+            
+            # Ignore if cant connect to server.
+            if auth.state not in  [ 'connected', 'clockshifted' ]: continue
+
+            # Build request
+            request = FEParamGetTiposMonedasSoapIn()
+            request = auth.set_auth_request(request)
+
+            response = get_bind(auth.server_id).FEParamGetTiposMonedas(request)
+
+            import pdb; pdb.set_trace()
+
+        pass
 
 invoice()
 
