@@ -25,6 +25,5 @@ import invoice
 import journal
 import report
 import config
-import currency
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
