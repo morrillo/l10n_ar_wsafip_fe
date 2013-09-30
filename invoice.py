@@ -50,18 +50,42 @@ def _get_parents(child, parents=[]):
         return parents + [ child.name ] + _get_parents(child.parent_id)
 
 class invoice(osv.osv):
+    def _get_concept(self, cr, uid, ids, name, args, context=None):
+        r = {}
+        for inv in self.browse(cr, uid, ids):
+            concept = False
+            product_types = set([ line.product_id.type for line in inv.invoice_line ])
+            if product_types == set(['consu']):
+                concept = '1'
+            elif product_types == set(['service']):
+                concept = '2'
+            elif product_types == set(['consu','service']):
+                concept = '3'
+            else
+                concept = False
+            r[inv.id] = concept
+        return r
+
     _inherit = "account.invoice"
     _columns = {
+        'afip_concept': fields.function(_get_concept,
+                                        type="selection",
+                                        selection=[('1','Consumible'),
+                                                   ('2','Service'),
+                                                   ('3','Mixted')],
+                                        method=True,
+                                        string="AFIP concept",
+                                        readonly="1"),
         'afip_result': fields.selection([
             ('', 'No CAE'),
             ('A', 'Accepted'),
             ('R', 'Rejected'),
         ], 'Status', help='This state is asigned by the AFIP. If * No CAE * state mean you have no generate this invoice by '),
-        'afip_service_start': fields.date(u'Service Start Date'),
-        'afip_service_end': fields.date(u'Service End Date'),
+        'afip_service_start': fields.date('Service Start Date'),
+        'afip_service_end': fields.date('Service End Date'),
         'afip_batch_number': fields.integer('Batch Number', readonly=True),
-        'afip_cae': fields.char(u'CAE number', size=24, readonly=True),
-        'afip_cae_due': fields.date(u'CAE due', readonly=True),
+        'afip_cae': fields.char('CAE number', size=24),
+        'afip_cae_due': fields.date('CAE due'),
         'afip_error_id': fields.many2one('afip.wsfe_error', 'AFIP Status', readonly=True),
     }
 
@@ -154,7 +178,6 @@ class invoice(osv.osv):
 
         Servers = {}
         Requests = {}
-        import pdb; pdb.set_trace()
         for inv in self.browse(cr, uid, ids):
             journal = inv.journal_id
             conn = journal.afip_connection_id
@@ -171,18 +194,6 @@ class invoice(osv.osv):
             # Could not work if your number have not 8 digits.
             invoice_number = int(re_number.search(inv.number).group())
 
-            # Calculate concept
-            # 1: Productos
-            # 2: Servicios
-            # 3: Productos y Servicios
-            product_types = set([ line.product_id.type for line in inv.invoice_line ])
-            if product_types == set(['consu']):
-                concept = 1
-            if product_types == set(['service']):
-                concept = 2
-            if product_types == set(['consu','service']):
-                concept = 3
-
             _f_date = lambda d: d and d.replace('-','')
 
             # Build request dictionary
@@ -190,7 +201,7 @@ class invoice(osv.osv):
             Requests[conn.id].append({
                 'CbteTipo': journal.journal_class_id.afip_code,
                 'PtoVta': journal.point_of_sale,
-                'Concepto': concept,
+                'Concepto': inv.afip_concept,
                 'DocTipo': inv.partner_id.document_type.afip_code,
                 'DocNro': int(inv.partner_id.document_number),
                 'CbteDesde': invoice_number,
@@ -202,8 +213,8 @@ class invoice(osv.osv):
                 'ImpOpEx': inv.compute_all(line_filter=lambda line: len(line.invoice_line_tax_id)==0)['amount_total'],
                 'ImpIVA': inv.compute_all(tax_filter=lambda tax: 'IVA' in _get_parents(tax.tax_code_id))['amount_tax'],
                 'ImpTrib': inv.compute_all(tax_filter=lambda tax: 'IVA' not in _get_parents(tax.tax_code_id))['amount_tax'],
-                'FchServDesde': _f_date(inv.afip_service_start),
-                'FchServHasta': _f_date(inv.afip_service_end),
+                'FchServDesde': _f_date(inv.afip_service_start) if inv.afip_concept != 1 else None,
+                'FchServHasta': _f_date(inv.afip_service_end) if inv.afip_concept != 1 else None,
                 'FchVtoPago': _f_date(inv.date_due),
                 'MonId': inv.currency_id.afip_code,
                 'MonCotiz': currency_obj.compute(cr, uid, inv.currency_id.id, inv.company_id.currency_id.id, 1.),
