@@ -61,7 +61,7 @@ class invoice(osv.osv):
                 concept = '2'
             elif product_types == set(['consu','service']):
                 concept = '3'
-            else
+            else:
                 concept = False
             r[inv.id] = concept
         return r
