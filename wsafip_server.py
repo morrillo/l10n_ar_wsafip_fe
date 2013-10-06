@@ -128,7 +128,6 @@ class wsafip_server(osv.osv):
                 _logger.error('AFIP Web service error!')
                 return False
 
-            import pdb; pdb.set_trace()
             _update(self.pool, cr, uid,
                     'afip.concept_type',
                     concepttype_list,

@@ -223,7 +223,6 @@ class invoice(osv.osv):
                 'IVA': self.get_vat(cr, uid, inv.id),
                 'Opcionales': self.get_optionals(cr, uid, inv.id),
             })
-            import pdb; pdb.set_trace()
 
         for c_id, r in Requests.items():
             conn_obj.wsfe_get_cae(cr, uid, [c_id], r)
@@ -453,8 +452,6 @@ class invoice(osv.osv):
             request = auth.set_auth_request(request)
 
             response = get_bind(auth.server_id).FEParamGetTiposMonedas(request)
-
-            import pdb; pdb.set_trace()
 
         pass
 
