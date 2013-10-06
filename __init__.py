@@ -19,10 +19,11 @@
 #
 ##############################################################################
 
+import wsafip_server
 import wsfe_error
-import document_class
 import invoice
 import journal
 import report
+import config
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

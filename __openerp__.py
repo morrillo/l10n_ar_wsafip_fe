@@ -20,7 +20,7 @@
 ##############################################################################
 {
     'name':     'Argentina - Web Services de Factura Electrónica del AFIP',
-    'version':  '0.1',
+    'version':  '2.7.155',
     'author':   'OpenERP - Team de Localización Argentina',
     'category': 'Localization/Argentina',
     'website':  'https://launchpad.net/~openerp-l10n-ar-localization',
@@ -33,7 +33,6 @@ API e GUI para acceder a las Web Services de Factura Electrónica de la AFIP
         'l10n_ar_invoice',
     ],
     'init_xml': [
-        'data/afip.document_class.csv',
         'data/afip.wsfe_error.csv',
     ],
     'demo_xml': [],
@@ -53,6 +52,7 @@ API e GUI para acceder a las Web Services de Factura Electrónica de la AFIP
         'data/journal_view.xml',
         'data/wsfe_error_view.xml',
         'data/reports.xml',
+        'data/wsafip_fe_config.xml',
         'security/wsafip_fe_security.xml',
         'security/ir.model.access.csv',
     ],

@@ -18,13 +18,16 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-from osv import fields, osv
+from openerp.osv import fields, osv
 from cache_bind import get_bind
 from stub.Service_client import *
 from stub.Service_types import *
-from tools.translate import _
-import netsvc
+from openerp.tools.translate import _
 import re
+import logging
+
+_logger = logging.getLogger(__name__)
+_schema = logging.getLogger(__name__ + '.schema')
 
 # Tabla de Codigo de Documentos por tipo de Facturas
 _FACT_A = [ 1, 2, 3, 4, 5, ]
@@ -39,79 +42,222 @@ _TIQU_X = [ 83 ]
 # Number Filter
 re_number = re.compile(r'\d{8}')
 
+# Functions to list parents names.
+def _get_parents(child, parents=[]):
+    if child is None:
+        return parents
+    else:
+        return parents + [ child.name ] + _get_parents(child.parent_id)
 
 class invoice(osv.osv):
-    # Class members to send messages to the logger system.
-    _logger = netsvc.Logger()
-
-    def logger(self, log, msg):
-        self._logger.notifyChannel('addons.'+self._name, log, msg)
+    def _get_concept(self, cr, uid, ids, name, args, context=None):
+        r = {}
+        for inv in self.browse(cr, uid, ids):
+            concept = False
+            product_types = set([ line.product_id.type for line in inv.invoice_line ])
+            if product_types == set(['consu']):
+                concept = '1'
+            elif product_types == set(['service']):
+                concept = '2'
+            elif product_types == set(['consu','service']):
+                concept = '3'
+            else:
+                concept = False
+            r[inv.id] = concept
+        return r
 
     _inherit = "account.invoice"
     _columns = {
+        'afip_concept': fields.function(_get_concept,
+                                        type="selection",
+                                        selection=[('1','Consumible'),
+                                                   ('2','Service'),
+                                                   ('3','Mixted')],
+                                        method=True,
+                                        string="AFIP concept",
+                                        readonly="1"),
         'afip_result': fields.selection([
             ('', 'No CAE'),
             ('A', 'Accepted'),
             ('R', 'Rejected'),
         ], 'Status', help='This state is asigned by the AFIP. If * No CAE * state mean you have no generate this invoice by '),
-        'afip_service_start': fields.date(u'Service Start Date'),
-        'afip_service_end': fields.date(u'Service End Date'),
+        'afip_service_start': fields.date('Service Start Date'),
+        'afip_service_end': fields.date('Service End Date'),
         'afip_batch_number': fields.integer('Batch Number', readonly=True),
-        'afip_cae': fields.char(u'Código de Autorización Electrónico', size=24, readonly=True),
-        'afip_cae_due': fields.date(u'Fecha de vencimiento del CAE', readonly=True),
-        'afip_error_id': fields.many2one('afip.wsfe_error', 'Error', readonly=True),
+        'afip_cae': fields.char('CAE number', size=24),
+        'afip_cae_due': fields.date('CAE due'),
+        'afip_error_id': fields.many2one('afip.wsfe_error', 'AFIP Status', readonly=True),
     }
 
     _defaults = {
         'afip_result': '',
     }
 
+    def valid_batch(self, cr, uid, ids, *args):
+        """
+        Increment batch number groupping by afip connection server.
+        """
+        conns = []
+        invoices = {}
+        for inv in self.browse(cr, uid, ids):
+            conn = inv.journal_id.afip_connection_id
+            if not conn: continue
+            if inv.journal_id.afip_items_generated + 1 != inv.journal_id.sequence_id.number_next:
+                raise osv.except_osv(_(u'Syncronization Error'),
+                                     _(u'La AFIP espera que el próximo número de secuencia sea %i, pero el sistema indica que será %i. Hable inmediatamente con su administrador del sistema para resolver este problema.') %
+                                     (inv.journal_id.afip_items_generated + 1, inv.journal_id.sequence_id.number_next))
+            conns.append(conn)
+            invoices[conn.id] = invoices.get(conn.id, []) + [inv.id]
+
+        for conn in conns:
+            prefix = conn.batch_sequence_id.prefix or ''
+            suffix = conn.batch_sequence_id.suffix or ''
+            sid_re = re.compile('%s(\d*)%s' % (prefix, suffix))
+            sid = conn.batch_sequence_id.get_id()
+            self.write(cr, uid, invoices[conn.id], {
+                'afip_batch_number': int(sid_re.search(sid).group(1)),
+            })
+
+        return True
+
+    def get_related_invoices(self, cr, uid, ids, *args):
+        """
+        List related invoice information to fill CbtesAsoc
+        """
+        r = {}
+        _ids = [ids] if isinstance(ids, int) else ids
+
+        for inv in self.browse(cr, uid, _ids):
+            rel_inv_ids = self.search(cr, uid, [('origin','=',inv.number)])
+            r[inv.id] = {}
+            for rel_inv in self.browse(cr, uid, rel_inv_ids):
+                journal = rel_inv.journal_id
+                r[inv.id].append({
+                    'Tipo': journal.journal_class_id.afip_code,
+                    'PtoVta': journal.point_of_sale,
+                    'Nro': rel_inv.invoice_number,
+                })
+
+        return r[ids] if isinstance(ids, int) else r
+
+    def get_taxes(self, cr, uid, ids, *args):
+        r = {}
+        _ids = [ids] if isinstance(ids, int) else ids
+
+        for inv in self.browse(cr, uid, _ids):
+            pass
+
+        return r[ids] if isinstance(ids, int) else r
+
+    def get_vat(self, cr, uid, ids, *args):
+        r = {}
+        _ids = [ids] if isinstance(ids, int) else ids
+
+        for inv in self.browse(cr, uid, _ids):
+            pass
+
+        return r[ids] if isinstance(ids, int) else r
+
+    def get_optionals(self, cr, uid, ids, *args):
+        r = {}
+        _ids = [ids] if isinstance(ids, int) else ids
+
+        for inv in self.browse(cr, uid, _ids):
+            pass
+
+        return r[ids] if isinstance(ids, int) else r
+
     def action_retrieve_cae(self, cr, uid, ids, *args):
         """
         Contact to the AFIP to get a CAE number.
         """
         wsfe_error_obj = self.pool.get('afip.wsfe_error')
+        conn_obj = self.pool.get('wsafip.connection')
+        serv_obj = self.pool.get('wsafip.server')
+        currency_obj = self.pool.get('res.currency')
+
+        Servers = {}
+        Requests = {}
+        for inv in self.browse(cr, uid, ids):
+            journal = inv.journal_id
+            conn = journal.afip_connection_id
+
+            # Only process if set to connect to afip
+            if not conn: continue
+            
+            # Ignore invoice if connection server is not type WSFE.
+            if conn.server_id.code != 'wsfe': continue
+
+            Servers[conn.id] = conn.server_id.id
+
+            # Take the last number of the "number".
+            # Could not work if your number have not 8 digits.
+            invoice_number = int(re_number.search(inv.number).group())
+
+            _f_date = lambda d: d and d.replace('-','')
+
+            # Build request dictionary
+            if conn.id not in Requests: Requests[conn.id] = []
+            Requests[conn.id].append({
+                'CbteTipo': journal.journal_class_id.afip_code,
+                'PtoVta': journal.point_of_sale,
+                'Concepto': inv.afip_concept,
+                'DocTipo': inv.partner_id.document_type.afip_code,
+                'DocNro': int(inv.partner_id.document_number),
+                'CbteDesde': invoice_number,
+                'CbteHasta': invoice_number,
+                'CbteFch': _f_date(inv.date_invoice),
+                'ImpTotal': inv.amount_total,
+                'ImpTotConc': inv.amount_untaxed,
+                'ImpNeto': inv.amount_untaxed,
+                'ImpOpEx': inv.compute_all(line_filter=lambda line: len(line.invoice_line_tax_id)==0)['amount_total'],
+                'ImpIVA': inv.compute_all(tax_filter=lambda tax: 'IVA' in _get_parents(tax.tax_code_id))['amount_tax'],
+                'ImpTrib': inv.compute_all(tax_filter=lambda tax: 'IVA' not in _get_parents(tax.tax_code_id))['amount_tax'],
+                'FchServDesde': _f_date(inv.afip_service_start) if inv.afip_concept != 1 else None,
+                'FchServHasta': _f_date(inv.afip_service_end) if inv.afip_concept != 1 else None,
+                'FchVtoPago': _f_date(inv.date_due),
+                'MonId': inv.currency_id.afip_code,
+                'MonCotiz': currency_obj.compute(cr, uid, inv.currency_id.id, inv.company_id.currency_id.id, 1.),
+                'CbtesAsoc': get_related_invoices(cr, uid, inv.id),
+                'Tributos': self.get_taxes(cr, uid, inv.id),
+                'IVA': self.get_vat(cr, uid, inv.id),
+                'Opcionales': self.get_optionals(cr, uid, inv.id),
+            })
+
+        for c_id, r in Requests.items():
+            conn_obj.wsfe_get_cae(cr, uid, [c_id], r)
+
+    def _do_request(self, request_dict):
 
         Details = {}
         Auths = {}
         Invoice = {}
-        for inv in self.browse(cr, uid, ids):
-            journal = inv.journal_id
-            auth = journal.afip_authorization_id
+        BatchNum = {}
 
-            # Only process if set to connect to afip
-            if not auth: continue
-            
-            # Ignore invoice if connection server is not type WSFE.
-            if auth.server_id.code != 'wsfe': continue
+        if False:
+            # New invoice request, header and details
+            Request = FECAESolicitarSoapIn().new_FeCAEReq()
+            Header  = Request.new_FeCabReq()
+            Details = Request.new_FeDetReq()
+            Detail  = Details.new_FECAEDetRequest() # One for invoice
 
-            auth.login() # Login if nescesary.
-            
-            # Ignore if cant connect to server.
-            if auth.state not in  [ 'connected', 'clockshifted' ]: continue
-
-            # New invoice detail
-            Detalle = FEAutRequestSoapIn().new_Fer().new_Fedr().new_FEDetalleRequest()
+            # Create header
+            Header.set_element_CantReg(1)
+            Header.set_element_CbteTipo(journal.journal_class_id.afip_code)
+            Header.set_element_PtoVta(journal.point_of_sale)
 
             # Take the last number of the "number".
             # Could not work if your number have not 8 digits.
             invoice_number = int(re_number.search(inv.number).group())
 
             # Partner data
-            if inv.partner_id.vat and inv.partner_id.vat[:2] == 'ar':
+            if inv.partner_id.document_type and inv.partner_id.document_number:
                 # CUIT
-                Detalle.set_element_tipo_doc(80)
-                Detalle.set_element_nro_doc(int(inv.partner_id.vat[2:]))
-            elif inv.partner_id.vat and inv.partner_id.vat[:2] != 'ar':
-                # CUIT for country
-                raise NotImplemented
+                Detalle.set_element_tipo_doc(inv.partner_id.document_type.afip_code)
+                Detalle.set_element_nro_doc(int(inv.partner_id.document_number))
             else:
-                # Consumidor final. No lleno estos datos.
-                #import pdb; pdb.set_trace()
-                #Detalle.set_element_tipo_doc(80)
-                #Detalle.set_element_nro_doc(99999999999)
-                raise NotImplemented
-                pass
+                raise osv.except_osv(_(u'Invoice error'),
+                                     _(u'The customer needs to identify with a document to billing.'))
 
             # Document information
             Detalle.set_element_tipo_cbte(journal.journal_class_id.afip_code)
@@ -145,6 +291,7 @@ class invoice(osv.osv):
                 Auths[name] = auth
             Details[name].append(Detalle)
             Invoice[invoice_number] = inv
+            BatchNum[name] = inv.afip_batch_number
 
         # Now work for authority entities and send request.
         req_id = 0
@@ -152,7 +299,7 @@ class invoice(osv.osv):
             auth = Auths[name]
             details = Details[name]
 
-            seq_id = self.pool.get('ir.sequence').get_id(cr, uid, auth.batch_sequence_id.id)
+            seq_id = BatchNum[name]
             batch_id = int(seq_id)
 
             request = FEAutRequestSoapIn()
@@ -185,15 +332,15 @@ class invoice(osv.osv):
                     afip_message = '; '.join([ err.description for err in afip_error ])
                     error_message.append(_('Invoice %s: %s.') % (r._cbt_desde, afip_message))
 
-                    self.logger(netsvc.LOG_ERROR, _('Processed document %s-%s. AFIP message: %s.') % (r._cbt_desde, r._cbt_hasta, afip_message))
+                    _logger.error(_('Processed document %s-%s. AFIP message: %s.') % (r._cbt_desde, r._cbt_hasta, afip_message))
 
                     if r._cbt_desde not in Invoice:
-                        self.logger(netsvc.LOG_ERROR, _('Document sequence is not syncronized with AFIP. Afip return %i as valid.') % r._cbt_desde)
-                        self.logger(netsvc.LOG_ERROR, _('Expected sequences: %s.') % repr(Invoice.keys()))
+                        _logger.error(_('Document sequence is not syncronized with AFIP. Afip return %i as valid.') % r._cbt_desde)
+                        _logger.error(_('Expected sequences: %s.') % repr(Invoice.keys()))
                         continue
 
                     if r._cae is None:
-                        self.logger(netsvc.LOG_ERROR, _('Document have not CAE assigned.'))
+                        _logger.error(_('Document have not CAE assigned.'))
                         return False 
 
                     self.write(cr, uid, Invoice[r._cbt_desde].id, 
@@ -218,7 +365,7 @@ class invoice(osv.osv):
                 response_motivo = response._FEAutRequestResult._FecResp._motivo
                 response_reproceso = response._FEAutRequestResult._FecResp._reproceso
 
-                self.logger(netsvc.LOG_ERROR, _('AFIP dont approve some document. Global Reason: %s') % response_motivo)
+                _logger.error(_('AFIP dont approve some document. Global Reason: %s') % response_motivo)
 
                 error_message = []
                 for i in range(response._FEAutRequestResult._FecResp._cantidadreg):
@@ -229,11 +376,11 @@ class invoice(osv.osv):
                     afip_message = '; '.join([ err.description for err in afip_error ])
                     error_message.append(_('Invoice %s: %s.') % (r._cbt_desde, afip_message))
 
-                    self.logger(netsvc.LOG_ERROR, _('AFIP dont approve the document %s-%s. Reason: %s.') % (r._cbt_desde, r._cbt_hasta, afip_message))
+                    _logger.error(_('AFIP dont approve the document %s-%s. Reason: %s.') % (r._cbt_desde, r._cbt_hasta, afip_message))
 
                     if r._cbt_desde not in Invoice:
-                        self.logger(netsvc.LOG_ERROR, _('Document sequence is not syncronized with AFIP. Afip return %i as valid.') % r._cbt_desde)
-                        self.logger(netsvc.LOG_ERROR, _('Expected sequences: %s.') % repr(Invoice.keys()))
+                        _logger.error(_('Document sequence is not syncronized with AFIP. Afip return %i as valid.') % r._cbt_desde)
+                        _logger.error(_('Expected sequences: %s.') % repr(Invoice.keys()))
                         return False
 
                 # Esto deberia ser un mensaje al usuario, asi termina de procesar todas las facturas.
@@ -243,6 +390,69 @@ class invoice(osv.osv):
                                       response._FEAutRequestResult._RError._perrmsg,
                                       '<br/>\n'.join(error_message),
                                      ))
+        pass
+
+    def invoice_print(self, cr, uid, ids, context=None):
+        '''
+        This function prints the invoice and mark it as sent, so that we can see more easily the next step of the workflow
+        '''
+        assert len(ids) == 1, 'This option should only be used for a single id at a time.'
+        self.write(cr, uid, ids, {'sent': True}, context=context)
+        datas = {
+            'ids': ids,
+            'model': 'account.invoice',
+            'form': self.read(cr, uid, ids[0], context=context)
+        }
+        is_electronic = bool(self.browse(cr, uid, ids[0]).journal_id.afip_authorization_id)
+        return {
+            'type': 'ir.actions.report.xml',
+            'report_name': 'account.invoice_fe' if is_electronic else 'account.invoice',
+            'datas': datas,
+            'nodestroy' : True
+        }
+
+    def afip_get_currency_code(self, cr, uid, ids, currency_id, context=None):
+        """
+        Take the AFIP currency code. If not set update database.
+        """
+        currency_obj = self.pool.get('res.currency')
+
+        afip_code = currency_obj.read(cr, uid, currency_id, ['afip_code'], context=context)
+
+        if not afip_code['afip_code']:
+            self.afip_update_currency(cr, uid, ids, context=context)
+
+            afip_code = currency_obj.read(cr, uid, currency_id, ['afip_code'], context=context)
+
+        return afip_code['afip_code']
+
+    def afip_update_currency(self, cr, uid, ids, context=None):
+        """
+        Update currency codes from AFIP database.
+        """
+        currency_obj = self.pool.get('res.currency')
+
+        for inv in self.browse(cr, uid, ids[:1], context=context):
+            journal = inv.journal_id
+            auth = journal.afip_authorization_id
+
+            # Only process if set to connect to afip
+            if not auth: continue
+            
+            # Ignore invoice if connection server is not type WSFE.
+            if auth.server_id.code != 'wsfe': continue
+
+            auth.login() # Login if nescesary.
+            
+            # Ignore if cant connect to server.
+            if auth.state not in  [ 'connected', 'clockshifted' ]: continue
+
+            # Build request
+            request = FEParamGetTiposMonedasSoapIn()
+            request = auth.set_auth_request(request)
+
+            response = get_bind(auth.server_id).FEParamGetTiposMonedas(request)
+
         pass
 
 invoice()

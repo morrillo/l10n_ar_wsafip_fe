@@ -20,8 +20,8 @@
 ##############################################################################
 
 import time
-from report import report_sxw
-from l10n_ar_invoice.report.invoice import ar_account_invoice
+from openerp.report import report_sxw
+from openerp.addons.l10n_ar_invoice.report.invoice import ar_account_invoice
 
 class fe_account_invoice(ar_account_invoice):
 
@@ -34,9 +34,6 @@ class fe_account_invoice(ar_account_invoice):
         self.localcontext.update({
             'is_electronic': self._is_electronic,
         })
-
-#from netsvc import Service
-#del Service._services['report.account.invoice_fe']
 
 report_sxw.report_sxw(
     'report.account.invoice_fe',

@@ -50,7 +50,12 @@
         <paraStyle name='tiny'      fontName='Helvetica' fontSize='6' leftIndent='0px' spaceAfter='0px' spaceBefore='0px' />
         <paraStyle name='tiny-bold' fontName='Helvetica-Bold' fontSize='6' leftIndent='0px' spaceAfter='0px' spaceBefore='0px' />
         <paraStyle name='number'    fontName='Helvetica' fontSize='9' />
-        <blockTableStyle id="Details">
+        <blockTableStyle id="Client">
+            <blockValign value="TOP" start="0,0" stop="-1,-1"/>
+            <blockTopPadding length="0.04cm" start="0,0" stop="-1,-1"/>
+            <blockBottomPadding  length="0.04cm" start="0,0" stop="-1,-1"/>
+        </blockTableStyle>
+        <blockTableStyle id="DetailsHeader">
             <blockValign value="MIDDLE" start="0,0" stop="0,-1"/>
             <blockValign value="BOTTOM" start="0,1" stop="-1,-1"/>
             <blockAlignment value="CENTER" start="0,0" stop="-1,0"/>
@@ -63,6 +68,16 @@
             <blockFont name="Helvetica-Bold" size="8" start="0,0" stop="-1,0"/>
             <blockFont name="Helvetica" size="8" start="0,1" stop="-1,-1"/>
         </blockTableStyle>
+        <blockTableStyle id="Details">
+            <blockValign value="MIDDLE" start="0,0" stop="0,-1"/>
+            <blockValign value="BOTTOM" start="0,1" stop="-1,-1"/>
+            <blockAlignment value="CENTER" start="0,0" stop="-1,0"/>
+            <blockAlignment value="LEFT"   start="0,1" stop="1,-1"/>
+            <blockAlignment value="RIGHT"  start="1,1" stop="2,-1"/>
+            <blockAlignment value="LEFT"   start="2,1" stop="3,-1"/>
+            <blockAlignment value="RIGHT"  start="3,1" stop="-1,-1"/>
+            <blockFont name="Helvetica" size="8" start="0,0" stop="-1,-1"/>
+        </blockTableStyle>
         <blockTableStyle id="Total">
             <blockValign value="MIDDLE" start="0,0" stop="-1,-1"/>
             <blockAlignment value="RIGHT" start="0,0" stop="-1,-1"/>
@@ -70,7 +85,6 @@
             <blockFont name="Helvetica" size="7" start="1,0" stop="1,-1"/>
         </blockTableStyle>
         <blockTableStyle id="Footer">
-            <!--lineStyle kind="GRID" colorName="gray" start="0,0" stop="-1,-1"/-->
             <blockValign value="TOP" start="0,0" stop="-1,-1"/>
             <blockFont name="Helvetica" size="7" start="0,0" stop="-1,-1"/>
             <blockRightPadding length="0.04cm" start="2,0" stop="-1,-1"/>
@@ -92,19 +106,19 @@
             <nextFrame name="seller_section"/>
                 <para style="seller"><b>Razón Social: </b>[[ company.name ]].</para>
                 <para style="seller"><b>Domicilio Comercial: </b>
-                [[ company.partner_id.address and company.partner_id.address[0].street or '[ERROR!]' ]] 
-                [[ company.partner_id.address and company.partner_id.address[0].street2 or '' ]], 
-                [[ ', '.join([ company.partner_id.address and company.partner_id.address[0].city or '',
-                company.partner_id.address and company.partner_id.address[0].state_id and company.partner_id.address[0].state_id.name or '',
-                company.partner_id.address and company.partner_id.address[0].country_id and company.partner_id.address[0].country_id.name or '' ] )]].</para>
+                [[ company.partner_id.street or '[ERROR!]' ]] 
+                [[ company.partner_id.street2 or '' ]], 
+                [[ ', '.join([ company.partner_id.city or '',
+                company.partner_id.state_id and company.partner_id.state_id.name or '',
+                company.partner_id.country_id and company.partner_id.country_id.name or '' ] )]].</para>
                 <para style="seller"><b>Condición frente al IVA: </b>[[ company.partner_id.responsability_id.name ]].</para>
             <nextFrame name="docinfo_section"/>
                 <para style="document_class"><b>[[ o.journal_id.journal_class_id.name.split('[')[0] ]]</b></para>
                 <spacer length="0.5cm"/>
-                <para style="seller"><b>Punto de Venta: </b>[[ '%04i' % o.journal_id.point_of_sale ]] - <b>Comp. Nro: </b>[[ o.number[-8:] ]]</para>
+                <para style="seller"><b>Punto de Venta: </b>[[ '%04i' % o.journal_id.point_of_sale ]] - <b>Comp. Nro: </b>[[ o.number and o.number[-8:] or '00000000' ]]</para>
                 <para style="seller"><b>Fecha de Emisión: </b>[[ formatLang(o.date_invoice, date=True) ]]</para>
                 <spacer length="0.31cm"/>
-                <para style="seller"><b>CUIT: </b>[[ company.partner_id.printed_vat ]]</para>
+                <para style="seller"><b>[[ company.partner_id.document_type.name ]]: </b>[[ company.partner_id.document_number ]]</para>
                 <para style="seller"><b>Ingresos Brutos: </b>[[ company.partner_id.iibb ]]</para>
                 <para style="seller"><b>Fecha de Inicio de Actividades: </b>[[ formatLang(company.partner_id.start_date, date=True) ]]</para>
                 <nextFrame name="docclass_section"/>
@@ -119,41 +133,43 @@
                     </tr>
                 </blockTable>
                 <nextFrame name="buyer_section"/>
-                <blockTable colWidths="9cm,9cm">
+                <blockTable colWidths="9cm,9cm" style="Client">
                     <tr>
-                    <td><para style="seller"><b>CUIT: </b>[[ o.partner_id.printed_vat ]]</para></td>
-                    <td><para style="seller"><b>Nombre y Apellido / Razón Social: </b>[[ o.partner_id.name ]]</para></td>
+                    <td><para style="seller"><b>[[ o.partner_id.document_type.name ]] : </b>[[ o.partner_id.document_number ]]</para></td>
+                    <td><para style="seller"><b>Nombre y Apellido / Razón Social: </b>[[ o.partner_id.name[:50] ]]</para></td>
                     </tr>
                     <tr>
                     <td><para style="seller"><b>Condición frente al IVA: </b>[[ o.partner_id.responsability_id.name ]]</para></td>
                     <td><para style="seller"><b>Domicilio: </b>
-                    [[ o.partner_id.address and o.partner_id.address[0].street or '[ERROR!]' ]] 
-                    [[ o.partner_id.address and o.partner_id.address[0].street2 or '' ]], 
-                    [[ ', '.join([ o.partner_id.address and o.partner_id.address[0].city or '',
-                    o.partner_id.address and o.partner_id.address[0].state_id and o.partner_id.address[0].state_id.name or '',
-                    o.partner_id.address and o.partner_id.address[0].country_id and o.partner_id.address[0].country_id.name or '' ] )]].</para></td>
+                    [[ o.partner_id and o.partner_id.street or '[ERROR!]' ]] 
+                    [[ o.partner_id and o.partner_id.street2 or '' ]], 
+                    [[ ', '.join([ o.partner_id and o.partner_id.city or '',
+                    o.partner_id and o.partner_id.state_id and o.partner_id.state_id.name or '',
+                    o.partner_id and o.partner_id.country_id and o.partner_id.country_id.name or '' ] )]].</para></td>
                     <para style="seller"><b>Condición frente al IVA: </b>[[ o.partner_id.responsability_id.name ]].</para>
                     </tr>
                     <tr>
-                    <td><para style="seller"><b>Condición de venta: </b>[[  ]]</para></td>
+                    <td><para style="seller"><b>Condición de venta: </b> Efectivo </para></td>
                     <td><para style="seller"><b>Nro. Remito: </b>[[ o.origin if o.afip_service_start is None else '-' ]]</para></td>
                     </tr>
                 </blockTable>
                 <nextFrame name="detail_section"/>
+                <blockTable colWidths="8cm,2cm,2cm,2cm,2cm,2cm,2cm" style="DetailsHeader">
+                    <tr>
+                        <td>Producto/Servicio</td>
+                        <td>Cantidad</td>
+                        <td>U.Medida</td>
+                        <td>Precio Unit.</td>
+                        <td>% Bonif.</td>
+                        <td>Imp. Bonif.</td>
+                        <td>Subtotal</td>
+                    </tr>
+                </blockTable>
                 <section>
                     <para style="body">[[ repeatIn(o.invoice_line,'l') ]]</para>
                     <blockTable colWidths="8cm,2cm,2cm,2cm,2cm,2cm,2cm" style="Details">
                         <tr>
-                            <td>Producto/Servicio</td>
-                            <td>Cantidad</td>
-                            <td>U.Medida</td>
-                            <td>Precio Unit.</td>
-                            <td>% Bonif.</td>
-                            <td>Imp. Bonif.</td>
-                            <td>Subtotal</td>
-                        </tr>
-                        <tr>
-                            <td><para name="small">[[ l.name ]][[ l.note ]]</para></td>
+                            <td><para style="small">[[ l.name ]]</para></td>
                             <td>[[ formatLang(l.quantity) ]]</td>
                             <td>[[ l.uos_id.name ]]</td>
                             <td>[[ formatLang(l.price_calc(use_vat=not is_class(o, 'A'), quantity=1, discount=0)[l.id]) ]]</td>
@@ -174,7 +190,7 @@
                             <td>[[ formatLang(o.amount_untaxed) if is_class(o, 'A') else formatLang(o.amount_total) ]]</td>
                         </tr>
                         <tr>
-                            <td>[[ (is_class(o, 'A') or removeParentNode('tr')) and '' ]] IVA 21%: [[ o.currency_id.symbol ]]</td>
+                            <td>[[ (is_class(o, 'A') or removeParentNode('tr')) and '' ]] IVA: [[ o.currency_id.symbol ]]</td>
                             <td>[[ formatLang(o.amount_tax) ]]</td>
                         </tr>
                         <tr>
@@ -193,23 +209,25 @@
                     <tr>
                         <td><para style='foot' alignment='left'><b>Comprobante[[ (o.afip_cae and ' ') or ' No ' ]]Autorizado.</b></para>
                             <para style='foot' alignment='left'>Verifique la validez del comprobante accediendo a <a href='http://www.afip.gob.ar/genericos/consultacae/Default.aspx'>http://www.afip.gob.ar/genericos/consultacae/Default.aspx</a></para>
+                            <section>
                             <para style='foot' alignment='left'><b>Información Bancaria</b></para>
-                            <para style='foot' alignment='left'>CBU: <i>[[ o.partner_bank_id.acc_number ]]</i></para>
-                            <para style='foot' alignment='left'>Entidad Bancaria: <i>[[ o.partner_bank_id.bank.name ]]</i></para>
+                            <para style='foot' alignment='left'>CBU: <i>[[ o.partner_bank_id and o.partner_bank_id.acc_number or removeParentNode('section')]]</i></para>
+                            <para style='foot' alignment='left'>Entidad Bancaria: <i>[[ o.partner_bank_id and o.partner_bank_id.bank.name ]]</i></para>
+                            </section>
                         </td>
                         <td></td>
-                        <td><para style='foot' alignment='right'><b>CAE N°:</b></para>
-                            <para style='foot' alignment='right'><b>Fecha Vto. CAE:</b></para></td>
+                        <td><para style='foot' alignment='right'><b>CAE N° :</b></para>
+                            <para style='foot' alignment='right'><b>Fecha Vto. CAE :</b></para></td>
                         <td><para style='foot' alignment='left'>[[ o.afip_cae or '-' ]]</para>
                             <para style='foot' alignment='left'>[[ formatLang(o.afip_cae_due, date=True) or '-' ]]</para></td>
                     </tr>
                     <tr>
                         <td alignment='center'>
-                            <barCode code="i2of5" xdim="0.0450" quiet="1" bearers="0" ratio="3.0" checksum="10">[[ company.partner_id.vat[2:] ]][[ '%02i' % o.journal_id.journal_class_id.afip_code ]][[ '%04i' % o.journal_id.point_of_sale ]][[ o.afip_cae or '-' ]][[ flatdate(o.afip_cae_due) or '-' ]]</barCode>
-                            <para style='tiny' alignment='center'>[[ company.partner_id.vat[2:] ]][[ '%02i' % o.journal_id.journal_class_id.afip_code ]][[ '%04i' % o.journal_id.point_of_sale ]][[ o.afip_cae or '-' ]][[ flatdate(o.afip_cae_due)) if o.afip_cae_due is not None else '-' ]]*</para>
+                            <barCode code="i2of5" quiet="1" bearers="0" checksum="10" barWidth="0.85" >[[ company.partner_id.vat[2:] ]][[ '%02i' % o.journal_id.journal_class_id.afip_code ]][[ '%04i' % o.journal_id.point_of_sale ]][[ o.afip_cae or 14*'0' ]][[ o.afip_cae_due!='False' and flatdate(o.afip_cae_due) or 8*'0' ]]</barCode>
+                            <para style='tiny' alignment='center'>[[ company.partner_id.vat[2:] ]][[ '%02i' % o.journal_id.journal_class_id.afip_code ]][[ '%04i' % o.journal_id.point_of_sale ]][[ o.afip_cae or 14*'0' ]][[ o.afip_cae_due!='False' and flatdate(o.afip_cae_due) or 8*'0' ]]-</para>
                         </td>
                         <td><para style='foot' alignment='center'>Pág. 1/1</para></td>
-                        <td><para style='foot' alignment='right'>Comprobante generado por</para> </td>
+                        <td><para style='foot' alignment='right'>Comprobante generado con</para> </td>
                         <td><para style='foot' alignment='left'><a href='http://www.openerp.com/'>OpenERP</a>.</para> </td>
                     </tr>
                 </blockTable>
