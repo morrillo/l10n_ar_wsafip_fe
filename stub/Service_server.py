@@ -12,29 +12,81 @@ from Service_types import *
 from ZSI.ServiceContainer import ServiceSOAPBinding
 
 # Messages  
-FERecuperaQTYRequestSoapIn = GED("http://ar.gov.afip.dif.facturaelectronica/", "FERecuperaQTYRequest").pyclass
+FECAESolicitarSoapIn = GED("http://ar.gov.afip.dif.FEV1/", "FECAESolicitar").pyclass
 
-FERecuperaQTYRequestSoapOut = GED("http://ar.gov.afip.dif.facturaelectronica/", "FERecuperaQTYRequestResponse").pyclass
+FECAESolicitarSoapOut = GED("http://ar.gov.afip.dif.FEV1/", "FECAESolicitarResponse").pyclass
 
-FEDummySoapIn = GED("http://ar.gov.afip.dif.facturaelectronica/", "FEDummy").pyclass
+FECompTotXRequestSoapIn = GED("http://ar.gov.afip.dif.FEV1/", "FECompTotXRequest").pyclass
 
-FEDummySoapOut = GED("http://ar.gov.afip.dif.facturaelectronica/", "FEDummyResponse").pyclass
+FECompTotXRequestSoapOut = GED("http://ar.gov.afip.dif.FEV1/", "FECompTotXRequestResponse").pyclass
 
-FERecuperaLastCMPRequestSoapIn = GED("http://ar.gov.afip.dif.facturaelectronica/", "FERecuperaLastCMPRequest").pyclass
+FEDummySoapIn = GED("http://ar.gov.afip.dif.FEV1/", "FEDummy").pyclass
 
-FERecuperaLastCMPRequestSoapOut = GED("http://ar.gov.afip.dif.facturaelectronica/", "FERecuperaLastCMPRequestResponse").pyclass
+FEDummySoapOut = GED("http://ar.gov.afip.dif.FEV1/", "FEDummyResponse").pyclass
 
-FEUltNroRequestSoapIn = GED("http://ar.gov.afip.dif.facturaelectronica/", "FEUltNroRequest").pyclass
+FECompUltimoAutorizadoSoapIn = GED("http://ar.gov.afip.dif.FEV1/", "FECompUltimoAutorizado").pyclass
 
-FEUltNroRequestSoapOut = GED("http://ar.gov.afip.dif.facturaelectronica/", "FEUltNroRequestResponse").pyclass
+FECompUltimoAutorizadoSoapOut = GED("http://ar.gov.afip.dif.FEV1/", "FECompUltimoAutorizadoResponse").pyclass
 
-FEAutRequestSoapIn = GED("http://ar.gov.afip.dif.facturaelectronica/", "FEAutRequest").pyclass
+FECompConsultarSoapIn = GED("http://ar.gov.afip.dif.FEV1/", "FECompConsultar").pyclass
 
-FEAutRequestSoapOut = GED("http://ar.gov.afip.dif.facturaelectronica/", "FEAutRequestResponse").pyclass
+FECompConsultarSoapOut = GED("http://ar.gov.afip.dif.FEV1/", "FECompConsultarResponse").pyclass
 
-FEConsultaCAERequestSoapIn = GED("http://ar.gov.afip.dif.facturaelectronica/", "FEConsultaCAERequest").pyclass
+FECAEARegInformativoSoapIn = GED("http://ar.gov.afip.dif.FEV1/", "FECAEARegInformativo").pyclass
 
-FEConsultaCAERequestSoapOut = GED("http://ar.gov.afip.dif.facturaelectronica/", "FEConsultaCAERequestResponse").pyclass
+FECAEARegInformativoSoapOut = GED("http://ar.gov.afip.dif.FEV1/", "FECAEARegInformativoResponse").pyclass
+
+FECAEASolicitarSoapIn = GED("http://ar.gov.afip.dif.FEV1/", "FECAEASolicitar").pyclass
+
+FECAEASolicitarSoapOut = GED("http://ar.gov.afip.dif.FEV1/", "FECAEASolicitarResponse").pyclass
+
+FECAEASinMovimientoConsultarSoapIn = GED("http://ar.gov.afip.dif.FEV1/", "FECAEASinMovimientoConsultar").pyclass
+
+FECAEASinMovimientoConsultarSoapOut = GED("http://ar.gov.afip.dif.FEV1/", "FECAEASinMovimientoConsultarResponse").pyclass
+
+FECAEASinMovimientoInformarSoapIn = GED("http://ar.gov.afip.dif.FEV1/", "FECAEASinMovimientoInformar").pyclass
+
+FECAEASinMovimientoInformarSoapOut = GED("http://ar.gov.afip.dif.FEV1/", "FECAEASinMovimientoInformarResponse").pyclass
+
+FECAEAConsultarSoapIn = GED("http://ar.gov.afip.dif.FEV1/", "FECAEAConsultar").pyclass
+
+FECAEAConsultarSoapOut = GED("http://ar.gov.afip.dif.FEV1/", "FECAEAConsultarResponse").pyclass
+
+FEParamGetCotizacionSoapIn = GED("http://ar.gov.afip.dif.FEV1/", "FEParamGetCotizacion").pyclass
+
+FEParamGetCotizacionSoapOut = GED("http://ar.gov.afip.dif.FEV1/", "FEParamGetCotizacionResponse").pyclass
+
+FEParamGetTiposTributosSoapIn = GED("http://ar.gov.afip.dif.FEV1/", "FEParamGetTiposTributos").pyclass
+
+FEParamGetTiposTributosSoapOut = GED("http://ar.gov.afip.dif.FEV1/", "FEParamGetTiposTributosResponse").pyclass
+
+FEParamGetTiposMonedasSoapIn = GED("http://ar.gov.afip.dif.FEV1/", "FEParamGetTiposMonedas").pyclass
+
+FEParamGetTiposMonedasSoapOut = GED("http://ar.gov.afip.dif.FEV1/", "FEParamGetTiposMonedasResponse").pyclass
+
+FEParamGetTiposIvaSoapIn = GED("http://ar.gov.afip.dif.FEV1/", "FEParamGetTiposIva").pyclass
+
+FEParamGetTiposIvaSoapOut = GED("http://ar.gov.afip.dif.FEV1/", "FEParamGetTiposIvaResponse").pyclass
+
+FEParamGetTiposOpcionalSoapIn = GED("http://ar.gov.afip.dif.FEV1/", "FEParamGetTiposOpcional").pyclass
+
+FEParamGetTiposOpcionalSoapOut = GED("http://ar.gov.afip.dif.FEV1/", "FEParamGetTiposOpcionalResponse").pyclass
+
+FEParamGetTiposConceptoSoapIn = GED("http://ar.gov.afip.dif.FEV1/", "FEParamGetTiposConcepto").pyclass
+
+FEParamGetTiposConceptoSoapOut = GED("http://ar.gov.afip.dif.FEV1/", "FEParamGetTiposConceptoResponse").pyclass
+
+FEParamGetPtosVentaSoapIn = GED("http://ar.gov.afip.dif.FEV1/", "FEParamGetPtosVenta").pyclass
+
+FEParamGetPtosVentaSoapOut = GED("http://ar.gov.afip.dif.FEV1/", "FEParamGetPtosVentaResponse").pyclass
+
+FEParamGetTiposCbteSoapIn = GED("http://ar.gov.afip.dif.FEV1/", "FEParamGetTiposCbte").pyclass
+
+FEParamGetTiposCbteSoapOut = GED("http://ar.gov.afip.dif.FEV1/", "FEParamGetTiposCbteResponse").pyclass
+
+FEParamGetTiposDocSoapIn = GED("http://ar.gov.afip.dif.FEV1/", "FEParamGetTiposDoc").pyclass
+
+FEParamGetTiposDocSoapOut = GED("http://ar.gov.afip.dif.FEV1/", "FEParamGetTiposDocResponse").pyclass
 
 
 # Service Skeletons
@@ -42,48 +94,139 @@ class Service(ServiceSOAPBinding):
     soapAction = {}
     root = {}
 
-    def __init__(self, post='/wsfe/service.asmx', **kw):
+    def __init__(self, post='/wsfev1/service.asmx', **kw):
         ServiceSOAPBinding.__init__(self, post)
 
-    def soap_FERecuperaQTYRequest(self, ps, **kw):
-        request = ps.Parse(FERecuperaQTYRequestSoapIn.typecode)
-        return request,FERecuperaQTYRequestSoapOut()
+    def soap_FECAESolicitar(self, ps, **kw):
+        request = ps.Parse(FECAESolicitarSoapIn.typecode)
+        return request,FECAESolicitarSoapOut()
 
-    soapAction['http://ar.gov.afip.dif.facturaelectronica/FERecuperaQTYRequest'] = 'soap_FERecuperaQTYRequest'
-    root[(FERecuperaQTYRequestSoapIn.typecode.nspname,FERecuperaQTYRequestSoapIn.typecode.pname)] = 'soap_FERecuperaQTYRequest'
+    soapAction['http://ar.gov.afip.dif.FEV1/FECAESolicitar'] = 'soap_FECAESolicitar'
+    root[(FECAESolicitarSoapIn.typecode.nspname,FECAESolicitarSoapIn.typecode.pname)] = 'soap_FECAESolicitar'
+
+    def soap_FECompTotXRequest(self, ps, **kw):
+        request = ps.Parse(FECompTotXRequestSoapIn.typecode)
+        return request,FECompTotXRequestSoapOut()
+
+    soapAction['http://ar.gov.afip.dif.FEV1/FECompTotXRequest'] = 'soap_FECompTotXRequest'
+    root[(FECompTotXRequestSoapIn.typecode.nspname,FECompTotXRequestSoapIn.typecode.pname)] = 'soap_FECompTotXRequest'
 
     def soap_FEDummy(self, ps, **kw):
         request = ps.Parse(FEDummySoapIn.typecode)
         return request,FEDummySoapOut()
 
-    soapAction['http://ar.gov.afip.dif.facturaelectronica/FEDummy'] = 'soap_FEDummy'
+    soapAction['http://ar.gov.afip.dif.FEV1/FEDummy'] = 'soap_FEDummy'
     root[(FEDummySoapIn.typecode.nspname,FEDummySoapIn.typecode.pname)] = 'soap_FEDummy'
 
-    def soap_FERecuperaLastCMPRequest(self, ps, **kw):
-        request = ps.Parse(FERecuperaLastCMPRequestSoapIn.typecode)
-        return request,FERecuperaLastCMPRequestSoapOut()
+    def soap_FECompUltimoAutorizado(self, ps, **kw):
+        request = ps.Parse(FECompUltimoAutorizadoSoapIn.typecode)
+        return request,FECompUltimoAutorizadoSoapOut()
 
-    soapAction['http://ar.gov.afip.dif.facturaelectronica/FERecuperaLastCMPRequest'] = 'soap_FERecuperaLastCMPRequest'
-    root[(FERecuperaLastCMPRequestSoapIn.typecode.nspname,FERecuperaLastCMPRequestSoapIn.typecode.pname)] = 'soap_FERecuperaLastCMPRequest'
+    soapAction['http://ar.gov.afip.dif.FEV1/FECompUltimoAutorizado'] = 'soap_FECompUltimoAutorizado'
+    root[(FECompUltimoAutorizadoSoapIn.typecode.nspname,FECompUltimoAutorizadoSoapIn.typecode.pname)] = 'soap_FECompUltimoAutorizado'
 
-    def soap_FEUltNroRequest(self, ps, **kw):
-        request = ps.Parse(FEUltNroRequestSoapIn.typecode)
-        return request,FEUltNroRequestSoapOut()
+    def soap_FECompConsultar(self, ps, **kw):
+        request = ps.Parse(FECompConsultarSoapIn.typecode)
+        return request,FECompConsultarSoapOut()
 
-    soapAction['http://ar.gov.afip.dif.facturaelectronica/FEUltNroRequest'] = 'soap_FEUltNroRequest'
-    root[(FEUltNroRequestSoapIn.typecode.nspname,FEUltNroRequestSoapIn.typecode.pname)] = 'soap_FEUltNroRequest'
+    soapAction['http://ar.gov.afip.dif.FEV1/FECompConsultar'] = 'soap_FECompConsultar'
+    root[(FECompConsultarSoapIn.typecode.nspname,FECompConsultarSoapIn.typecode.pname)] = 'soap_FECompConsultar'
 
-    def soap_FEAutRequest(self, ps, **kw):
-        request = ps.Parse(FEAutRequestSoapIn.typecode)
-        return request,FEAutRequestSoapOut()
+    def soap_FECAEARegInformativo(self, ps, **kw):
+        request = ps.Parse(FECAEARegInformativoSoapIn.typecode)
+        return request,FECAEARegInformativoSoapOut()
 
-    soapAction['http://ar.gov.afip.dif.facturaelectronica/FEAutRequest'] = 'soap_FEAutRequest'
-    root[(FEAutRequestSoapIn.typecode.nspname,FEAutRequestSoapIn.typecode.pname)] = 'soap_FEAutRequest'
+    soapAction['http://ar.gov.afip.dif.FEV1/FECAEARegInformativo'] = 'soap_FECAEARegInformativo'
+    root[(FECAEARegInformativoSoapIn.typecode.nspname,FECAEARegInformativoSoapIn.typecode.pname)] = 'soap_FECAEARegInformativo'
 
-    def soap_FEConsultaCAERequest(self, ps, **kw):
-        request = ps.Parse(FEConsultaCAERequestSoapIn.typecode)
-        return request,FEConsultaCAERequestSoapOut()
+    def soap_FECAEASolicitar(self, ps, **kw):
+        request = ps.Parse(FECAEASolicitarSoapIn.typecode)
+        return request,FECAEASolicitarSoapOut()
 
-    soapAction['http://ar.gov.afip.dif.facturaelectronica/FEConsultaCAERequest'] = 'soap_FEConsultaCAERequest'
-    root[(FEConsultaCAERequestSoapIn.typecode.nspname,FEConsultaCAERequestSoapIn.typecode.pname)] = 'soap_FEConsultaCAERequest'
+    soapAction['http://ar.gov.afip.dif.FEV1/FECAEASolicitar'] = 'soap_FECAEASolicitar'
+    root[(FECAEASolicitarSoapIn.typecode.nspname,FECAEASolicitarSoapIn.typecode.pname)] = 'soap_FECAEASolicitar'
+
+    def soap_FECAEASinMovimientoConsultar(self, ps, **kw):
+        request = ps.Parse(FECAEASinMovimientoConsultarSoapIn.typecode)
+        return request,FECAEASinMovimientoConsultarSoapOut()
+
+    soapAction['http://ar.gov.afip.dif.FEV1/FECAEASinMovimientoConsultar'] = 'soap_FECAEASinMovimientoConsultar'
+    root[(FECAEASinMovimientoConsultarSoapIn.typecode.nspname,FECAEASinMovimientoConsultarSoapIn.typecode.pname)] = 'soap_FECAEASinMovimientoConsultar'
+
+    def soap_FECAEASinMovimientoInformar(self, ps, **kw):
+        request = ps.Parse(FECAEASinMovimientoInformarSoapIn.typecode)
+        return request,FECAEASinMovimientoInformarSoapOut()
+
+    soapAction['http://ar.gov.afip.dif.FEV1/FECAEASinMovimientoInformar'] = 'soap_FECAEASinMovimientoInformar'
+    root[(FECAEASinMovimientoInformarSoapIn.typecode.nspname,FECAEASinMovimientoInformarSoapIn.typecode.pname)] = 'soap_FECAEASinMovimientoInformar'
+
+    def soap_FECAEAConsultar(self, ps, **kw):
+        request = ps.Parse(FECAEAConsultarSoapIn.typecode)
+        return request,FECAEAConsultarSoapOut()
+
+    soapAction['http://ar.gov.afip.dif.FEV1/FECAEAConsultar'] = 'soap_FECAEAConsultar'
+    root[(FECAEAConsultarSoapIn.typecode.nspname,FECAEAConsultarSoapIn.typecode.pname)] = 'soap_FECAEAConsultar'
+
+    def soap_FEParamGetCotizacion(self, ps, **kw):
+        request = ps.Parse(FEParamGetCotizacionSoapIn.typecode)
+        return request,FEParamGetCotizacionSoapOut()
+
+    soapAction['http://ar.gov.afip.dif.FEV1/FEParamGetCotizacion'] = 'soap_FEParamGetCotizacion'
+    root[(FEParamGetCotizacionSoapIn.typecode.nspname,FEParamGetCotizacionSoapIn.typecode.pname)] = 'soap_FEParamGetCotizacion'
+
+    def soap_FEParamGetTiposTributos(self, ps, **kw):
+        request = ps.Parse(FEParamGetTiposTributosSoapIn.typecode)
+        return request,FEParamGetTiposTributosSoapOut()
+
+    soapAction['http://ar.gov.afip.dif.FEV1/FEParamGetTiposTributos'] = 'soap_FEParamGetTiposTributos'
+    root[(FEParamGetTiposTributosSoapIn.typecode.nspname,FEParamGetTiposTributosSoapIn.typecode.pname)] = 'soap_FEParamGetTiposTributos'
+
+    def soap_FEParamGetTiposMonedas(self, ps, **kw):
+        request = ps.Parse(FEParamGetTiposMonedasSoapIn.typecode)
+        return request,FEParamGetTiposMonedasSoapOut()
+
+    soapAction['http://ar.gov.afip.dif.FEV1/FEParamGetTiposMonedas'] = 'soap_FEParamGetTiposMonedas'
+    root[(FEParamGetTiposMonedasSoapIn.typecode.nspname,FEParamGetTiposMonedasSoapIn.typecode.pname)] = 'soap_FEParamGetTiposMonedas'
+
+    def soap_FEParamGetTiposIva(self, ps, **kw):
+        request = ps.Parse(FEParamGetTiposIvaSoapIn.typecode)
+        return request,FEParamGetTiposIvaSoapOut()
+
+    soapAction['http://ar.gov.afip.dif.FEV1/FEParamGetTiposIva'] = 'soap_FEParamGetTiposIva'
+    root[(FEParamGetTiposIvaSoapIn.typecode.nspname,FEParamGetTiposIvaSoapIn.typecode.pname)] = 'soap_FEParamGetTiposIva'
+
+    def soap_FEParamGetTiposOpcional(self, ps, **kw):
+        request = ps.Parse(FEParamGetTiposOpcionalSoapIn.typecode)
+        return request,FEParamGetTiposOpcionalSoapOut()
+
+    soapAction['http://ar.gov.afip.dif.FEV1/FEParamGetTiposOpcional'] = 'soap_FEParamGetTiposOpcional'
+    root[(FEParamGetTiposOpcionalSoapIn.typecode.nspname,FEParamGetTiposOpcionalSoapIn.typecode.pname)] = 'soap_FEParamGetTiposOpcional'
+
+    def soap_FEParamGetTiposConcepto(self, ps, **kw):
+        request = ps.Parse(FEParamGetTiposConceptoSoapIn.typecode)
+        return request,FEParamGetTiposConceptoSoapOut()
+
+    soapAction['http://ar.gov.afip.dif.FEV1/FEParamGetTiposConcepto'] = 'soap_FEParamGetTiposConcepto'
+    root[(FEParamGetTiposConceptoSoapIn.typecode.nspname,FEParamGetTiposConceptoSoapIn.typecode.pname)] = 'soap_FEParamGetTiposConcepto'
+
+    def soap_FEParamGetPtosVenta(self, ps, **kw):
+        request = ps.Parse(FEParamGetPtosVentaSoapIn.typecode)
+        return request,FEParamGetPtosVentaSoapOut()
+
+    soapAction['http://ar.gov.afip.dif.FEV1/FEParamGetPtosVenta'] = 'soap_FEParamGetPtosVenta'
+    root[(FEParamGetPtosVentaSoapIn.typecode.nspname,FEParamGetPtosVentaSoapIn.typecode.pname)] = 'soap_FEParamGetPtosVenta'
+
+    def soap_FEParamGetTiposCbte(self, ps, **kw):
+        request = ps.Parse(FEParamGetTiposCbteSoapIn.typecode)
+        return request,FEParamGetTiposCbteSoapOut()
+
+    soapAction['http://ar.gov.afip.dif.FEV1/FEParamGetTiposCbte'] = 'soap_FEParamGetTiposCbte'
+    root[(FEParamGetTiposCbteSoapIn.typecode.nspname,FEParamGetTiposCbteSoapIn.typecode.pname)] = 'soap_FEParamGetTiposCbte'
+
+    def soap_FEParamGetTiposDoc(self, ps, **kw):
+        request = ps.Parse(FEParamGetTiposDocSoapIn.typecode)
+        return request,FEParamGetTiposDocSoapOut()
+
+    soapAction['http://ar.gov.afip.dif.FEV1/FEParamGetTiposDoc'] = 'soap_FEParamGetTiposDoc'
+    root[(FEParamGetTiposDocSoapIn.typecode.nspname,FEParamGetTiposDocSoapIn.typecode.pname)] = 'soap_FEParamGetTiposDoc'
 

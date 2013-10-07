@@ -34,11 +34,11 @@ class account_journal(osv.osv):
             context={}
         r={}
         for journal in self.browse(cr, uid, ids):
-            auth = journal.afip_authorization_id
+            auth = journal.afip_connection_id
             if not auth:
                 r[journal.id] = 'not available'
             elif auth.server_id.code != 'wsfe':
-                r[journal.id] = 'authorization_service_error'
+                r[journal.id] = 'connection_service_error'
             else:
                 # Try to login just one time.
                 try:
@@ -61,76 +61,25 @@ class account_journal(osv.osv):
                     pass
         return r
 
-    def _get_afip_items_available(self, cr, uid, ids, fields_name, arg, context=None):
-        if context is None:
-            context={}
-        r={}
-        for journal in self.browse(cr, uid, ids):
-            r[journal.id] = False
-            auth = journal.afip_authorization_id
-            if auth and auth.server_id.code == 'wsfe':
-                try:
-                    auth.login()
-                    if auth.state in  [ 'connected', 'clockshifted' ]:
-                        request = FERecuperaQTYRequestSoapIn()
-                        request = auth.set_auth_request(request)
-                        response = get_bind(auth.server_id).FERecuperaQTYRequest(request)
-                        if response._FERecuperaQTYRequestResult._RError._percode == 0:
-                            r[journal.id] = response._FERecuperaQTYRequestResult._qty._value
-                        else:
-                            _logger.error('RESPONSE:afip_items_available:%i:\n%s' % (
-                                response._FERecuperaQTYRequestResult._RError._percode,
-                                response._FERecuperaQTYRequestResult._RError._perrmsg
-                            ))
-                            raise osv.except_osv(_('Error in Response'), _('Following error back from server: (%i) %s') % (
-                                response._FERecuperaQTYRequestResult._RError._percode,
-                                response._FERecuperaQTYRequestResult._RError._perrmsg
-                            ))
-                except:
-                    pass
-        return r
-
     def _get_afip_items_generated(self, cr, uid, ids, fields_name, arg, context=None):
         if context is None:
             context={}
         r={}
         for journal in self.browse(cr, uid, ids):
             r[journal.id] = False
-            auth = journal.afip_authorization_id
-            if auth and auth.server_id.code == 'wsfe':
-                try:
-                    auth.login()
-                    if auth.state in  [ 'connected', 'clockshifted' ]:
-                        request = FERecuperaLastCMPRequestSoapIn()
-                        request = auth.set_auth_request(request)
-                        argTCMP = request.new_argTCMP()
-                        argTCMP.set_element_PtoVta(journal.point_of_sale)
-                        argTCMP.set_element_TipoCbte(journal.journal_class_id.afip_code)
-                        request.ArgTCMP = argTCMP
-                        response = get_bind(auth.server_id).FERecuperaLastCMPRequest(request)
-                        if response._FERecuperaLastCMPRequestResult._RError._percode == 0:
-                            r[journal.id] = response._FERecuperaLastCMPRequestResult._cbte_nro
-                        else:
-                            _logger.error('RESPONSE:afip_items_available:%i:\n%s' %  (
-                                response._FERecuperaQTYRequestResult._RError._percode,
-                                response._FERecuperaQTYRequestResult._RError._perrmsg
-                            ))
-                            raise osv.except_osv(_('Error in Response'), _('Following error back from server: (%i) %s') % (
-                                response._FERecuperaQTYRequestResult._RError._percode,
-                                response._FERecuperaQTYRequestResult._RError._perrmsg
-                            ))
-                except:
-                    pass
+            conn = journal.afip_connection_id
+            if conn and conn.server_id.code == 'wsfe':
+                cb = conn.get_callbacks()[conn.id]
+                r[journal.id] = cb.get_last_invoice_number(journal.point_of_sale, journal.journal_class_id.afip_code)
+                cb.update_afip_concepts()
         return r
 
     _inherit = "account.journal"
     _columns = {
-        'afip_authorization_id': fields.many2one('wsafip.authorization', 'Web Service AFIP Authorization',
-                            help="Which service authorization must be used to connecto to AFIP."),
-        'afip_state': fields.function(_get_afip_state, type='char', string='AFIP State',method=True, 
+        'afip_connection_id': fields.many2one('wsafip.connection', 'Web Service connection',
+                            help="Which connection must be used to use AFIP services."),
+        'afip_state': fields.function(_get_afip_state, type='char', string='Connection state',method=True, 
                             help="Connect to the AFIP and check is service is avilable."),
-        'afip_items_available': fields.function(_get_afip_items_available, type='integer', string='Number of Invoices Available',method=True, 
-                            help="Connect to the AFIP and check how many invoices are avaible to print."),
         'afip_items_generated': fields.function(_get_afip_items_generated, type='integer', string='Number of Invoices Generated',method=True, 
                             help="Connect to the AFIP and check how many invoices was generated."),
     }

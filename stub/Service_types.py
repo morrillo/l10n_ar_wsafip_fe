@@ -13,18 +13,18 @@ from ZSI.generate.pyclass import pyclass_type
 
 ##############################
 # targetNamespace
-# http://ar.gov.afip.dif.facturaelectronica/
+# http://ar.gov.afip.dif.FEV1/
 ##############################
 
 class ns0:
-    targetNamespace = "http://ar.gov.afip.dif.facturaelectronica/"
+    targetNamespace = "http://ar.gov.afip.dif.FEV1/"
 
     class FEAuthRequest_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
-        schema = "http://ar.gov.afip.dif.facturaelectronica/"
+        schema = "http://ar.gov.afip.dif.FEV1/"
         type = (schema, "FEAuthRequest")
         def __init__(self, pname, ofwhat=(), attributes=None, extend=False, restrict=False, **kw):
             ns = ns0.FEAuthRequest_Def.schema
-            TClist = [ZSI.TC.String(pname=(ns,"Token"), aname="_Token", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"Sign"), aname="_Sign", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.Ilong(pname=(ns,"cuit"), aname="_cuit", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            TClist = [ZSI.TC.String(pname=(ns,"Token"), aname="_Token", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"Sign"), aname="_Sign", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.Ilong(pname=(ns,"Cuit"), aname="_Cuit", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
             self.attribute_typecode_dict = attributes or {}
             if extend: TClist += ofwhat
             if restrict: TClist = ofwhat
@@ -36,17 +36,17 @@ class ns0:
                     # pyclass
                     self._Token = None
                     self._Sign = None
-                    self._cuit = None
+                    self._Cuit = None
                     return
             Holder.__name__ = "FEAuthRequest_Holder"
             self.pyclass = Holder
 
-    class FERecuperaQTYResponse_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
-        schema = "http://ar.gov.afip.dif.facturaelectronica/"
-        type = (schema, "FERecuperaQTYResponse")
+    class FECAERequest_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        type = (schema, "FECAERequest")
         def __init__(self, pname, ofwhat=(), attributes=None, extend=False, restrict=False, **kw):
-            ns = ns0.FERecuperaQTYResponse_Def.schema
-            TClist = [GTD("http://ar.gov.afip.dif.facturaelectronica/","FERecuperaQTY",lazy=False)(pname=(ns,"qty"), aname="_qty", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), GTD("http://ar.gov.afip.dif.facturaelectronica/","vError",lazy=False)(pname=(ns,"RError"), aname="_RError", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            ns = ns0.FECAERequest_Def.schema
+            TClist = [GTD("http://ar.gov.afip.dif.FEV1/","FECAECabRequest",lazy=False)(pname=(ns,"FeCabReq"), aname="_FeCabReq", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), GTD("http://ar.gov.afip.dif.FEV1/","ArrayOfFECAEDetRequest",lazy=False)(pname=(ns,"FeDetReq"), aname="_FeDetReq", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
             self.attribute_typecode_dict = attributes or {}
             if extend: TClist += ofwhat
             if restrict: TClist = ofwhat
@@ -56,18 +56,35 @@ class ns0:
                 typecode = self
                 def __init__(self):
                     # pyclass
-                    self._qty = None
-                    self._RError = None
+                    self._FeCabReq = None
+                    self._FeDetReq = None
                     return
-            Holder.__name__ = "FERecuperaQTYResponse_Holder"
+            Holder.__name__ = "FECAERequest_Holder"
             self.pyclass = Holder
 
-    class FERecuperaQTY_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
-        schema = "http://ar.gov.afip.dif.facturaelectronica/"
-        type = (schema, "FERecuperaQTY")
+    class FECAECabRequest_Def(TypeDefinition):
+        #complexType/complexContent extension
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        type = (schema, "FECAECabRequest")
+        def __init__(self, pname, ofwhat=(), extend=False, restrict=False, attributes=None, **kw):
+            ns = ns0.FECAECabRequest_Def.schema
+            TClist = []
+            attributes = self.attribute_typecode_dict = attributes or {}
+            if extend: TClist += ofwhat
+            if restrict: TClist = ofwhat
+            if ns0.FECabRequest_Def not in ns0.FECAECabRequest_Def.__bases__:
+                bases = list(ns0.FECAECabRequest_Def.__bases__)
+                bases.insert(0, ns0.FECabRequest_Def)
+                ns0.FECAECabRequest_Def.__bases__ = tuple(bases)
+
+            ns0.FECabRequest_Def.__init__(self, pname, ofwhat=TClist, extend=True, attributes=attributes, **kw)
+
+    class FECabRequest_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        type = (schema, "FECabRequest")
         def __init__(self, pname, ofwhat=(), attributes=None, extend=False, restrict=False, **kw):
-            ns = ns0.FERecuperaQTY_Def.schema
-            TClist = [ZSI.TCnumbers.Iint(pname=(ns,"value"), aname="_value", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            ns = ns0.FECabRequest_Def.schema
+            TClist = [ZSI.TCnumbers.Iint(pname=(ns,"CantReg"), aname="_CantReg", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.Iint(pname=(ns,"PtoVta"), aname="_PtoVta", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.Iint(pname=(ns,"CbteTipo"), aname="_CbteTipo", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
             self.attribute_typecode_dict = attributes or {}
             if extend: TClist += ofwhat
             if restrict: TClist = ofwhat
@@ -77,17 +94,19 @@ class ns0:
                 typecode = self
                 def __init__(self):
                     # pyclass
-                    self._value = None
+                    self._CantReg = None
+                    self._PtoVta = None
+                    self._CbteTipo = None
                     return
-            Holder.__name__ = "FERecuperaQTY_Holder"
+            Holder.__name__ = "FECabRequest_Holder"
             self.pyclass = Holder
 
-    class vError_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
-        schema = "http://ar.gov.afip.dif.facturaelectronica/"
-        type = (schema, "vError")
+    class ArrayOfFECAEDetRequest_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        type = (schema, "ArrayOfFECAEDetRequest")
         def __init__(self, pname, ofwhat=(), attributes=None, extend=False, restrict=False, **kw):
-            ns = ns0.vError_Def.schema
-            TClist = [ZSI.TCnumbers.Iint(pname=(ns,"percode"), aname="_percode", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"perrmsg"), aname="_perrmsg", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            ns = ns0.ArrayOfFECAEDetRequest_Def.schema
+            TClist = [GTD("http://ar.gov.afip.dif.FEV1/","FECAEDetRequest",lazy=False)(pname=(ns,"FECAEDetRequest"), aname="_FECAEDetRequest", minOccurs=0, maxOccurs="unbounded", nillable=True, typed=False, encoded=kw.get("encoded"))]
             self.attribute_typecode_dict = attributes or {}
             if extend: TClist += ofwhat
             if restrict: TClist = ofwhat
@@ -97,18 +116,518 @@ class ns0:
                 typecode = self
                 def __init__(self):
                     # pyclass
-                    self._percode = None
-                    self._perrmsg = None
+                    self._FECAEDetRequest = []
                     return
-            Holder.__name__ = "vError_Holder"
+            Holder.__name__ = "ArrayOfFECAEDetRequest_Holder"
+            self.pyclass = Holder
+
+    class FECAEDetRequest_Def(TypeDefinition):
+        #complexType/complexContent extension
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        type = (schema, "FECAEDetRequest")
+        def __init__(self, pname, ofwhat=(), extend=False, restrict=False, attributes=None, **kw):
+            ns = ns0.FECAEDetRequest_Def.schema
+            TClist = []
+            attributes = self.attribute_typecode_dict = attributes or {}
+            if extend: TClist += ofwhat
+            if restrict: TClist = ofwhat
+            if ns0.FEDetRequest_Def not in ns0.FECAEDetRequest_Def.__bases__:
+                bases = list(ns0.FECAEDetRequest_Def.__bases__)
+                bases.insert(0, ns0.FEDetRequest_Def)
+                ns0.FECAEDetRequest_Def.__bases__ = tuple(bases)
+
+            ns0.FEDetRequest_Def.__init__(self, pname, ofwhat=TClist, extend=True, attributes=attributes, **kw)
+
+    class FEDetRequest_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        type = (schema, "FEDetRequest")
+        def __init__(self, pname, ofwhat=(), attributes=None, extend=False, restrict=False, **kw):
+            ns = ns0.FEDetRequest_Def.schema
+            TClist = [ZSI.TCnumbers.Iint(pname=(ns,"Concepto"), aname="_Concepto", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.Iint(pname=(ns,"DocTipo"), aname="_DocTipo", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.Ilong(pname=(ns,"DocNro"), aname="_DocNro", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.Ilong(pname=(ns,"CbteDesde"), aname="_CbteDesde", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.Ilong(pname=(ns,"CbteHasta"), aname="_CbteHasta", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"CbteFch"), aname="_CbteFch", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.FPdouble(pname=(ns,"ImpTotal"), aname="_ImpTotal", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.FPdouble(pname=(ns,"ImpTotConc"), aname="_ImpTotConc", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.FPdouble(pname=(ns,"ImpNeto"), aname="_ImpNeto", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.FPdouble(pname=(ns,"ImpOpEx"), aname="_ImpOpEx", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.FPdouble(pname=(ns,"ImpTrib"), aname="_ImpTrib", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.FPdouble(pname=(ns,"ImpIVA"), aname="_ImpIVA", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"FchServDesde"), aname="_FchServDesde", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"FchServHasta"), aname="_FchServHasta", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"FchVtoPago"), aname="_FchVtoPago", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"MonId"), aname="_MonId", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.FPdouble(pname=(ns,"MonCotiz"), aname="_MonCotiz", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), GTD("http://ar.gov.afip.dif.FEV1/","ArrayOfCbteAsoc",lazy=False)(pname=(ns,"CbtesAsoc"), aname="_CbtesAsoc", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), GTD("http://ar.gov.afip.dif.FEV1/","ArrayOfTributo",lazy=False)(pname=(ns,"Tributos"), aname="_Tributos", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), GTD("http://ar.gov.afip.dif.FEV1/","ArrayOfAlicIva",lazy=False)(pname=(ns,"Iva"), aname="_Iva", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), GTD("http://ar.gov.afip.dif.FEV1/","ArrayOfOpcional",lazy=False)(pname=(ns,"Opcionales"), aname="_Opcionales", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            self.attribute_typecode_dict = attributes or {}
+            if extend: TClist += ofwhat
+            if restrict: TClist = ofwhat
+            ZSI.TCcompound.ComplexType.__init__(self, None, TClist, pname=pname, inorder=0, **kw)
+            class Holder:
+                __metaclass__ = pyclass_type
+                typecode = self
+                def __init__(self):
+                    # pyclass
+                    self._Concepto = None
+                    self._DocTipo = None
+                    self._DocNro = None
+                    self._CbteDesde = None
+                    self._CbteHasta = None
+                    self._CbteFch = None
+                    self._ImpTotal = None
+                    self._ImpTotConc = None
+                    self._ImpNeto = None
+                    self._ImpOpEx = None
+                    self._ImpTrib = None
+                    self._ImpIVA = None
+                    self._FchServDesde = None
+                    self._FchServHasta = None
+                    self._FchVtoPago = None
+                    self._MonId = None
+                    self._MonCotiz = None
+                    self._CbtesAsoc = None
+                    self._Tributos = None
+                    self._Iva = None
+                    self._Opcionales = None
+                    return
+            Holder.__name__ = "FEDetRequest_Holder"
+            self.pyclass = Holder
+
+    class ArrayOfCbteAsoc_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        type = (schema, "ArrayOfCbteAsoc")
+        def __init__(self, pname, ofwhat=(), attributes=None, extend=False, restrict=False, **kw):
+            ns = ns0.ArrayOfCbteAsoc_Def.schema
+            TClist = [GTD("http://ar.gov.afip.dif.FEV1/","CbteAsoc",lazy=False)(pname=(ns,"CbteAsoc"), aname="_CbteAsoc", minOccurs=0, maxOccurs="unbounded", nillable=True, typed=False, encoded=kw.get("encoded"))]
+            self.attribute_typecode_dict = attributes or {}
+            if extend: TClist += ofwhat
+            if restrict: TClist = ofwhat
+            ZSI.TCcompound.ComplexType.__init__(self, None, TClist, pname=pname, inorder=0, **kw)
+            class Holder:
+                __metaclass__ = pyclass_type
+                typecode = self
+                def __init__(self):
+                    # pyclass
+                    self._CbteAsoc = []
+                    return
+            Holder.__name__ = "ArrayOfCbteAsoc_Holder"
+            self.pyclass = Holder
+
+    class CbteAsoc_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        type = (schema, "CbteAsoc")
+        def __init__(self, pname, ofwhat=(), attributes=None, extend=False, restrict=False, **kw):
+            ns = ns0.CbteAsoc_Def.schema
+            TClist = [ZSI.TCnumbers.Iint(pname=(ns,"Tipo"), aname="_Tipo", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.Iint(pname=(ns,"PtoVta"), aname="_PtoVta", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.Ilong(pname=(ns,"Nro"), aname="_Nro", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            self.attribute_typecode_dict = attributes or {}
+            if extend: TClist += ofwhat
+            if restrict: TClist = ofwhat
+            ZSI.TCcompound.ComplexType.__init__(self, None, TClist, pname=pname, inorder=0, **kw)
+            class Holder:
+                __metaclass__ = pyclass_type
+                typecode = self
+                def __init__(self):
+                    # pyclass
+                    self._Tipo = None
+                    self._PtoVta = None
+                    self._Nro = None
+                    return
+            Holder.__name__ = "CbteAsoc_Holder"
+            self.pyclass = Holder
+
+    class ArrayOfTributo_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        type = (schema, "ArrayOfTributo")
+        def __init__(self, pname, ofwhat=(), attributes=None, extend=False, restrict=False, **kw):
+            ns = ns0.ArrayOfTributo_Def.schema
+            TClist = [GTD("http://ar.gov.afip.dif.FEV1/","Tributo",lazy=False)(pname=(ns,"Tributo"), aname="_Tributo", minOccurs=0, maxOccurs="unbounded", nillable=True, typed=False, encoded=kw.get("encoded"))]
+            self.attribute_typecode_dict = attributes or {}
+            if extend: TClist += ofwhat
+            if restrict: TClist = ofwhat
+            ZSI.TCcompound.ComplexType.__init__(self, None, TClist, pname=pname, inorder=0, **kw)
+            class Holder:
+                __metaclass__ = pyclass_type
+                typecode = self
+                def __init__(self):
+                    # pyclass
+                    self._Tributo = []
+                    return
+            Holder.__name__ = "ArrayOfTributo_Holder"
+            self.pyclass = Holder
+
+    class Tributo_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        type = (schema, "Tributo")
+        def __init__(self, pname, ofwhat=(), attributes=None, extend=False, restrict=False, **kw):
+            ns = ns0.Tributo_Def.schema
+            TClist = [ZSI.TCnumbers.Ishort(pname=(ns,"Id"), aname="_Id", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"Desc"), aname="_Desc", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.FPdouble(pname=(ns,"BaseImp"), aname="_BaseImp", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.FPdouble(pname=(ns,"Alic"), aname="_Alic", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.FPdouble(pname=(ns,"Importe"), aname="_Importe", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            self.attribute_typecode_dict = attributes or {}
+            if extend: TClist += ofwhat
+            if restrict: TClist = ofwhat
+            ZSI.TCcompound.ComplexType.__init__(self, None, TClist, pname=pname, inorder=0, **kw)
+            class Holder:
+                __metaclass__ = pyclass_type
+                typecode = self
+                def __init__(self):
+                    # pyclass
+                    self._Id = None
+                    self._Desc = None
+                    self._BaseImp = None
+                    self._Alic = None
+                    self._Importe = None
+                    return
+            Holder.__name__ = "Tributo_Holder"
+            self.pyclass = Holder
+
+    class ArrayOfAlicIva_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        type = (schema, "ArrayOfAlicIva")
+        def __init__(self, pname, ofwhat=(), attributes=None, extend=False, restrict=False, **kw):
+            ns = ns0.ArrayOfAlicIva_Def.schema
+            TClist = [GTD("http://ar.gov.afip.dif.FEV1/","AlicIva",lazy=False)(pname=(ns,"AlicIva"), aname="_AlicIva", minOccurs=0, maxOccurs="unbounded", nillable=True, typed=False, encoded=kw.get("encoded"))]
+            self.attribute_typecode_dict = attributes or {}
+            if extend: TClist += ofwhat
+            if restrict: TClist = ofwhat
+            ZSI.TCcompound.ComplexType.__init__(self, None, TClist, pname=pname, inorder=0, **kw)
+            class Holder:
+                __metaclass__ = pyclass_type
+                typecode = self
+                def __init__(self):
+                    # pyclass
+                    self._AlicIva = []
+                    return
+            Holder.__name__ = "ArrayOfAlicIva_Holder"
+            self.pyclass = Holder
+
+    class AlicIva_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        type = (schema, "AlicIva")
+        def __init__(self, pname, ofwhat=(), attributes=None, extend=False, restrict=False, **kw):
+            ns = ns0.AlicIva_Def.schema
+            TClist = [ZSI.TCnumbers.Iint(pname=(ns,"Id"), aname="_Id", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.FPdouble(pname=(ns,"BaseImp"), aname="_BaseImp", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.FPdouble(pname=(ns,"Importe"), aname="_Importe", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            self.attribute_typecode_dict = attributes or {}
+            if extend: TClist += ofwhat
+            if restrict: TClist = ofwhat
+            ZSI.TCcompound.ComplexType.__init__(self, None, TClist, pname=pname, inorder=0, **kw)
+            class Holder:
+                __metaclass__ = pyclass_type
+                typecode = self
+                def __init__(self):
+                    # pyclass
+                    self._Id = None
+                    self._BaseImp = None
+                    self._Importe = None
+                    return
+            Holder.__name__ = "AlicIva_Holder"
+            self.pyclass = Holder
+
+    class ArrayOfOpcional_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        type = (schema, "ArrayOfOpcional")
+        def __init__(self, pname, ofwhat=(), attributes=None, extend=False, restrict=False, **kw):
+            ns = ns0.ArrayOfOpcional_Def.schema
+            TClist = [GTD("http://ar.gov.afip.dif.FEV1/","Opcional",lazy=False)(pname=(ns,"Opcional"), aname="_Opcional", minOccurs=0, maxOccurs="unbounded", nillable=True, typed=False, encoded=kw.get("encoded"))]
+            self.attribute_typecode_dict = attributes or {}
+            if extend: TClist += ofwhat
+            if restrict: TClist = ofwhat
+            ZSI.TCcompound.ComplexType.__init__(self, None, TClist, pname=pname, inorder=0, **kw)
+            class Holder:
+                __metaclass__ = pyclass_type
+                typecode = self
+                def __init__(self):
+                    # pyclass
+                    self._Opcional = []
+                    return
+            Holder.__name__ = "ArrayOfOpcional_Holder"
+            self.pyclass = Holder
+
+    class Opcional_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        type = (schema, "Opcional")
+        def __init__(self, pname, ofwhat=(), attributes=None, extend=False, restrict=False, **kw):
+            ns = ns0.Opcional_Def.schema
+            TClist = [ZSI.TC.String(pname=(ns,"Id"), aname="_Id", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"Valor"), aname="_Valor", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            self.attribute_typecode_dict = attributes or {}
+            if extend: TClist += ofwhat
+            if restrict: TClist = ofwhat
+            ZSI.TCcompound.ComplexType.__init__(self, None, TClist, pname=pname, inorder=0, **kw)
+            class Holder:
+                __metaclass__ = pyclass_type
+                typecode = self
+                def __init__(self):
+                    # pyclass
+                    self._Id = None
+                    self._Valor = None
+                    return
+            Holder.__name__ = "Opcional_Holder"
+            self.pyclass = Holder
+
+    class FECAEResponse_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        type = (schema, "FECAEResponse")
+        def __init__(self, pname, ofwhat=(), attributes=None, extend=False, restrict=False, **kw):
+            ns = ns0.FECAEResponse_Def.schema
+            TClist = [GTD("http://ar.gov.afip.dif.FEV1/","FECAECabResponse",lazy=False)(pname=(ns,"FeCabResp"), aname="_FeCabResp", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), GTD("http://ar.gov.afip.dif.FEV1/","ArrayOfFECAEDetResponse",lazy=False)(pname=(ns,"FeDetResp"), aname="_FeDetResp", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), GTD("http://ar.gov.afip.dif.FEV1/","ArrayOfEvt",lazy=False)(pname=(ns,"Events"), aname="_Events", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), GTD("http://ar.gov.afip.dif.FEV1/","ArrayOfErr",lazy=False)(pname=(ns,"Errors"), aname="_Errors", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            self.attribute_typecode_dict = attributes or {}
+            if extend: TClist += ofwhat
+            if restrict: TClist = ofwhat
+            ZSI.TCcompound.ComplexType.__init__(self, None, TClist, pname=pname, inorder=0, **kw)
+            class Holder:
+                __metaclass__ = pyclass_type
+                typecode = self
+                def __init__(self):
+                    # pyclass
+                    self._FeCabResp = None
+                    self._FeDetResp = None
+                    self._Events = None
+                    self._Errors = None
+                    return
+            Holder.__name__ = "FECAEResponse_Holder"
+            self.pyclass = Holder
+
+    class FECAECabResponse_Def(TypeDefinition):
+        #complexType/complexContent extension
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        type = (schema, "FECAECabResponse")
+        def __init__(self, pname, ofwhat=(), extend=False, restrict=False, attributes=None, **kw):
+            ns = ns0.FECAECabResponse_Def.schema
+            TClist = []
+            attributes = self.attribute_typecode_dict = attributes or {}
+            if extend: TClist += ofwhat
+            if restrict: TClist = ofwhat
+            if ns0.FECabResponse_Def not in ns0.FECAECabResponse_Def.__bases__:
+                bases = list(ns0.FECAECabResponse_Def.__bases__)
+                bases.insert(0, ns0.FECabResponse_Def)
+                ns0.FECAECabResponse_Def.__bases__ = tuple(bases)
+
+            ns0.FECabResponse_Def.__init__(self, pname, ofwhat=TClist, extend=True, attributes=attributes, **kw)
+
+    class FECabResponse_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        type = (schema, "FECabResponse")
+        def __init__(self, pname, ofwhat=(), attributes=None, extend=False, restrict=False, **kw):
+            ns = ns0.FECabResponse_Def.schema
+            TClist = [ZSI.TCnumbers.Ilong(pname=(ns,"Cuit"), aname="_Cuit", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.Iint(pname=(ns,"PtoVta"), aname="_PtoVta", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.Iint(pname=(ns,"CbteTipo"), aname="_CbteTipo", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"FchProceso"), aname="_FchProceso", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.Iint(pname=(ns,"CantReg"), aname="_CantReg", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"Resultado"), aname="_Resultado", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"Reproceso"), aname="_Reproceso", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            self.attribute_typecode_dict = attributes or {}
+            if extend: TClist += ofwhat
+            if restrict: TClist = ofwhat
+            ZSI.TCcompound.ComplexType.__init__(self, None, TClist, pname=pname, inorder=0, **kw)
+            class Holder:
+                __metaclass__ = pyclass_type
+                typecode = self
+                def __init__(self):
+                    # pyclass
+                    self._Cuit = None
+                    self._PtoVta = None
+                    self._CbteTipo = None
+                    self._FchProceso = None
+                    self._CantReg = None
+                    self._Resultado = None
+                    self._Reproceso = None
+                    return
+            Holder.__name__ = "FECabResponse_Holder"
+            self.pyclass = Holder
+
+    class ArrayOfFECAEDetResponse_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        type = (schema, "ArrayOfFECAEDetResponse")
+        def __init__(self, pname, ofwhat=(), attributes=None, extend=False, restrict=False, **kw):
+            ns = ns0.ArrayOfFECAEDetResponse_Def.schema
+            TClist = [GTD("http://ar.gov.afip.dif.FEV1/","FECAEDetResponse",lazy=False)(pname=(ns,"FECAEDetResponse"), aname="_FECAEDetResponse", minOccurs=0, maxOccurs="unbounded", nillable=True, typed=False, encoded=kw.get("encoded"))]
+            self.attribute_typecode_dict = attributes or {}
+            if extend: TClist += ofwhat
+            if restrict: TClist = ofwhat
+            ZSI.TCcompound.ComplexType.__init__(self, None, TClist, pname=pname, inorder=0, **kw)
+            class Holder:
+                __metaclass__ = pyclass_type
+                typecode = self
+                def __init__(self):
+                    # pyclass
+                    self._FECAEDetResponse = []
+                    return
+            Holder.__name__ = "ArrayOfFECAEDetResponse_Holder"
+            self.pyclass = Holder
+
+    class FECAEDetResponse_Def(TypeDefinition):
+        #complexType/complexContent extension
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        type = (schema, "FECAEDetResponse")
+        def __init__(self, pname, ofwhat=(), extend=False, restrict=False, attributes=None, **kw):
+            ns = ns0.FECAEDetResponse_Def.schema
+            TClist = [ZSI.TC.String(pname=(ns,"CAE"), aname="_CAE", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"CAEFchVto"), aname="_CAEFchVto", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            attributes = self.attribute_typecode_dict = attributes or {}
+            if extend: TClist += ofwhat
+            if restrict: TClist = ofwhat
+            if ns0.FEDetResponse_Def not in ns0.FECAEDetResponse_Def.__bases__:
+                bases = list(ns0.FECAEDetResponse_Def.__bases__)
+                bases.insert(0, ns0.FEDetResponse_Def)
+                ns0.FECAEDetResponse_Def.__bases__ = tuple(bases)
+
+            ns0.FEDetResponse_Def.__init__(self, pname, ofwhat=TClist, extend=True, attributes=attributes, **kw)
+
+    class FEDetResponse_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        type = (schema, "FEDetResponse")
+        def __init__(self, pname, ofwhat=(), attributes=None, extend=False, restrict=False, **kw):
+            ns = ns0.FEDetResponse_Def.schema
+            TClist = [ZSI.TCnumbers.Iint(pname=(ns,"Concepto"), aname="_Concepto", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.Iint(pname=(ns,"DocTipo"), aname="_DocTipo", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.Ilong(pname=(ns,"DocNro"), aname="_DocNro", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.Ilong(pname=(ns,"CbteDesde"), aname="_CbteDesde", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.Ilong(pname=(ns,"CbteHasta"), aname="_CbteHasta", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"CbteFch"), aname="_CbteFch", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"Resultado"), aname="_Resultado", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), GTD("http://ar.gov.afip.dif.FEV1/","ArrayOfObs",lazy=False)(pname=(ns,"Observaciones"), aname="_Observaciones", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            self.attribute_typecode_dict = attributes or {}
+            if extend: TClist += ofwhat
+            if restrict: TClist = ofwhat
+            ZSI.TCcompound.ComplexType.__init__(self, None, TClist, pname=pname, inorder=0, **kw)
+            class Holder:
+                __metaclass__ = pyclass_type
+                typecode = self
+                def __init__(self):
+                    # pyclass
+                    self._Concepto = None
+                    self._DocTipo = None
+                    self._DocNro = None
+                    self._CbteDesde = None
+                    self._CbteHasta = None
+                    self._CbteFch = None
+                    self._Resultado = None
+                    self._Observaciones = None
+                    return
+            Holder.__name__ = "FEDetResponse_Holder"
+            self.pyclass = Holder
+
+    class ArrayOfObs_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        type = (schema, "ArrayOfObs")
+        def __init__(self, pname, ofwhat=(), attributes=None, extend=False, restrict=False, **kw):
+            ns = ns0.ArrayOfObs_Def.schema
+            TClist = [GTD("http://ar.gov.afip.dif.FEV1/","Obs",lazy=False)(pname=(ns,"Obs"), aname="_Obs", minOccurs=0, maxOccurs="unbounded", nillable=True, typed=False, encoded=kw.get("encoded"))]
+            self.attribute_typecode_dict = attributes or {}
+            if extend: TClist += ofwhat
+            if restrict: TClist = ofwhat
+            ZSI.TCcompound.ComplexType.__init__(self, None, TClist, pname=pname, inorder=0, **kw)
+            class Holder:
+                __metaclass__ = pyclass_type
+                typecode = self
+                def __init__(self):
+                    # pyclass
+                    self._Obs = []
+                    return
+            Holder.__name__ = "ArrayOfObs_Holder"
+            self.pyclass = Holder
+
+    class Obs_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        type = (schema, "Obs")
+        def __init__(self, pname, ofwhat=(), attributes=None, extend=False, restrict=False, **kw):
+            ns = ns0.Obs_Def.schema
+            TClist = [ZSI.TCnumbers.Iint(pname=(ns,"Code"), aname="_Code", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"Msg"), aname="_Msg", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            self.attribute_typecode_dict = attributes or {}
+            if extend: TClist += ofwhat
+            if restrict: TClist = ofwhat
+            ZSI.TCcompound.ComplexType.__init__(self, None, TClist, pname=pname, inorder=0, **kw)
+            class Holder:
+                __metaclass__ = pyclass_type
+                typecode = self
+                def __init__(self):
+                    # pyclass
+                    self._Code = None
+                    self._Msg = None
+                    return
+            Holder.__name__ = "Obs_Holder"
+            self.pyclass = Holder
+
+    class ArrayOfEvt_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        type = (schema, "ArrayOfEvt")
+        def __init__(self, pname, ofwhat=(), attributes=None, extend=False, restrict=False, **kw):
+            ns = ns0.ArrayOfEvt_Def.schema
+            TClist = [GTD("http://ar.gov.afip.dif.FEV1/","Evt",lazy=False)(pname=(ns,"Evt"), aname="_Evt", minOccurs=0, maxOccurs="unbounded", nillable=True, typed=False, encoded=kw.get("encoded"))]
+            self.attribute_typecode_dict = attributes or {}
+            if extend: TClist += ofwhat
+            if restrict: TClist = ofwhat
+            ZSI.TCcompound.ComplexType.__init__(self, None, TClist, pname=pname, inorder=0, **kw)
+            class Holder:
+                __metaclass__ = pyclass_type
+                typecode = self
+                def __init__(self):
+                    # pyclass
+                    self._Evt = []
+                    return
+            Holder.__name__ = "ArrayOfEvt_Holder"
+            self.pyclass = Holder
+
+    class Evt_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        type = (schema, "Evt")
+        def __init__(self, pname, ofwhat=(), attributes=None, extend=False, restrict=False, **kw):
+            ns = ns0.Evt_Def.schema
+            TClist = [ZSI.TCnumbers.Iint(pname=(ns,"Code"), aname="_Code", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"Msg"), aname="_Msg", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            self.attribute_typecode_dict = attributes or {}
+            if extend: TClist += ofwhat
+            if restrict: TClist = ofwhat
+            ZSI.TCcompound.ComplexType.__init__(self, None, TClist, pname=pname, inorder=0, **kw)
+            class Holder:
+                __metaclass__ = pyclass_type
+                typecode = self
+                def __init__(self):
+                    # pyclass
+                    self._Code = None
+                    self._Msg = None
+                    return
+            Holder.__name__ = "Evt_Holder"
+            self.pyclass = Holder
+
+    class ArrayOfErr_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        type = (schema, "ArrayOfErr")
+        def __init__(self, pname, ofwhat=(), attributes=None, extend=False, restrict=False, **kw):
+            ns = ns0.ArrayOfErr_Def.schema
+            TClist = [GTD("http://ar.gov.afip.dif.FEV1/","Err",lazy=False)(pname=(ns,"Err"), aname="_Err", minOccurs=0, maxOccurs="unbounded", nillable=True, typed=False, encoded=kw.get("encoded"))]
+            self.attribute_typecode_dict = attributes or {}
+            if extend: TClist += ofwhat
+            if restrict: TClist = ofwhat
+            ZSI.TCcompound.ComplexType.__init__(self, None, TClist, pname=pname, inorder=0, **kw)
+            class Holder:
+                __metaclass__ = pyclass_type
+                typecode = self
+                def __init__(self):
+                    # pyclass
+                    self._Err = []
+                    return
+            Holder.__name__ = "ArrayOfErr_Holder"
+            self.pyclass = Holder
+
+    class Err_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        type = (schema, "Err")
+        def __init__(self, pname, ofwhat=(), attributes=None, extend=False, restrict=False, **kw):
+            ns = ns0.Err_Def.schema
+            TClist = [ZSI.TCnumbers.Iint(pname=(ns,"Code"), aname="_Code", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"Msg"), aname="_Msg", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            self.attribute_typecode_dict = attributes or {}
+            if extend: TClist += ofwhat
+            if restrict: TClist = ofwhat
+            ZSI.TCcompound.ComplexType.__init__(self, None, TClist, pname=pname, inorder=0, **kw)
+            class Holder:
+                __metaclass__ = pyclass_type
+                typecode = self
+                def __init__(self):
+                    # pyclass
+                    self._Code = None
+                    self._Msg = None
+                    return
+            Holder.__name__ = "Err_Holder"
+            self.pyclass = Holder
+
+    class FERegXReqResponse_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        type = (schema, "FERegXReqResponse")
+        def __init__(self, pname, ofwhat=(), attributes=None, extend=False, restrict=False, **kw):
+            ns = ns0.FERegXReqResponse_Def.schema
+            TClist = [ZSI.TCnumbers.Iint(pname=(ns,"RegXReq"), aname="_RegXReq", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), GTD("http://ar.gov.afip.dif.FEV1/","ArrayOfErr",lazy=False)(pname=(ns,"Errors"), aname="_Errors", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), GTD("http://ar.gov.afip.dif.FEV1/","ArrayOfEvt",lazy=False)(pname=(ns,"Events"), aname="_Events", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            self.attribute_typecode_dict = attributes or {}
+            if extend: TClist += ofwhat
+            if restrict: TClist = ofwhat
+            ZSI.TCcompound.ComplexType.__init__(self, None, TClist, pname=pname, inorder=0, **kw)
+            class Holder:
+                __metaclass__ = pyclass_type
+                typecode = self
+                def __init__(self):
+                    # pyclass
+                    self._RegXReq = None
+                    self._Errors = None
+                    self._Events = None
+                    return
+            Holder.__name__ = "FERegXReqResponse_Holder"
             self.pyclass = Holder
 
     class DummyResponse_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
-        schema = "http://ar.gov.afip.dif.facturaelectronica/"
+        schema = "http://ar.gov.afip.dif.FEV1/"
         type = (schema, "DummyResponse")
         def __init__(self, pname, ofwhat=(), attributes=None, extend=False, restrict=False, **kw):
             ns = ns0.DummyResponse_Def.schema
-            TClist = [ZSI.TC.String(pname=(ns,"appserver"), aname="_appserver", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"dbserver"), aname="_dbserver", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"authserver"), aname="_authserver", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            TClist = [ZSI.TC.String(pname=(ns,"AppServer"), aname="_AppServer", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"DbServer"), aname="_DbServer", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"AuthServer"), aname="_AuthServer", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
             self.attribute_typecode_dict = attributes or {}
             if extend: TClist += ofwhat
             if restrict: TClist = ofwhat
@@ -118,19 +637,19 @@ class ns0:
                 typecode = self
                 def __init__(self):
                     # pyclass
-                    self._appserver = None
-                    self._dbserver = None
-                    self._authserver = None
+                    self._AppServer = None
+                    self._DbServer = None
+                    self._AuthServer = None
                     return
             Holder.__name__ = "DummyResponse_Holder"
             self.pyclass = Holder
 
-    class FELastCMPtype_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
-        schema = "http://ar.gov.afip.dif.facturaelectronica/"
-        type = (schema, "FELastCMPtype")
+    class FERecuperaLastCbteResponse_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        type = (schema, "FERecuperaLastCbteResponse")
         def __init__(self, pname, ofwhat=(), attributes=None, extend=False, restrict=False, **kw):
-            ns = ns0.FELastCMPtype_Def.schema
-            TClist = [ZSI.TCnumbers.Iint(pname=(ns,"PtoVta"), aname="_PtoVta", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.Iint(pname=(ns,"TipoCbte"), aname="_TipoCbte", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            ns = ns0.FERecuperaLastCbteResponse_Def.schema
+            TClist = [ZSI.TCnumbers.Iint(pname=(ns,"PtoVta"), aname="_PtoVta", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.Iint(pname=(ns,"CbteTipo"), aname="_CbteTipo", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.Iint(pname=(ns,"CbteNro"), aname="_CbteNro", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), GTD("http://ar.gov.afip.dif.FEV1/","ArrayOfErr",lazy=False)(pname=(ns,"Errors"), aname="_Errors", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), GTD("http://ar.gov.afip.dif.FEV1/","ArrayOfEvt",lazy=False)(pname=(ns,"Events"), aname="_Events", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
             self.attribute_typecode_dict = attributes or {}
             if extend: TClist += ofwhat
             if restrict: TClist = ofwhat
@@ -141,17 +660,20 @@ class ns0:
                 def __init__(self):
                     # pyclass
                     self._PtoVta = None
-                    self._TipoCbte = None
+                    self._CbteTipo = None
+                    self._CbteNro = None
+                    self._Errors = None
+                    self._Events = None
                     return
-            Holder.__name__ = "FELastCMPtype_Holder"
+            Holder.__name__ = "FERecuperaLastCbteResponse_Holder"
             self.pyclass = Holder
 
-    class FERecuperaLastCMPResponse_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
-        schema = "http://ar.gov.afip.dif.facturaelectronica/"
-        type = (schema, "FERecuperaLastCMPResponse")
+    class FECompConsultaReq_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        type = (schema, "FECompConsultaReq")
         def __init__(self, pname, ofwhat=(), attributes=None, extend=False, restrict=False, **kw):
-            ns = ns0.FERecuperaLastCMPResponse_Def.schema
-            TClist = [ZSI.TCnumbers.Iint(pname=(ns,"cbte_nro"), aname="_cbte_nro", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), GTD("http://ar.gov.afip.dif.facturaelectronica/","vError",lazy=False)(pname=(ns,"RError"), aname="_RError", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            ns = ns0.FECompConsultaReq_Def.schema
+            TClist = [ZSI.TCnumbers.Iint(pname=(ns,"CbteTipo"), aname="_CbteTipo", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.Ilong(pname=(ns,"CbteNro"), aname="_CbteNro", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.Iint(pname=(ns,"PtoVta"), aname="_PtoVta", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
             self.attribute_typecode_dict = attributes or {}
             if extend: TClist += ofwhat
             if restrict: TClist = ofwhat
@@ -161,18 +683,19 @@ class ns0:
                 typecode = self
                 def __init__(self):
                     # pyclass
-                    self._cbte_nro = None
-                    self._RError = None
+                    self._CbteTipo = None
+                    self._CbteNro = None
+                    self._PtoVta = None
                     return
-            Holder.__name__ = "FERecuperaLastCMPResponse_Holder"
+            Holder.__name__ = "FECompConsultaReq_Holder"
             self.pyclass = Holder
 
-    class FEUltNroResponse_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
-        schema = "http://ar.gov.afip.dif.facturaelectronica/"
-        type = (schema, "FEUltNroResponse")
+    class FECompConsultaResponse_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        type = (schema, "FECompConsultaResponse")
         def __init__(self, pname, ofwhat=(), attributes=None, extend=False, restrict=False, **kw):
-            ns = ns0.FEUltNroResponse_Def.schema
-            TClist = [GTD("http://ar.gov.afip.dif.facturaelectronica/","UltNroResponse",lazy=False)(pname=(ns,"nro"), aname="_nro", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), GTD("http://ar.gov.afip.dif.facturaelectronica/","vError",lazy=False)(pname=(ns,"RError"), aname="_RError", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            ns = ns0.FECompConsultaResponse_Def.schema
+            TClist = [GTD("http://ar.gov.afip.dif.FEV1/","FECompConsResponse",lazy=False)(pname=(ns,"ResultGet"), aname="_ResultGet", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), GTD("http://ar.gov.afip.dif.FEV1/","ArrayOfErr",lazy=False)(pname=(ns,"Errors"), aname="_Errors", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), GTD("http://ar.gov.afip.dif.FEV1/","ArrayOfEvt",lazy=False)(pname=(ns,"Events"), aname="_Events", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
             self.attribute_typecode_dict = attributes or {}
             if extend: TClist += ofwhat
             if restrict: TClist = ofwhat
@@ -182,18 +705,36 @@ class ns0:
                 typecode = self
                 def __init__(self):
                     # pyclass
-                    self._nro = None
-                    self._RError = None
+                    self._ResultGet = None
+                    self._Errors = None
+                    self._Events = None
                     return
-            Holder.__name__ = "FEUltNroResponse_Holder"
+            Holder.__name__ = "FECompConsultaResponse_Holder"
             self.pyclass = Holder
 
-    class UltNroResponse_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
-        schema = "http://ar.gov.afip.dif.facturaelectronica/"
-        type = (schema, "UltNroResponse")
+    class FECompConsResponse_Def(TypeDefinition):
+        #complexType/complexContent extension
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        type = (schema, "FECompConsResponse")
+        def __init__(self, pname, ofwhat=(), extend=False, restrict=False, attributes=None, **kw):
+            ns = ns0.FECompConsResponse_Def.schema
+            TClist = [ZSI.TC.String(pname=(ns,"Resultado"), aname="_Resultado", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"CodAutorizacion"), aname="_CodAutorizacion", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"EmisionTipo"), aname="_EmisionTipo", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"FchVto"), aname="_FchVto", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"FchProceso"), aname="_FchProceso", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), GTD("http://ar.gov.afip.dif.FEV1/","ArrayOfObs",lazy=False)(pname=(ns,"Observaciones"), aname="_Observaciones", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.Iint(pname=(ns,"PtoVta"), aname="_PtoVta", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.Iint(pname=(ns,"CbteTipo"), aname="_CbteTipo", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            attributes = self.attribute_typecode_dict = attributes or {}
+            if extend: TClist += ofwhat
+            if restrict: TClist = ofwhat
+            if ns0.FECAEDetRequest_Def not in ns0.FECompConsResponse_Def.__bases__:
+                bases = list(ns0.FECompConsResponse_Def.__bases__)
+                bases.insert(0, ns0.FECAEDetRequest_Def)
+                ns0.FECompConsResponse_Def.__bases__ = tuple(bases)
+
+            ns0.FECAEDetRequest_Def.__init__(self, pname, ofwhat=TClist, extend=True, attributes=attributes, **kw)
+
+    class FECAEARequest_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        type = (schema, "FECAEARequest")
         def __init__(self, pname, ofwhat=(), attributes=None, extend=False, restrict=False, **kw):
-            ns = ns0.UltNroResponse_Def.schema
-            TClist = [ZSI.TCnumbers.Ilong(pname=(ns,"value"), aname="_value", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            ns = ns0.FECAEARequest_Def.schema
+            TClist = [GTD("http://ar.gov.afip.dif.FEV1/","FECAEACabRequest",lazy=False)(pname=(ns,"FeCabReq"), aname="_FeCabReq", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), GTD("http://ar.gov.afip.dif.FEV1/","ArrayOfFECAEADetRequest",lazy=False)(pname=(ns,"FeDetReq"), aname="_FeDetReq", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
             self.attribute_typecode_dict = attributes or {}
             if extend: TClist += ofwhat
             if restrict: TClist = ofwhat
@@ -203,17 +744,35 @@ class ns0:
                 typecode = self
                 def __init__(self):
                     # pyclass
-                    self._value = None
+                    self._FeCabReq = None
+                    self._FeDetReq = None
                     return
-            Holder.__name__ = "UltNroResponse_Holder"
+            Holder.__name__ = "FECAEARequest_Holder"
             self.pyclass = Holder
 
-    class FERequest_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
-        schema = "http://ar.gov.afip.dif.facturaelectronica/"
-        type = (schema, "FERequest")
+    class FECAEACabRequest_Def(TypeDefinition):
+        #complexType/complexContent extension
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        type = (schema, "FECAEACabRequest")
+        def __init__(self, pname, ofwhat=(), extend=False, restrict=False, attributes=None, **kw):
+            ns = ns0.FECAEACabRequest_Def.schema
+            TClist = []
+            attributes = self.attribute_typecode_dict = attributes or {}
+            if extend: TClist += ofwhat
+            if restrict: TClist = ofwhat
+            if ns0.FECabRequest_Def not in ns0.FECAEACabRequest_Def.__bases__:
+                bases = list(ns0.FECAEACabRequest_Def.__bases__)
+                bases.insert(0, ns0.FECabRequest_Def)
+                ns0.FECAEACabRequest_Def.__bases__ = tuple(bases)
+
+            ns0.FECabRequest_Def.__init__(self, pname, ofwhat=TClist, extend=True, attributes=attributes, **kw)
+
+    class ArrayOfFECAEADetRequest_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        type = (schema, "ArrayOfFECAEADetRequest")
         def __init__(self, pname, ofwhat=(), attributes=None, extend=False, restrict=False, **kw):
-            ns = ns0.FERequest_Def.schema
-            TClist = [GTD("http://ar.gov.afip.dif.facturaelectronica/","FECabeceraRequest",lazy=False)(pname=(ns,"Fecr"), aname="_Fecr", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), GTD("http://ar.gov.afip.dif.facturaelectronica/","ArrayOfFEDetalleRequest",lazy=False)(pname=(ns,"Fedr"), aname="_Fedr", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            ns = ns0.ArrayOfFECAEADetRequest_Def.schema
+            TClist = [GTD("http://ar.gov.afip.dif.FEV1/","FECAEADetRequest",lazy=False)(pname=(ns,"FECAEADetRequest"), aname="_FECAEADetRequest", minOccurs=0, maxOccurs="unbounded", nillable=True, typed=False, encoded=kw.get("encoded"))]
             self.attribute_typecode_dict = attributes or {}
             if extend: TClist += ofwhat
             if restrict: TClist = ofwhat
@@ -223,18 +782,34 @@ class ns0:
                 typecode = self
                 def __init__(self):
                     # pyclass
-                    self._Fecr = None
-                    self._Fedr = None
+                    self._FECAEADetRequest = []
                     return
-            Holder.__name__ = "FERequest_Holder"
+            Holder.__name__ = "ArrayOfFECAEADetRequest_Holder"
             self.pyclass = Holder
 
-    class FECabeceraRequest_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
-        schema = "http://ar.gov.afip.dif.facturaelectronica/"
-        type = (schema, "FECabeceraRequest")
+    class FECAEADetRequest_Def(TypeDefinition):
+        #complexType/complexContent extension
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        type = (schema, "FECAEADetRequest")
+        def __init__(self, pname, ofwhat=(), extend=False, restrict=False, attributes=None, **kw):
+            ns = ns0.FECAEADetRequest_Def.schema
+            TClist = [ZSI.TC.String(pname=(ns,"CAEA"), aname="_CAEA", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            attributes = self.attribute_typecode_dict = attributes or {}
+            if extend: TClist += ofwhat
+            if restrict: TClist = ofwhat
+            if ns0.FEDetRequest_Def not in ns0.FECAEADetRequest_Def.__bases__:
+                bases = list(ns0.FECAEADetRequest_Def.__bases__)
+                bases.insert(0, ns0.FEDetRequest_Def)
+                ns0.FECAEADetRequest_Def.__bases__ = tuple(bases)
+
+            ns0.FEDetRequest_Def.__init__(self, pname, ofwhat=TClist, extend=True, attributes=attributes, **kw)
+
+    class FECAEAResponse_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        type = (schema, "FECAEAResponse")
         def __init__(self, pname, ofwhat=(), attributes=None, extend=False, restrict=False, **kw):
-            ns = ns0.FECabeceraRequest_Def.schema
-            TClist = [ZSI.TCnumbers.Ilong(pname=(ns,"id"), aname="_id", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.Iint(pname=(ns,"cantidadreg"), aname="_cantidadreg", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.Iint(pname=(ns,"presta_serv"), aname="_presta_serv", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            ns = ns0.FECAEAResponse_Def.schema
+            TClist = [GTD("http://ar.gov.afip.dif.FEV1/","FECAEACabResponse",lazy=False)(pname=(ns,"FeCabResp"), aname="_FeCabResp", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), GTD("http://ar.gov.afip.dif.FEV1/","ArrayOfFECAEADetResponse",lazy=False)(pname=(ns,"FeDetResp"), aname="_FeDetResp", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), GTD("http://ar.gov.afip.dif.FEV1/","ArrayOfEvt",lazy=False)(pname=(ns,"Events"), aname="_Events", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), GTD("http://ar.gov.afip.dif.FEV1/","ArrayOfErr",lazy=False)(pname=(ns,"Errors"), aname="_Errors", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
             self.attribute_typecode_dict = attributes or {}
             if extend: TClist += ofwhat
             if restrict: TClist = ofwhat
@@ -244,19 +819,37 @@ class ns0:
                 typecode = self
                 def __init__(self):
                     # pyclass
-                    self._id = None
-                    self._cantidadreg = None
-                    self._presta_serv = None
+                    self._FeCabResp = None
+                    self._FeDetResp = None
+                    self._Events = None
+                    self._Errors = None
                     return
-            Holder.__name__ = "FECabeceraRequest_Holder"
+            Holder.__name__ = "FECAEAResponse_Holder"
             self.pyclass = Holder
 
-    class ArrayOfFEDetalleRequest_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
-        schema = "http://ar.gov.afip.dif.facturaelectronica/"
-        type = (schema, "ArrayOfFEDetalleRequest")
+    class FECAEACabResponse_Def(TypeDefinition):
+        #complexType/complexContent extension
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        type = (schema, "FECAEACabResponse")
+        def __init__(self, pname, ofwhat=(), extend=False, restrict=False, attributes=None, **kw):
+            ns = ns0.FECAEACabResponse_Def.schema
+            TClist = []
+            attributes = self.attribute_typecode_dict = attributes or {}
+            if extend: TClist += ofwhat
+            if restrict: TClist = ofwhat
+            if ns0.FECabResponse_Def not in ns0.FECAEACabResponse_Def.__bases__:
+                bases = list(ns0.FECAEACabResponse_Def.__bases__)
+                bases.insert(0, ns0.FECabResponse_Def)
+                ns0.FECAEACabResponse_Def.__bases__ = tuple(bases)
+
+            ns0.FECabResponse_Def.__init__(self, pname, ofwhat=TClist, extend=True, attributes=attributes, **kw)
+
+    class ArrayOfFECAEADetResponse_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        type = (schema, "ArrayOfFECAEADetResponse")
         def __init__(self, pname, ofwhat=(), attributes=None, extend=False, restrict=False, **kw):
-            ns = ns0.ArrayOfFEDetalleRequest_Def.schema
-            TClist = [GTD("http://ar.gov.afip.dif.facturaelectronica/","FEDetalleRequest",lazy=False)(pname=(ns,"FEDetalleRequest"), aname="_FEDetalleRequest", minOccurs=0, maxOccurs="unbounded", nillable=True, typed=False, encoded=kw.get("encoded"))]
+            ns = ns0.ArrayOfFECAEADetResponse_Def.schema
+            TClist = [GTD("http://ar.gov.afip.dif.FEV1/","FECAEADetResponse",lazy=False)(pname=(ns,"FECAEADetResponse"), aname="_FECAEADetResponse", minOccurs=0, maxOccurs="unbounded", nillable=True, typed=False, encoded=kw.get("encoded"))]
             self.attribute_typecode_dict = attributes or {}
             if extend: TClist += ofwhat
             if restrict: TClist = ofwhat
@@ -266,17 +859,34 @@ class ns0:
                 typecode = self
                 def __init__(self):
                     # pyclass
-                    self._FEDetalleRequest = []
+                    self._FECAEADetResponse = []
                     return
-            Holder.__name__ = "ArrayOfFEDetalleRequest_Holder"
+            Holder.__name__ = "ArrayOfFECAEADetResponse_Holder"
             self.pyclass = Holder
 
-    class FEDetalleRequest_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
-        schema = "http://ar.gov.afip.dif.facturaelectronica/"
-        type = (schema, "FEDetalleRequest")
+    class FECAEADetResponse_Def(TypeDefinition):
+        #complexType/complexContent extension
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        type = (schema, "FECAEADetResponse")
+        def __init__(self, pname, ofwhat=(), extend=False, restrict=False, attributes=None, **kw):
+            ns = ns0.FECAEADetResponse_Def.schema
+            TClist = [ZSI.TC.String(pname=(ns,"CAEA"), aname="_CAEA", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            attributes = self.attribute_typecode_dict = attributes or {}
+            if extend: TClist += ofwhat
+            if restrict: TClist = ofwhat
+            if ns0.FEDetResponse_Def not in ns0.FECAEADetResponse_Def.__bases__:
+                bases = list(ns0.FECAEADetResponse_Def.__bases__)
+                bases.insert(0, ns0.FEDetResponse_Def)
+                ns0.FECAEADetResponse_Def.__bases__ = tuple(bases)
+
+            ns0.FEDetResponse_Def.__init__(self, pname, ofwhat=TClist, extend=True, attributes=attributes, **kw)
+
+    class FECAEAGetResponse_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        type = (schema, "FECAEAGetResponse")
         def __init__(self, pname, ofwhat=(), attributes=None, extend=False, restrict=False, **kw):
-            ns = ns0.FEDetalleRequest_Def.schema
-            TClist = [ZSI.TCnumbers.Iint(pname=(ns,"tipo_doc"), aname="_tipo_doc", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.Ilong(pname=(ns,"nro_doc"), aname="_nro_doc", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.Iint(pname=(ns,"tipo_cbte"), aname="_tipo_cbte", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.Iint(pname=(ns,"punto_vta"), aname="_punto_vta", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.Ilong(pname=(ns,"cbt_desde"), aname="_cbt_desde", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.Ilong(pname=(ns,"cbt_hasta"), aname="_cbt_hasta", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.FPdouble(pname=(ns,"imp_total"), aname="_imp_total", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.FPdouble(pname=(ns,"imp_tot_conc"), aname="_imp_tot_conc", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.FPdouble(pname=(ns,"imp_neto"), aname="_imp_neto", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.FPdouble(pname=(ns,"impto_liq"), aname="_impto_liq", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.FPdouble(pname=(ns,"impto_liq_rni"), aname="_impto_liq_rni", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.FPdouble(pname=(ns,"imp_op_ex"), aname="_imp_op_ex", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"fecha_cbte"), aname="_fecha_cbte", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"fecha_serv_desde"), aname="_fecha_serv_desde", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"fecha_serv_hasta"), aname="_fecha_serv_hasta", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"fecha_venc_pago"), aname="_fecha_venc_pago", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            ns = ns0.FECAEAGetResponse_Def.schema
+            TClist = [GTD("http://ar.gov.afip.dif.FEV1/","FECAEAGet",lazy=False)(pname=(ns,"ResultGet"), aname="_ResultGet", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), GTD("http://ar.gov.afip.dif.FEV1/","ArrayOfErr",lazy=False)(pname=(ns,"Errors"), aname="_Errors", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), GTD("http://ar.gov.afip.dif.FEV1/","ArrayOfEvt",lazy=False)(pname=(ns,"Events"), aname="_Events", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
             self.attribute_typecode_dict = attributes or {}
             if extend: TClist += ofwhat
             if restrict: TClist = ofwhat
@@ -286,32 +896,19 @@ class ns0:
                 typecode = self
                 def __init__(self):
                     # pyclass
-                    self._tipo_doc = None
-                    self._nro_doc = None
-                    self._tipo_cbte = None
-                    self._punto_vta = None
-                    self._cbt_desde = None
-                    self._cbt_hasta = None
-                    self._imp_total = None
-                    self._imp_tot_conc = None
-                    self._imp_neto = None
-                    self._impto_liq = None
-                    self._impto_liq_rni = None
-                    self._imp_op_ex = None
-                    self._fecha_cbte = None
-                    self._fecha_serv_desde = None
-                    self._fecha_serv_hasta = None
-                    self._fecha_venc_pago = None
+                    self._ResultGet = None
+                    self._Errors = None
+                    self._Events = None
                     return
-            Holder.__name__ = "FEDetalleRequest_Holder"
+            Holder.__name__ = "FECAEAGetResponse_Holder"
             self.pyclass = Holder
 
-    class FEResponse_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
-        schema = "http://ar.gov.afip.dif.facturaelectronica/"
-        type = (schema, "FEResponse")
+    class FECAEAGet_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        type = (schema, "FECAEAGet")
         def __init__(self, pname, ofwhat=(), attributes=None, extend=False, restrict=False, **kw):
-            ns = ns0.FEResponse_Def.schema
-            TClist = [GTD("http://ar.gov.afip.dif.facturaelectronica/","FECabeceraResponse",lazy=False)(pname=(ns,"FecResp"), aname="_FecResp", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), GTD("http://ar.gov.afip.dif.facturaelectronica/","ArrayOfFEDetalleResponse",lazy=False)(pname=(ns,"FedResp"), aname="_FedResp", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), GTD("http://ar.gov.afip.dif.facturaelectronica/","vError",lazy=False)(pname=(ns,"RError"), aname="_RError", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            ns = ns0.FECAEAGet_Def.schema
+            TClist = [ZSI.TC.String(pname=(ns,"CAEA"), aname="_CAEA", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.Iint(pname=(ns,"Periodo"), aname="_Periodo", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.Ishort(pname=(ns,"Orden"), aname="_Orden", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"FchVigDesde"), aname="_FchVigDesde", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"FchVigHasta"), aname="_FchVigHasta", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"FchTopeInf"), aname="_FchTopeInf", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"FchProceso"), aname="_FchProceso", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
             self.attribute_typecode_dict = attributes or {}
             if extend: TClist += ofwhat
             if restrict: TClist = ofwhat
@@ -321,19 +918,23 @@ class ns0:
                 typecode = self
                 def __init__(self):
                     # pyclass
-                    self._FecResp = None
-                    self._FedResp = None
-                    self._RError = None
+                    self._CAEA = None
+                    self._Periodo = None
+                    self._Orden = None
+                    self._FchVigDesde = None
+                    self._FchVigHasta = None
+                    self._FchTopeInf = None
+                    self._FchProceso = None
                     return
-            Holder.__name__ = "FEResponse_Holder"
+            Holder.__name__ = "FECAEAGet_Holder"
             self.pyclass = Holder
 
-    class FECabeceraResponse_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
-        schema = "http://ar.gov.afip.dif.facturaelectronica/"
-        type = (schema, "FECabeceraResponse")
+    class FECAEASinMovConsResponse_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        type = (schema, "FECAEASinMovConsResponse")
         def __init__(self, pname, ofwhat=(), attributes=None, extend=False, restrict=False, **kw):
-            ns = ns0.FECabeceraResponse_Def.schema
-            TClist = [ZSI.TCnumbers.Ilong(pname=(ns,"id"), aname="_id", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.Ilong(pname=(ns,"cuit"), aname="_cuit", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"fecha_cae"), aname="_fecha_cae", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.Iint(pname=(ns,"cantidadreg"), aname="_cantidadreg", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"resultado"), aname="_resultado", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"motivo"), aname="_motivo", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"reproceso"), aname="_reproceso", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.Iint(pname=(ns,"presta_serv"), aname="_presta_serv", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            ns = ns0.FECAEASinMovConsResponse_Def.schema
+            TClist = [GTD("http://ar.gov.afip.dif.FEV1/","ArrayOfFECAEASinMov",lazy=False)(pname=(ns,"ResultGet"), aname="_ResultGet", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), GTD("http://ar.gov.afip.dif.FEV1/","ArrayOfErr",lazy=False)(pname=(ns,"Errors"), aname="_Errors", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), GTD("http://ar.gov.afip.dif.FEV1/","ArrayOfEvt",lazy=False)(pname=(ns,"Events"), aname="_Events", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
             self.attribute_typecode_dict = attributes or {}
             if extend: TClist += ofwhat
             if restrict: TClist = ofwhat
@@ -343,24 +944,19 @@ class ns0:
                 typecode = self
                 def __init__(self):
                     # pyclass
-                    self._id = None
-                    self._cuit = None
-                    self._fecha_cae = None
-                    self._cantidadreg = None
-                    self._resultado = None
-                    self._motivo = None
-                    self._reproceso = None
-                    self._presta_serv = None
+                    self._ResultGet = None
+                    self._Errors = None
+                    self._Events = None
                     return
-            Holder.__name__ = "FECabeceraResponse_Holder"
+            Holder.__name__ = "FECAEASinMovConsResponse_Holder"
             self.pyclass = Holder
 
-    class ArrayOfFEDetalleResponse_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
-        schema = "http://ar.gov.afip.dif.facturaelectronica/"
-        type = (schema, "ArrayOfFEDetalleResponse")
+    class ArrayOfFECAEASinMov_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        type = (schema, "ArrayOfFECAEASinMov")
         def __init__(self, pname, ofwhat=(), attributes=None, extend=False, restrict=False, **kw):
-            ns = ns0.ArrayOfFEDetalleResponse_Def.schema
-            TClist = [GTD("http://ar.gov.afip.dif.facturaelectronica/","FEDetalleResponse",lazy=False)(pname=(ns,"FEDetalleResponse"), aname="_FEDetalleResponse", minOccurs=0, maxOccurs="unbounded", nillable=True, typed=False, encoded=kw.get("encoded"))]
+            ns = ns0.ArrayOfFECAEASinMov_Def.schema
+            TClist = [GTD("http://ar.gov.afip.dif.FEV1/","FECAEASinMov",lazy=False)(pname=(ns,"FECAEASinMov"), aname="_FECAEASinMov", minOccurs=0, maxOccurs="unbounded", nillable=True, typed=False, encoded=kw.get("encoded"))]
             self.attribute_typecode_dict = attributes or {}
             if extend: TClist += ofwhat
             if restrict: TClist = ofwhat
@@ -370,17 +966,17 @@ class ns0:
                 typecode = self
                 def __init__(self):
                     # pyclass
-                    self._FEDetalleResponse = []
+                    self._FECAEASinMov = []
                     return
-            Holder.__name__ = "ArrayOfFEDetalleResponse_Holder"
+            Holder.__name__ = "ArrayOfFECAEASinMov_Holder"
             self.pyclass = Holder
 
-    class FEDetalleResponse_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
-        schema = "http://ar.gov.afip.dif.facturaelectronica/"
-        type = (schema, "FEDetalleResponse")
+    class FECAEASinMov_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        type = (schema, "FECAEASinMov")
         def __init__(self, pname, ofwhat=(), attributes=None, extend=False, restrict=False, **kw):
-            ns = ns0.FEDetalleResponse_Def.schema
-            TClist = [ZSI.TCnumbers.Iint(pname=(ns,"tipo_doc"), aname="_tipo_doc", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.Ilong(pname=(ns,"nro_doc"), aname="_nro_doc", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.Iint(pname=(ns,"tipo_cbte"), aname="_tipo_cbte", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.Iint(pname=(ns,"punto_vta"), aname="_punto_vta", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.Ilong(pname=(ns,"cbt_desde"), aname="_cbt_desde", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.Ilong(pname=(ns,"cbt_hasta"), aname="_cbt_hasta", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.FPdouble(pname=(ns,"imp_total"), aname="_imp_total", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.FPdouble(pname=(ns,"imp_tot_conc"), aname="_imp_tot_conc", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.FPdouble(pname=(ns,"imp_neto"), aname="_imp_neto", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.FPdouble(pname=(ns,"impto_liq"), aname="_impto_liq", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.FPdouble(pname=(ns,"impto_liq_rni"), aname="_impto_liq_rni", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.FPdouble(pname=(ns,"imp_op_ex"), aname="_imp_op_ex", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"resultado"), aname="_resultado", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"cae"), aname="_cae", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"fecha_cbte"), aname="_fecha_cbte", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"fecha_vto"), aname="_fecha_vto", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"motivo"), aname="_motivo", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"fecha_serv_desde"), aname="_fecha_serv_desde", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"fecha_serv_hasta"), aname="_fecha_serv_hasta", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"fecha_venc_pago"), aname="_fecha_venc_pago", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            ns = ns0.FECAEASinMov_Def.schema
+            TClist = [ZSI.TC.String(pname=(ns,"CAEA"), aname="_CAEA", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"FchProceso"), aname="_FchProceso", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.Iint(pname=(ns,"PtoVta"), aname="_PtoVta", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
             self.attribute_typecode_dict = attributes or {}
             if extend: TClist += ofwhat
             if restrict: TClist = ofwhat
@@ -390,36 +986,36 @@ class ns0:
                 typecode = self
                 def __init__(self):
                     # pyclass
-                    self._tipo_doc = None
-                    self._nro_doc = None
-                    self._tipo_cbte = None
-                    self._punto_vta = None
-                    self._cbt_desde = None
-                    self._cbt_hasta = None
-                    self._imp_total = None
-                    self._imp_tot_conc = None
-                    self._imp_neto = None
-                    self._impto_liq = None
-                    self._impto_liq_rni = None
-                    self._imp_op_ex = None
-                    self._resultado = None
-                    self._cae = None
-                    self._fecha_cbte = None
-                    self._fecha_vto = None
-                    self._motivo = None
-                    self._fecha_serv_desde = None
-                    self._fecha_serv_hasta = None
-                    self._fecha_venc_pago = None
+                    self._CAEA = None
+                    self._FchProceso = None
+                    self._PtoVta = None
                     return
-            Holder.__name__ = "FEDetalleResponse_Holder"
+            Holder.__name__ = "FECAEASinMov_Holder"
             self.pyclass = Holder
 
-    class FEConsultaCAEReq_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
-        schema = "http://ar.gov.afip.dif.facturaelectronica/"
-        type = (schema, "FEConsultaCAEReq")
+    class FECAEASinMovResponse_Def(TypeDefinition):
+        #complexType/complexContent extension
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        type = (schema, "FECAEASinMovResponse")
+        def __init__(self, pname, ofwhat=(), extend=False, restrict=False, attributes=None, **kw):
+            ns = ns0.FECAEASinMovResponse_Def.schema
+            TClist = [ZSI.TC.String(pname=(ns,"Resultado"), aname="_Resultado", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), GTD("http://ar.gov.afip.dif.FEV1/","ArrayOfErr",lazy=False)(pname=(ns,"Errors"), aname="_Errors", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), GTD("http://ar.gov.afip.dif.FEV1/","ArrayOfEvt",lazy=False)(pname=(ns,"Events"), aname="_Events", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            attributes = self.attribute_typecode_dict = attributes or {}
+            if extend: TClist += ofwhat
+            if restrict: TClist = ofwhat
+            if ns0.FECAEASinMov_Def not in ns0.FECAEASinMovResponse_Def.__bases__:
+                bases = list(ns0.FECAEASinMovResponse_Def.__bases__)
+                bases.insert(0, ns0.FECAEASinMov_Def)
+                ns0.FECAEASinMovResponse_Def.__bases__ = tuple(bases)
+
+            ns0.FECAEASinMov_Def.__init__(self, pname, ofwhat=TClist, extend=True, attributes=attributes, **kw)
+
+    class FECotizacionResponse_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        type = (schema, "FECotizacionResponse")
         def __init__(self, pname, ofwhat=(), attributes=None, extend=False, restrict=False, **kw):
-            ns = ns0.FEConsultaCAEReq_Def.schema
-            TClist = [ZSI.TCnumbers.Ilong(pname=(ns,"cuit_emisor"), aname="_cuit_emisor", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.Iint(pname=(ns,"tipo_cbte"), aname="_tipo_cbte", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.Iint(pname=(ns,"punto_vta"), aname="_punto_vta", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.Ilong(pname=(ns,"cbt_nro"), aname="_cbt_nro", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.FPdouble(pname=(ns,"imp_total"), aname="_imp_total", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"cae"), aname="_cae", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"fecha_cbte"), aname="_fecha_cbte", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            ns = ns0.FECotizacionResponse_Def.schema
+            TClist = [GTD("http://ar.gov.afip.dif.FEV1/","Cotizacion",lazy=False)(pname=(ns,"ResultGet"), aname="_ResultGet", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), GTD("http://ar.gov.afip.dif.FEV1/","ArrayOfErr",lazy=False)(pname=(ns,"Errors"), aname="_Errors", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), GTD("http://ar.gov.afip.dif.FEV1/","ArrayOfEvt",lazy=False)(pname=(ns,"Events"), aname="_Events", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
             self.attribute_typecode_dict = attributes or {}
             if extend: TClist += ofwhat
             if restrict: TClist = ofwhat
@@ -429,23 +1025,19 @@ class ns0:
                 typecode = self
                 def __init__(self):
                     # pyclass
-                    self._cuit_emisor = None
-                    self._tipo_cbte = None
-                    self._punto_vta = None
-                    self._cbt_nro = None
-                    self._imp_total = None
-                    self._cae = None
-                    self._fecha_cbte = None
+                    self._ResultGet = None
+                    self._Errors = None
+                    self._Events = None
                     return
-            Holder.__name__ = "FEConsultaCAEReq_Holder"
+            Holder.__name__ = "FECotizacionResponse_Holder"
             self.pyclass = Holder
 
-    class FEConsultaCAEResponse_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
-        schema = "http://ar.gov.afip.dif.facturaelectronica/"
-        type = (schema, "FEConsultaCAEResponse")
+    class Cotizacion_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        type = (schema, "Cotizacion")
         def __init__(self, pname, ofwhat=(), attributes=None, extend=False, restrict=False, **kw):
-            ns = ns0.FEConsultaCAEResponse_Def.schema
-            TClist = [ZSI.TCnumbers.Iint(pname=(ns,"Resultado"), aname="_Resultado", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), GTD("http://ar.gov.afip.dif.facturaelectronica/","vError",lazy=False)(pname=(ns,"RError"), aname="_RError", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            ns = ns0.Cotizacion_Def.schema
+            TClist = [ZSI.TC.String(pname=(ns,"MonId"), aname="_MonId", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.FPdouble(pname=(ns,"MonCotiz"), aname="_MonCotiz", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"FchCotiz"), aname="_FchCotiz", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
             self.attribute_typecode_dict = attributes or {}
             if extend: TClist += ofwhat
             if restrict: TClist = ofwhat
@@ -455,20 +1047,541 @@ class ns0:
                 typecode = self
                 def __init__(self):
                     # pyclass
-                    self._Resultado = None
-                    self._RError = None
+                    self._MonId = None
+                    self._MonCotiz = None
+                    self._FchCotiz = None
                     return
-            Holder.__name__ = "FEConsultaCAEResponse_Holder"
+            Holder.__name__ = "Cotizacion_Holder"
             self.pyclass = Holder
 
-    class FERecuperaQTYRequest_Dec(ZSI.TCcompound.ComplexType, ElementDeclaration):
-        literal = "FERecuperaQTYRequest"
-        schema = "http://ar.gov.afip.dif.facturaelectronica/"
+    class FETributoResponse_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        type = (schema, "FETributoResponse")
+        def __init__(self, pname, ofwhat=(), attributes=None, extend=False, restrict=False, **kw):
+            ns = ns0.FETributoResponse_Def.schema
+            TClist = [GTD("http://ar.gov.afip.dif.FEV1/","ArrayOfTributoTipo",lazy=False)(pname=(ns,"ResultGet"), aname="_ResultGet", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), GTD("http://ar.gov.afip.dif.FEV1/","ArrayOfErr",lazy=False)(pname=(ns,"Errors"), aname="_Errors", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), GTD("http://ar.gov.afip.dif.FEV1/","ArrayOfEvt",lazy=False)(pname=(ns,"Events"), aname="_Events", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            self.attribute_typecode_dict = attributes or {}
+            if extend: TClist += ofwhat
+            if restrict: TClist = ofwhat
+            ZSI.TCcompound.ComplexType.__init__(self, None, TClist, pname=pname, inorder=0, **kw)
+            class Holder:
+                __metaclass__ = pyclass_type
+                typecode = self
+                def __init__(self):
+                    # pyclass
+                    self._ResultGet = None
+                    self._Errors = None
+                    self._Events = None
+                    return
+            Holder.__name__ = "FETributoResponse_Holder"
+            self.pyclass = Holder
+
+    class ArrayOfTributoTipo_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        type = (schema, "ArrayOfTributoTipo")
+        def __init__(self, pname, ofwhat=(), attributes=None, extend=False, restrict=False, **kw):
+            ns = ns0.ArrayOfTributoTipo_Def.schema
+            TClist = [GTD("http://ar.gov.afip.dif.FEV1/","TributoTipo",lazy=False)(pname=(ns,"TributoTipo"), aname="_TributoTipo", minOccurs=0, maxOccurs="unbounded", nillable=True, typed=False, encoded=kw.get("encoded"))]
+            self.attribute_typecode_dict = attributes or {}
+            if extend: TClist += ofwhat
+            if restrict: TClist = ofwhat
+            ZSI.TCcompound.ComplexType.__init__(self, None, TClist, pname=pname, inorder=0, **kw)
+            class Holder:
+                __metaclass__ = pyclass_type
+                typecode = self
+                def __init__(self):
+                    # pyclass
+                    self._TributoTipo = []
+                    return
+            Holder.__name__ = "ArrayOfTributoTipo_Holder"
+            self.pyclass = Holder
+
+    class TributoTipo_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        type = (schema, "TributoTipo")
+        def __init__(self, pname, ofwhat=(), attributes=None, extend=False, restrict=False, **kw):
+            ns = ns0.TributoTipo_Def.schema
+            TClist = [ZSI.TCnumbers.Ishort(pname=(ns,"Id"), aname="_Id", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"Desc"), aname="_Desc", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"FchDesde"), aname="_FchDesde", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"FchHasta"), aname="_FchHasta", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            self.attribute_typecode_dict = attributes or {}
+            if extend: TClist += ofwhat
+            if restrict: TClist = ofwhat
+            ZSI.TCcompound.ComplexType.__init__(self, None, TClist, pname=pname, inorder=0, **kw)
+            class Holder:
+                __metaclass__ = pyclass_type
+                typecode = self
+                def __init__(self):
+                    # pyclass
+                    self._Id = None
+                    self._Desc = None
+                    self._FchDesde = None
+                    self._FchHasta = None
+                    return
+            Holder.__name__ = "TributoTipo_Holder"
+            self.pyclass = Holder
+
+    class MonedaResponse_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        type = (schema, "MonedaResponse")
+        def __init__(self, pname, ofwhat=(), attributes=None, extend=False, restrict=False, **kw):
+            ns = ns0.MonedaResponse_Def.schema
+            TClist = [GTD("http://ar.gov.afip.dif.FEV1/","ArrayOfMoneda",lazy=False)(pname=(ns,"ResultGet"), aname="_ResultGet", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), GTD("http://ar.gov.afip.dif.FEV1/","ArrayOfErr",lazy=False)(pname=(ns,"Errors"), aname="_Errors", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), GTD("http://ar.gov.afip.dif.FEV1/","ArrayOfEvt",lazy=False)(pname=(ns,"Events"), aname="_Events", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            self.attribute_typecode_dict = attributes or {}
+            if extend: TClist += ofwhat
+            if restrict: TClist = ofwhat
+            ZSI.TCcompound.ComplexType.__init__(self, None, TClist, pname=pname, inorder=0, **kw)
+            class Holder:
+                __metaclass__ = pyclass_type
+                typecode = self
+                def __init__(self):
+                    # pyclass
+                    self._ResultGet = None
+                    self._Errors = None
+                    self._Events = None
+                    return
+            Holder.__name__ = "MonedaResponse_Holder"
+            self.pyclass = Holder
+
+    class ArrayOfMoneda_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        type = (schema, "ArrayOfMoneda")
+        def __init__(self, pname, ofwhat=(), attributes=None, extend=False, restrict=False, **kw):
+            ns = ns0.ArrayOfMoneda_Def.schema
+            TClist = [GTD("http://ar.gov.afip.dif.FEV1/","Moneda",lazy=False)(pname=(ns,"Moneda"), aname="_Moneda", minOccurs=0, maxOccurs="unbounded", nillable=True, typed=False, encoded=kw.get("encoded"))]
+            self.attribute_typecode_dict = attributes or {}
+            if extend: TClist += ofwhat
+            if restrict: TClist = ofwhat
+            ZSI.TCcompound.ComplexType.__init__(self, None, TClist, pname=pname, inorder=0, **kw)
+            class Holder:
+                __metaclass__ = pyclass_type
+                typecode = self
+                def __init__(self):
+                    # pyclass
+                    self._Moneda = []
+                    return
+            Holder.__name__ = "ArrayOfMoneda_Holder"
+            self.pyclass = Holder
+
+    class Moneda_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        type = (schema, "Moneda")
+        def __init__(self, pname, ofwhat=(), attributes=None, extend=False, restrict=False, **kw):
+            ns = ns0.Moneda_Def.schema
+            TClist = [ZSI.TC.String(pname=(ns,"Id"), aname="_Id", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"Desc"), aname="_Desc", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"FchDesde"), aname="_FchDesde", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"FchHasta"), aname="_FchHasta", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            self.attribute_typecode_dict = attributes or {}
+            if extend: TClist += ofwhat
+            if restrict: TClist = ofwhat
+            ZSI.TCcompound.ComplexType.__init__(self, None, TClist, pname=pname, inorder=0, **kw)
+            class Holder:
+                __metaclass__ = pyclass_type
+                typecode = self
+                def __init__(self):
+                    # pyclass
+                    self._Id = None
+                    self._Desc = None
+                    self._FchDesde = None
+                    self._FchHasta = None
+                    return
+            Holder.__name__ = "Moneda_Holder"
+            self.pyclass = Holder
+
+    class IvaTipoResponse_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        type = (schema, "IvaTipoResponse")
+        def __init__(self, pname, ofwhat=(), attributes=None, extend=False, restrict=False, **kw):
+            ns = ns0.IvaTipoResponse_Def.schema
+            TClist = [GTD("http://ar.gov.afip.dif.FEV1/","ArrayOfIvaTipo",lazy=False)(pname=(ns,"ResultGet"), aname="_ResultGet", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), GTD("http://ar.gov.afip.dif.FEV1/","ArrayOfErr",lazy=False)(pname=(ns,"Errors"), aname="_Errors", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), GTD("http://ar.gov.afip.dif.FEV1/","ArrayOfEvt",lazy=False)(pname=(ns,"Events"), aname="_Events", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            self.attribute_typecode_dict = attributes or {}
+            if extend: TClist += ofwhat
+            if restrict: TClist = ofwhat
+            ZSI.TCcompound.ComplexType.__init__(self, None, TClist, pname=pname, inorder=0, **kw)
+            class Holder:
+                __metaclass__ = pyclass_type
+                typecode = self
+                def __init__(self):
+                    # pyclass
+                    self._ResultGet = None
+                    self._Errors = None
+                    self._Events = None
+                    return
+            Holder.__name__ = "IvaTipoResponse_Holder"
+            self.pyclass = Holder
+
+    class ArrayOfIvaTipo_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        type = (schema, "ArrayOfIvaTipo")
+        def __init__(self, pname, ofwhat=(), attributes=None, extend=False, restrict=False, **kw):
+            ns = ns0.ArrayOfIvaTipo_Def.schema
+            TClist = [GTD("http://ar.gov.afip.dif.FEV1/","IvaTipo",lazy=False)(pname=(ns,"IvaTipo"), aname="_IvaTipo", minOccurs=0, maxOccurs="unbounded", nillable=True, typed=False, encoded=kw.get("encoded"))]
+            self.attribute_typecode_dict = attributes or {}
+            if extend: TClist += ofwhat
+            if restrict: TClist = ofwhat
+            ZSI.TCcompound.ComplexType.__init__(self, None, TClist, pname=pname, inorder=0, **kw)
+            class Holder:
+                __metaclass__ = pyclass_type
+                typecode = self
+                def __init__(self):
+                    # pyclass
+                    self._IvaTipo = []
+                    return
+            Holder.__name__ = "ArrayOfIvaTipo_Holder"
+            self.pyclass = Holder
+
+    class IvaTipo_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        type = (schema, "IvaTipo")
+        def __init__(self, pname, ofwhat=(), attributes=None, extend=False, restrict=False, **kw):
+            ns = ns0.IvaTipo_Def.schema
+            TClist = [ZSI.TC.String(pname=(ns,"Id"), aname="_Id", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"Desc"), aname="_Desc", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"FchDesde"), aname="_FchDesde", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"FchHasta"), aname="_FchHasta", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            self.attribute_typecode_dict = attributes or {}
+            if extend: TClist += ofwhat
+            if restrict: TClist = ofwhat
+            ZSI.TCcompound.ComplexType.__init__(self, None, TClist, pname=pname, inorder=0, **kw)
+            class Holder:
+                __metaclass__ = pyclass_type
+                typecode = self
+                def __init__(self):
+                    # pyclass
+                    self._Id = None
+                    self._Desc = None
+                    self._FchDesde = None
+                    self._FchHasta = None
+                    return
+            Holder.__name__ = "IvaTipo_Holder"
+            self.pyclass = Holder
+
+    class OpcionalTipoResponse_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        type = (schema, "OpcionalTipoResponse")
+        def __init__(self, pname, ofwhat=(), attributes=None, extend=False, restrict=False, **kw):
+            ns = ns0.OpcionalTipoResponse_Def.schema
+            TClist = [GTD("http://ar.gov.afip.dif.FEV1/","ArrayOfOpcionalTipo",lazy=False)(pname=(ns,"ResultGet"), aname="_ResultGet", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), GTD("http://ar.gov.afip.dif.FEV1/","ArrayOfErr",lazy=False)(pname=(ns,"Errors"), aname="_Errors", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), GTD("http://ar.gov.afip.dif.FEV1/","ArrayOfEvt",lazy=False)(pname=(ns,"Events"), aname="_Events", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            self.attribute_typecode_dict = attributes or {}
+            if extend: TClist += ofwhat
+            if restrict: TClist = ofwhat
+            ZSI.TCcompound.ComplexType.__init__(self, None, TClist, pname=pname, inorder=0, **kw)
+            class Holder:
+                __metaclass__ = pyclass_type
+                typecode = self
+                def __init__(self):
+                    # pyclass
+                    self._ResultGet = None
+                    self._Errors = None
+                    self._Events = None
+                    return
+            Holder.__name__ = "OpcionalTipoResponse_Holder"
+            self.pyclass = Holder
+
+    class ArrayOfOpcionalTipo_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        type = (schema, "ArrayOfOpcionalTipo")
+        def __init__(self, pname, ofwhat=(), attributes=None, extend=False, restrict=False, **kw):
+            ns = ns0.ArrayOfOpcionalTipo_Def.schema
+            TClist = [GTD("http://ar.gov.afip.dif.FEV1/","OpcionalTipo",lazy=False)(pname=(ns,"OpcionalTipo"), aname="_OpcionalTipo", minOccurs=0, maxOccurs="unbounded", nillable=True, typed=False, encoded=kw.get("encoded"))]
+            self.attribute_typecode_dict = attributes or {}
+            if extend: TClist += ofwhat
+            if restrict: TClist = ofwhat
+            ZSI.TCcompound.ComplexType.__init__(self, None, TClist, pname=pname, inorder=0, **kw)
+            class Holder:
+                __metaclass__ = pyclass_type
+                typecode = self
+                def __init__(self):
+                    # pyclass
+                    self._OpcionalTipo = []
+                    return
+            Holder.__name__ = "ArrayOfOpcionalTipo_Holder"
+            self.pyclass = Holder
+
+    class OpcionalTipo_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        type = (schema, "OpcionalTipo")
+        def __init__(self, pname, ofwhat=(), attributes=None, extend=False, restrict=False, **kw):
+            ns = ns0.OpcionalTipo_Def.schema
+            TClist = [ZSI.TC.String(pname=(ns,"Id"), aname="_Id", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"Desc"), aname="_Desc", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"FchDesde"), aname="_FchDesde", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"FchHasta"), aname="_FchHasta", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            self.attribute_typecode_dict = attributes or {}
+            if extend: TClist += ofwhat
+            if restrict: TClist = ofwhat
+            ZSI.TCcompound.ComplexType.__init__(self, None, TClist, pname=pname, inorder=0, **kw)
+            class Holder:
+                __metaclass__ = pyclass_type
+                typecode = self
+                def __init__(self):
+                    # pyclass
+                    self._Id = None
+                    self._Desc = None
+                    self._FchDesde = None
+                    self._FchHasta = None
+                    return
+            Holder.__name__ = "OpcionalTipo_Holder"
+            self.pyclass = Holder
+
+    class ConceptoTipoResponse_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        type = (schema, "ConceptoTipoResponse")
+        def __init__(self, pname, ofwhat=(), attributes=None, extend=False, restrict=False, **kw):
+            ns = ns0.ConceptoTipoResponse_Def.schema
+            TClist = [GTD("http://ar.gov.afip.dif.FEV1/","ArrayOfConceptoTipo",lazy=False)(pname=(ns,"ResultGet"), aname="_ResultGet", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), GTD("http://ar.gov.afip.dif.FEV1/","ArrayOfErr",lazy=False)(pname=(ns,"Errors"), aname="_Errors", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), GTD("http://ar.gov.afip.dif.FEV1/","ArrayOfEvt",lazy=False)(pname=(ns,"Events"), aname="_Events", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            self.attribute_typecode_dict = attributes or {}
+            if extend: TClist += ofwhat
+            if restrict: TClist = ofwhat
+            ZSI.TCcompound.ComplexType.__init__(self, None, TClist, pname=pname, inorder=0, **kw)
+            class Holder:
+                __metaclass__ = pyclass_type
+                typecode = self
+                def __init__(self):
+                    # pyclass
+                    self._ResultGet = None
+                    self._Errors = None
+                    self._Events = None
+                    return
+            Holder.__name__ = "ConceptoTipoResponse_Holder"
+            self.pyclass = Holder
+
+    class ArrayOfConceptoTipo_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        type = (schema, "ArrayOfConceptoTipo")
+        def __init__(self, pname, ofwhat=(), attributes=None, extend=False, restrict=False, **kw):
+            ns = ns0.ArrayOfConceptoTipo_Def.schema
+            TClist = [GTD("http://ar.gov.afip.dif.FEV1/","ConceptoTipo",lazy=False)(pname=(ns,"ConceptoTipo"), aname="_ConceptoTipo", minOccurs=0, maxOccurs="unbounded", nillable=True, typed=False, encoded=kw.get("encoded"))]
+            self.attribute_typecode_dict = attributes or {}
+            if extend: TClist += ofwhat
+            if restrict: TClist = ofwhat
+            ZSI.TCcompound.ComplexType.__init__(self, None, TClist, pname=pname, inorder=0, **kw)
+            class Holder:
+                __metaclass__ = pyclass_type
+                typecode = self
+                def __init__(self):
+                    # pyclass
+                    self._ConceptoTipo = []
+                    return
+            Holder.__name__ = "ArrayOfConceptoTipo_Holder"
+            self.pyclass = Holder
+
+    class ConceptoTipo_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        type = (schema, "ConceptoTipo")
+        def __init__(self, pname, ofwhat=(), attributes=None, extend=False, restrict=False, **kw):
+            ns = ns0.ConceptoTipo_Def.schema
+            TClist = [ZSI.TCnumbers.Iint(pname=(ns,"Id"), aname="_Id", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"Desc"), aname="_Desc", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"FchDesde"), aname="_FchDesde", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"FchHasta"), aname="_FchHasta", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            self.attribute_typecode_dict = attributes or {}
+            if extend: TClist += ofwhat
+            if restrict: TClist = ofwhat
+            ZSI.TCcompound.ComplexType.__init__(self, None, TClist, pname=pname, inorder=0, **kw)
+            class Holder:
+                __metaclass__ = pyclass_type
+                typecode = self
+                def __init__(self):
+                    # pyclass
+                    self._Id = None
+                    self._Desc = None
+                    self._FchDesde = None
+                    self._FchHasta = None
+                    return
+            Holder.__name__ = "ConceptoTipo_Holder"
+            self.pyclass = Holder
+
+    class FEPtoVentaResponse_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        type = (schema, "FEPtoVentaResponse")
+        def __init__(self, pname, ofwhat=(), attributes=None, extend=False, restrict=False, **kw):
+            ns = ns0.FEPtoVentaResponse_Def.schema
+            TClist = [GTD("http://ar.gov.afip.dif.FEV1/","ArrayOfPtoVenta",lazy=False)(pname=(ns,"ResultGet"), aname="_ResultGet", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), GTD("http://ar.gov.afip.dif.FEV1/","ArrayOfErr",lazy=False)(pname=(ns,"Errors"), aname="_Errors", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), GTD("http://ar.gov.afip.dif.FEV1/","ArrayOfEvt",lazy=False)(pname=(ns,"Events"), aname="_Events", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            self.attribute_typecode_dict = attributes or {}
+            if extend: TClist += ofwhat
+            if restrict: TClist = ofwhat
+            ZSI.TCcompound.ComplexType.__init__(self, None, TClist, pname=pname, inorder=0, **kw)
+            class Holder:
+                __metaclass__ = pyclass_type
+                typecode = self
+                def __init__(self):
+                    # pyclass
+                    self._ResultGet = None
+                    self._Errors = None
+                    self._Events = None
+                    return
+            Holder.__name__ = "FEPtoVentaResponse_Holder"
+            self.pyclass = Holder
+
+    class ArrayOfPtoVenta_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        type = (schema, "ArrayOfPtoVenta")
+        def __init__(self, pname, ofwhat=(), attributes=None, extend=False, restrict=False, **kw):
+            ns = ns0.ArrayOfPtoVenta_Def.schema
+            TClist = [GTD("http://ar.gov.afip.dif.FEV1/","PtoVenta",lazy=False)(pname=(ns,"PtoVenta"), aname="_PtoVenta", minOccurs=0, maxOccurs="unbounded", nillable=True, typed=False, encoded=kw.get("encoded"))]
+            self.attribute_typecode_dict = attributes or {}
+            if extend: TClist += ofwhat
+            if restrict: TClist = ofwhat
+            ZSI.TCcompound.ComplexType.__init__(self, None, TClist, pname=pname, inorder=0, **kw)
+            class Holder:
+                __metaclass__ = pyclass_type
+                typecode = self
+                def __init__(self):
+                    # pyclass
+                    self._PtoVenta = []
+                    return
+            Holder.__name__ = "ArrayOfPtoVenta_Holder"
+            self.pyclass = Holder
+
+    class PtoVenta_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        type = (schema, "PtoVenta")
+        def __init__(self, pname, ofwhat=(), attributes=None, extend=False, restrict=False, **kw):
+            ns = ns0.PtoVenta_Def.schema
+            TClist = [ZSI.TCnumbers.Ishort(pname=(ns,"Nro"), aname="_Nro", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"EmisionTipo"), aname="_EmisionTipo", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"Bloqueado"), aname="_Bloqueado", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"FchBaja"), aname="_FchBaja", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            self.attribute_typecode_dict = attributes or {}
+            if extend: TClist += ofwhat
+            if restrict: TClist = ofwhat
+            ZSI.TCcompound.ComplexType.__init__(self, None, TClist, pname=pname, inorder=0, **kw)
+            class Holder:
+                __metaclass__ = pyclass_type
+                typecode = self
+                def __init__(self):
+                    # pyclass
+                    self._Nro = None
+                    self._EmisionTipo = None
+                    self._Bloqueado = None
+                    self._FchBaja = None
+                    return
+            Holder.__name__ = "PtoVenta_Holder"
+            self.pyclass = Holder
+
+    class CbteTipoResponse_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        type = (schema, "CbteTipoResponse")
+        def __init__(self, pname, ofwhat=(), attributes=None, extend=False, restrict=False, **kw):
+            ns = ns0.CbteTipoResponse_Def.schema
+            TClist = [GTD("http://ar.gov.afip.dif.FEV1/","ArrayOfCbteTipo",lazy=False)(pname=(ns,"ResultGet"), aname="_ResultGet", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), GTD("http://ar.gov.afip.dif.FEV1/","ArrayOfErr",lazy=False)(pname=(ns,"Errors"), aname="_Errors", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), GTD("http://ar.gov.afip.dif.FEV1/","ArrayOfEvt",lazy=False)(pname=(ns,"Events"), aname="_Events", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            self.attribute_typecode_dict = attributes or {}
+            if extend: TClist += ofwhat
+            if restrict: TClist = ofwhat
+            ZSI.TCcompound.ComplexType.__init__(self, None, TClist, pname=pname, inorder=0, **kw)
+            class Holder:
+                __metaclass__ = pyclass_type
+                typecode = self
+                def __init__(self):
+                    # pyclass
+                    self._ResultGet = None
+                    self._Errors = None
+                    self._Events = None
+                    return
+            Holder.__name__ = "CbteTipoResponse_Holder"
+            self.pyclass = Holder
+
+    class ArrayOfCbteTipo_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        type = (schema, "ArrayOfCbteTipo")
+        def __init__(self, pname, ofwhat=(), attributes=None, extend=False, restrict=False, **kw):
+            ns = ns0.ArrayOfCbteTipo_Def.schema
+            TClist = [GTD("http://ar.gov.afip.dif.FEV1/","CbteTipo",lazy=False)(pname=(ns,"CbteTipo"), aname="_CbteTipo", minOccurs=0, maxOccurs="unbounded", nillable=True, typed=False, encoded=kw.get("encoded"))]
+            self.attribute_typecode_dict = attributes or {}
+            if extend: TClist += ofwhat
+            if restrict: TClist = ofwhat
+            ZSI.TCcompound.ComplexType.__init__(self, None, TClist, pname=pname, inorder=0, **kw)
+            class Holder:
+                __metaclass__ = pyclass_type
+                typecode = self
+                def __init__(self):
+                    # pyclass
+                    self._CbteTipo = []
+                    return
+            Holder.__name__ = "ArrayOfCbteTipo_Holder"
+            self.pyclass = Holder
+
+    class CbteTipo_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        type = (schema, "CbteTipo")
+        def __init__(self, pname, ofwhat=(), attributes=None, extend=False, restrict=False, **kw):
+            ns = ns0.CbteTipo_Def.schema
+            TClist = [ZSI.TCnumbers.Iint(pname=(ns,"Id"), aname="_Id", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"Desc"), aname="_Desc", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"FchDesde"), aname="_FchDesde", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"FchHasta"), aname="_FchHasta", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            self.attribute_typecode_dict = attributes or {}
+            if extend: TClist += ofwhat
+            if restrict: TClist = ofwhat
+            ZSI.TCcompound.ComplexType.__init__(self, None, TClist, pname=pname, inorder=0, **kw)
+            class Holder:
+                __metaclass__ = pyclass_type
+                typecode = self
+                def __init__(self):
+                    # pyclass
+                    self._Id = None
+                    self._Desc = None
+                    self._FchDesde = None
+                    self._FchHasta = None
+                    return
+            Holder.__name__ = "CbteTipo_Holder"
+            self.pyclass = Holder
+
+    class DocTipoResponse_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        type = (schema, "DocTipoResponse")
+        def __init__(self, pname, ofwhat=(), attributes=None, extend=False, restrict=False, **kw):
+            ns = ns0.DocTipoResponse_Def.schema
+            TClist = [GTD("http://ar.gov.afip.dif.FEV1/","ArrayOfDocTipo",lazy=False)(pname=(ns,"ResultGet"), aname="_ResultGet", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), GTD("http://ar.gov.afip.dif.FEV1/","ArrayOfErr",lazy=False)(pname=(ns,"Errors"), aname="_Errors", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), GTD("http://ar.gov.afip.dif.FEV1/","ArrayOfEvt",lazy=False)(pname=(ns,"Events"), aname="_Events", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            self.attribute_typecode_dict = attributes or {}
+            if extend: TClist += ofwhat
+            if restrict: TClist = ofwhat
+            ZSI.TCcompound.ComplexType.__init__(self, None, TClist, pname=pname, inorder=0, **kw)
+            class Holder:
+                __metaclass__ = pyclass_type
+                typecode = self
+                def __init__(self):
+                    # pyclass
+                    self._ResultGet = None
+                    self._Errors = None
+                    self._Events = None
+                    return
+            Holder.__name__ = "DocTipoResponse_Holder"
+            self.pyclass = Holder
+
+    class ArrayOfDocTipo_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        type = (schema, "ArrayOfDocTipo")
+        def __init__(self, pname, ofwhat=(), attributes=None, extend=False, restrict=False, **kw):
+            ns = ns0.ArrayOfDocTipo_Def.schema
+            TClist = [GTD("http://ar.gov.afip.dif.FEV1/","DocTipo",lazy=False)(pname=(ns,"DocTipo"), aname="_DocTipo", minOccurs=0, maxOccurs="unbounded", nillable=True, typed=False, encoded=kw.get("encoded"))]
+            self.attribute_typecode_dict = attributes or {}
+            if extend: TClist += ofwhat
+            if restrict: TClist = ofwhat
+            ZSI.TCcompound.ComplexType.__init__(self, None, TClist, pname=pname, inorder=0, **kw)
+            class Holder:
+                __metaclass__ = pyclass_type
+                typecode = self
+                def __init__(self):
+                    # pyclass
+                    self._DocTipo = []
+                    return
+            Holder.__name__ = "ArrayOfDocTipo_Holder"
+            self.pyclass = Holder
+
+    class DocTipo_Def(ZSI.TCcompound.ComplexType, TypeDefinition):
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        type = (schema, "DocTipo")
+        def __init__(self, pname, ofwhat=(), attributes=None, extend=False, restrict=False, **kw):
+            ns = ns0.DocTipo_Def.schema
+            TClist = [ZSI.TCnumbers.Iint(pname=(ns,"Id"), aname="_Id", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"Desc"), aname="_Desc", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"FchDesde"), aname="_FchDesde", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"FchHasta"), aname="_FchHasta", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            self.attribute_typecode_dict = attributes or {}
+            if extend: TClist += ofwhat
+            if restrict: TClist = ofwhat
+            ZSI.TCcompound.ComplexType.__init__(self, None, TClist, pname=pname, inorder=0, **kw)
+            class Holder:
+                __metaclass__ = pyclass_type
+                typecode = self
+                def __init__(self):
+                    # pyclass
+                    self._Id = None
+                    self._Desc = None
+                    self._FchDesde = None
+                    self._FchHasta = None
+                    return
+            Holder.__name__ = "DocTipo_Holder"
+            self.pyclass = Holder
+
+    class FECAESolicitar_Dec(ZSI.TCcompound.ComplexType, ElementDeclaration):
+        literal = "FECAESolicitar"
+        schema = "http://ar.gov.afip.dif.FEV1/"
         def __init__(self, **kw):
-            ns = ns0.FERecuperaQTYRequest_Dec.schema
-            TClist = [GTD("http://ar.gov.afip.dif.facturaelectronica/","FEAuthRequest",lazy=False)(pname=(ns,"argAuth"), aname="_argAuth", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
-            kw["pname"] = ("http://ar.gov.afip.dif.facturaelectronica/","FERecuperaQTYRequest")
-            kw["aname"] = "_FERecuperaQTYRequest"
+            ns = ns0.FECAESolicitar_Dec.schema
+            TClist = [GTD("http://ar.gov.afip.dif.FEV1/","FEAuthRequest",lazy=False)(pname=(ns,"Auth"), aname="_Auth", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), GTD("http://ar.gov.afip.dif.FEV1/","FECAERequest",lazy=False)(pname=(ns,"FeCAEReq"), aname="_FeCAEReq", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            kw["pname"] = ("http://ar.gov.afip.dif.FEV1/","FECAESolicitar")
+            kw["aname"] = "_FECAESolicitar"
             self.attribute_typecode_dict = {}
             ZSI.TCcompound.ComplexType.__init__(self,None,TClist,inorder=0,**kw)
             class Holder:
@@ -476,19 +1589,20 @@ class ns0:
                 typecode = self
                 def __init__(self):
                     # pyclass
-                    self._argAuth = None
+                    self._Auth = None
+                    self._FeCAEReq = None
                     return
-            Holder.__name__ = "FERecuperaQTYRequest_Holder"
+            Holder.__name__ = "FECAESolicitar_Holder"
             self.pyclass = Holder
 
-    class FERecuperaQTYRequestResponse_Dec(ZSI.TCcompound.ComplexType, ElementDeclaration):
-        literal = "FERecuperaQTYRequestResponse"
-        schema = "http://ar.gov.afip.dif.facturaelectronica/"
+    class FECAESolicitarResponse_Dec(ZSI.TCcompound.ComplexType, ElementDeclaration):
+        literal = "FECAESolicitarResponse"
+        schema = "http://ar.gov.afip.dif.FEV1/"
         def __init__(self, **kw):
-            ns = ns0.FERecuperaQTYRequestResponse_Dec.schema
-            TClist = [GTD("http://ar.gov.afip.dif.facturaelectronica/","FERecuperaQTYResponse",lazy=False)(pname=(ns,"FERecuperaQTYRequestResult"), aname="_FERecuperaQTYRequestResult", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
-            kw["pname"] = ("http://ar.gov.afip.dif.facturaelectronica/","FERecuperaQTYRequestResponse")
-            kw["aname"] = "_FERecuperaQTYRequestResponse"
+            ns = ns0.FECAESolicitarResponse_Dec.schema
+            TClist = [GTD("http://ar.gov.afip.dif.FEV1/","FECAEResponse",lazy=False)(pname=(ns,"FECAESolicitarResult"), aname="_FECAESolicitarResult", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            kw["pname"] = ("http://ar.gov.afip.dif.FEV1/","FECAESolicitarResponse")
+            kw["aname"] = "_FECAESolicitarResponse"
             self.attribute_typecode_dict = {}
             ZSI.TCcompound.ComplexType.__init__(self,None,TClist,inorder=0,**kw)
             class Holder:
@@ -496,18 +1610,58 @@ class ns0:
                 typecode = self
                 def __init__(self):
                     # pyclass
-                    self._FERecuperaQTYRequestResult = None
+                    self._FECAESolicitarResult = None
                     return
-            Holder.__name__ = "FERecuperaQTYRequestResponse_Holder"
+            Holder.__name__ = "FECAESolicitarResponse_Holder"
+            self.pyclass = Holder
+
+    class FECompTotXRequest_Dec(ZSI.TCcompound.ComplexType, ElementDeclaration):
+        literal = "FECompTotXRequest"
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        def __init__(self, **kw):
+            ns = ns0.FECompTotXRequest_Dec.schema
+            TClist = [GTD("http://ar.gov.afip.dif.FEV1/","FEAuthRequest",lazy=False)(pname=(ns,"Auth"), aname="_Auth", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            kw["pname"] = ("http://ar.gov.afip.dif.FEV1/","FECompTotXRequest")
+            kw["aname"] = "_FECompTotXRequest"
+            self.attribute_typecode_dict = {}
+            ZSI.TCcompound.ComplexType.__init__(self,None,TClist,inorder=0,**kw)
+            class Holder:
+                __metaclass__ = pyclass_type
+                typecode = self
+                def __init__(self):
+                    # pyclass
+                    self._Auth = None
+                    return
+            Holder.__name__ = "FECompTotXRequest_Holder"
+            self.pyclass = Holder
+
+    class FECompTotXRequestResponse_Dec(ZSI.TCcompound.ComplexType, ElementDeclaration):
+        literal = "FECompTotXRequestResponse"
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        def __init__(self, **kw):
+            ns = ns0.FECompTotXRequestResponse_Dec.schema
+            TClist = [GTD("http://ar.gov.afip.dif.FEV1/","FERegXReqResponse",lazy=False)(pname=(ns,"FECompTotXRequestResult"), aname="_FECompTotXRequestResult", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            kw["pname"] = ("http://ar.gov.afip.dif.FEV1/","FECompTotXRequestResponse")
+            kw["aname"] = "_FECompTotXRequestResponse"
+            self.attribute_typecode_dict = {}
+            ZSI.TCcompound.ComplexType.__init__(self,None,TClist,inorder=0,**kw)
+            class Holder:
+                __metaclass__ = pyclass_type
+                typecode = self
+                def __init__(self):
+                    # pyclass
+                    self._FECompTotXRequestResult = None
+                    return
+            Holder.__name__ = "FECompTotXRequestResponse_Holder"
             self.pyclass = Holder
 
     class FEDummy_Dec(ZSI.TCcompound.ComplexType, ElementDeclaration):
         literal = "FEDummy"
-        schema = "http://ar.gov.afip.dif.facturaelectronica/"
+        schema = "http://ar.gov.afip.dif.FEV1/"
         def __init__(self, **kw):
             ns = ns0.FEDummy_Dec.schema
             TClist = []
-            kw["pname"] = ("http://ar.gov.afip.dif.facturaelectronica/","FEDummy")
+            kw["pname"] = ("http://ar.gov.afip.dif.FEV1/","FEDummy")
             kw["aname"] = "_FEDummy"
             self.attribute_typecode_dict = {}
             ZSI.TCcompound.ComplexType.__init__(self,None,TClist,inorder=0,**kw)
@@ -522,11 +1676,11 @@ class ns0:
 
     class FEDummyResponse_Dec(ZSI.TCcompound.ComplexType, ElementDeclaration):
         literal = "FEDummyResponse"
-        schema = "http://ar.gov.afip.dif.facturaelectronica/"
+        schema = "http://ar.gov.afip.dif.FEV1/"
         def __init__(self, **kw):
             ns = ns0.FEDummyResponse_Dec.schema
-            TClist = [GTD("http://ar.gov.afip.dif.facturaelectronica/","DummyResponse",lazy=False)(pname=(ns,"FEDummyResult"), aname="_FEDummyResult", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
-            kw["pname"] = ("http://ar.gov.afip.dif.facturaelectronica/","FEDummyResponse")
+            TClist = [GTD("http://ar.gov.afip.dif.FEV1/","DummyResponse",lazy=False)(pname=(ns,"FEDummyResult"), aname="_FEDummyResult", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            kw["pname"] = ("http://ar.gov.afip.dif.FEV1/","FEDummyResponse")
             kw["aname"] = "_FEDummyResponse"
             self.attribute_typecode_dict = {}
             ZSI.TCcompound.ComplexType.__init__(self,None,TClist,inorder=0,**kw)
@@ -540,14 +1694,14 @@ class ns0:
             Holder.__name__ = "FEDummyResponse_Holder"
             self.pyclass = Holder
 
-    class FERecuperaLastCMPRequest_Dec(ZSI.TCcompound.ComplexType, ElementDeclaration):
-        literal = "FERecuperaLastCMPRequest"
-        schema = "http://ar.gov.afip.dif.facturaelectronica/"
+    class FECompUltimoAutorizado_Dec(ZSI.TCcompound.ComplexType, ElementDeclaration):
+        literal = "FECompUltimoAutorizado"
+        schema = "http://ar.gov.afip.dif.FEV1/"
         def __init__(self, **kw):
-            ns = ns0.FERecuperaLastCMPRequest_Dec.schema
-            TClist = [GTD("http://ar.gov.afip.dif.facturaelectronica/","FEAuthRequest",lazy=False)(pname=(ns,"argAuth"), aname="_argAuth", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), GTD("http://ar.gov.afip.dif.facturaelectronica/","FELastCMPtype",lazy=False)(pname=(ns,"argTCMP"), aname="_argTCMP", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
-            kw["pname"] = ("http://ar.gov.afip.dif.facturaelectronica/","FERecuperaLastCMPRequest")
-            kw["aname"] = "_FERecuperaLastCMPRequest"
+            ns = ns0.FECompUltimoAutorizado_Dec.schema
+            TClist = [GTD("http://ar.gov.afip.dif.FEV1/","FEAuthRequest",lazy=False)(pname=(ns,"Auth"), aname="_Auth", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.Iint(pname=(ns,"PtoVta"), aname="_PtoVta", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.Iint(pname=(ns,"CbteTipo"), aname="_CbteTipo", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            kw["pname"] = ("http://ar.gov.afip.dif.FEV1/","FECompUltimoAutorizado")
+            kw["aname"] = "_FECompUltimoAutorizado"
             self.attribute_typecode_dict = {}
             ZSI.TCcompound.ComplexType.__init__(self,None,TClist,inorder=0,**kw)
             class Holder:
@@ -555,20 +1709,21 @@ class ns0:
                 typecode = self
                 def __init__(self):
                     # pyclass
-                    self._argAuth = None
-                    self._argTCMP = None
+                    self._Auth = None
+                    self._PtoVta = None
+                    self._CbteTipo = None
                     return
-            Holder.__name__ = "FERecuperaLastCMPRequest_Holder"
+            Holder.__name__ = "FECompUltimoAutorizado_Holder"
             self.pyclass = Holder
 
-    class FERecuperaLastCMPRequestResponse_Dec(ZSI.TCcompound.ComplexType, ElementDeclaration):
-        literal = "FERecuperaLastCMPRequestResponse"
-        schema = "http://ar.gov.afip.dif.facturaelectronica/"
+    class FECompUltimoAutorizadoResponse_Dec(ZSI.TCcompound.ComplexType, ElementDeclaration):
+        literal = "FECompUltimoAutorizadoResponse"
+        schema = "http://ar.gov.afip.dif.FEV1/"
         def __init__(self, **kw):
-            ns = ns0.FERecuperaLastCMPRequestResponse_Dec.schema
-            TClist = [GTD("http://ar.gov.afip.dif.facturaelectronica/","FERecuperaLastCMPResponse",lazy=False)(pname=(ns,"FERecuperaLastCMPRequestResult"), aname="_FERecuperaLastCMPRequestResult", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
-            kw["pname"] = ("http://ar.gov.afip.dif.facturaelectronica/","FERecuperaLastCMPRequestResponse")
-            kw["aname"] = "_FERecuperaLastCMPRequestResponse"
+            ns = ns0.FECompUltimoAutorizadoResponse_Dec.schema
+            TClist = [GTD("http://ar.gov.afip.dif.FEV1/","FERecuperaLastCbteResponse",lazy=False)(pname=(ns,"FECompUltimoAutorizadoResult"), aname="_FECompUltimoAutorizadoResult", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            kw["pname"] = ("http://ar.gov.afip.dif.FEV1/","FECompUltimoAutorizadoResponse")
+            kw["aname"] = "_FECompUltimoAutorizadoResponse"
             self.attribute_typecode_dict = {}
             ZSI.TCcompound.ComplexType.__init__(self,None,TClist,inorder=0,**kw)
             class Holder:
@@ -576,19 +1731,19 @@ class ns0:
                 typecode = self
                 def __init__(self):
                     # pyclass
-                    self._FERecuperaLastCMPRequestResult = None
+                    self._FECompUltimoAutorizadoResult = None
                     return
-            Holder.__name__ = "FERecuperaLastCMPRequestResponse_Holder"
+            Holder.__name__ = "FECompUltimoAutorizadoResponse_Holder"
             self.pyclass = Holder
 
-    class FEUltNroRequest_Dec(ZSI.TCcompound.ComplexType, ElementDeclaration):
-        literal = "FEUltNroRequest"
-        schema = "http://ar.gov.afip.dif.facturaelectronica/"
+    class FECompConsultar_Dec(ZSI.TCcompound.ComplexType, ElementDeclaration):
+        literal = "FECompConsultar"
+        schema = "http://ar.gov.afip.dif.FEV1/"
         def __init__(self, **kw):
-            ns = ns0.FEUltNroRequest_Dec.schema
-            TClist = [GTD("http://ar.gov.afip.dif.facturaelectronica/","FEAuthRequest",lazy=False)(pname=(ns,"argAuth"), aname="_argAuth", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
-            kw["pname"] = ("http://ar.gov.afip.dif.facturaelectronica/","FEUltNroRequest")
-            kw["aname"] = "_FEUltNroRequest"
+            ns = ns0.FECompConsultar_Dec.schema
+            TClist = [GTD("http://ar.gov.afip.dif.FEV1/","FEAuthRequest",lazy=False)(pname=(ns,"Auth"), aname="_Auth", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), GTD("http://ar.gov.afip.dif.FEV1/","FECompConsultaReq",lazy=False)(pname=(ns,"FeCompConsReq"), aname="_FeCompConsReq", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            kw["pname"] = ("http://ar.gov.afip.dif.FEV1/","FECompConsultar")
+            kw["aname"] = "_FECompConsultar"
             self.attribute_typecode_dict = {}
             ZSI.TCcompound.ComplexType.__init__(self,None,TClist,inorder=0,**kw)
             class Holder:
@@ -596,19 +1751,20 @@ class ns0:
                 typecode = self
                 def __init__(self):
                     # pyclass
-                    self._argAuth = None
+                    self._Auth = None
+                    self._FeCompConsReq = None
                     return
-            Holder.__name__ = "FEUltNroRequest_Holder"
+            Holder.__name__ = "FECompConsultar_Holder"
             self.pyclass = Holder
 
-    class FEUltNroRequestResponse_Dec(ZSI.TCcompound.ComplexType, ElementDeclaration):
-        literal = "FEUltNroRequestResponse"
-        schema = "http://ar.gov.afip.dif.facturaelectronica/"
+    class FECompConsultarResponse_Dec(ZSI.TCcompound.ComplexType, ElementDeclaration):
+        literal = "FECompConsultarResponse"
+        schema = "http://ar.gov.afip.dif.FEV1/"
         def __init__(self, **kw):
-            ns = ns0.FEUltNroRequestResponse_Dec.schema
-            TClist = [GTD("http://ar.gov.afip.dif.facturaelectronica/","FEUltNroResponse",lazy=False)(pname=(ns,"FEUltNroRequestResult"), aname="_FEUltNroRequestResult", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
-            kw["pname"] = ("http://ar.gov.afip.dif.facturaelectronica/","FEUltNroRequestResponse")
-            kw["aname"] = "_FEUltNroRequestResponse"
+            ns = ns0.FECompConsultarResponse_Dec.schema
+            TClist = [GTD("http://ar.gov.afip.dif.FEV1/","FECompConsultaResponse",lazy=False)(pname=(ns,"FECompConsultarResult"), aname="_FECompConsultarResult", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            kw["pname"] = ("http://ar.gov.afip.dif.FEV1/","FECompConsultarResponse")
+            kw["aname"] = "_FECompConsultarResponse"
             self.attribute_typecode_dict = {}
             ZSI.TCcompound.ComplexType.__init__(self,None,TClist,inorder=0,**kw)
             class Holder:
@@ -616,19 +1772,19 @@ class ns0:
                 typecode = self
                 def __init__(self):
                     # pyclass
-                    self._FEUltNroRequestResult = None
+                    self._FECompConsultarResult = None
                     return
-            Holder.__name__ = "FEUltNroRequestResponse_Holder"
+            Holder.__name__ = "FECompConsultarResponse_Holder"
             self.pyclass = Holder
 
-    class FEAutRequest_Dec(ZSI.TCcompound.ComplexType, ElementDeclaration):
-        literal = "FEAutRequest"
-        schema = "http://ar.gov.afip.dif.facturaelectronica/"
+    class FECAEARegInformativo_Dec(ZSI.TCcompound.ComplexType, ElementDeclaration):
+        literal = "FECAEARegInformativo"
+        schema = "http://ar.gov.afip.dif.FEV1/"
         def __init__(self, **kw):
-            ns = ns0.FEAutRequest_Dec.schema
-            TClist = [GTD("http://ar.gov.afip.dif.facturaelectronica/","FEAuthRequest",lazy=False)(pname=(ns,"argAuth"), aname="_argAuth", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), GTD("http://ar.gov.afip.dif.facturaelectronica/","FERequest",lazy=False)(pname=(ns,"Fer"), aname="_Fer", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
-            kw["pname"] = ("http://ar.gov.afip.dif.facturaelectronica/","FEAutRequest")
-            kw["aname"] = "_FEAutRequest"
+            ns = ns0.FECAEARegInformativo_Dec.schema
+            TClist = [GTD("http://ar.gov.afip.dif.FEV1/","FEAuthRequest",lazy=False)(pname=(ns,"Auth"), aname="_Auth", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), GTD("http://ar.gov.afip.dif.FEV1/","FECAEARequest",lazy=False)(pname=(ns,"FeCAEARegInfReq"), aname="_FeCAEARegInfReq", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            kw["pname"] = ("http://ar.gov.afip.dif.FEV1/","FECAEARegInformativo")
+            kw["aname"] = "_FECAEARegInformativo"
             self.attribute_typecode_dict = {}
             ZSI.TCcompound.ComplexType.__init__(self,None,TClist,inorder=0,**kw)
             class Holder:
@@ -636,20 +1792,20 @@ class ns0:
                 typecode = self
                 def __init__(self):
                     # pyclass
-                    self._argAuth = None
-                    self._Fer = None
+                    self._Auth = None
+                    self._FeCAEARegInfReq = None
                     return
-            Holder.__name__ = "FEAutRequest_Holder"
+            Holder.__name__ = "FECAEARegInformativo_Holder"
             self.pyclass = Holder
 
-    class FEAutRequestResponse_Dec(ZSI.TCcompound.ComplexType, ElementDeclaration):
-        literal = "FEAutRequestResponse"
-        schema = "http://ar.gov.afip.dif.facturaelectronica/"
+    class FECAEARegInformativoResponse_Dec(ZSI.TCcompound.ComplexType, ElementDeclaration):
+        literal = "FECAEARegInformativoResponse"
+        schema = "http://ar.gov.afip.dif.FEV1/"
         def __init__(self, **kw):
-            ns = ns0.FEAutRequestResponse_Dec.schema
-            TClist = [GTD("http://ar.gov.afip.dif.facturaelectronica/","FEResponse",lazy=False)(pname=(ns,"FEAutRequestResult"), aname="_FEAutRequestResult", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
-            kw["pname"] = ("http://ar.gov.afip.dif.facturaelectronica/","FEAutRequestResponse")
-            kw["aname"] = "_FEAutRequestResponse"
+            ns = ns0.FECAEARegInformativoResponse_Dec.schema
+            TClist = [GTD("http://ar.gov.afip.dif.FEV1/","FECAEAResponse",lazy=False)(pname=(ns,"FECAEARegInformativoResult"), aname="_FECAEARegInformativoResult", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            kw["pname"] = ("http://ar.gov.afip.dif.FEV1/","FECAEARegInformativoResponse")
+            kw["aname"] = "_FECAEARegInformativoResponse"
             self.attribute_typecode_dict = {}
             ZSI.TCcompound.ComplexType.__init__(self,None,TClist,inorder=0,**kw)
             class Holder:
@@ -657,19 +1813,19 @@ class ns0:
                 typecode = self
                 def __init__(self):
                     # pyclass
-                    self._FEAutRequestResult = None
+                    self._FECAEARegInformativoResult = None
                     return
-            Holder.__name__ = "FEAutRequestResponse_Holder"
+            Holder.__name__ = "FECAEARegInformativoResponse_Holder"
             self.pyclass = Holder
 
-    class FEConsultaCAERequest_Dec(ZSI.TCcompound.ComplexType, ElementDeclaration):
-        literal = "FEConsultaCAERequest"
-        schema = "http://ar.gov.afip.dif.facturaelectronica/"
+    class FECAEASolicitar_Dec(ZSI.TCcompound.ComplexType, ElementDeclaration):
+        literal = "FECAEASolicitar"
+        schema = "http://ar.gov.afip.dif.FEV1/"
         def __init__(self, **kw):
-            ns = ns0.FEConsultaCAERequest_Dec.schema
-            TClist = [GTD("http://ar.gov.afip.dif.facturaelectronica/","FEAuthRequest",lazy=False)(pname=(ns,"argAuth"), aname="_argAuth", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), GTD("http://ar.gov.afip.dif.facturaelectronica/","FEConsultaCAEReq",lazy=False)(pname=(ns,"argCAERequest"), aname="_argCAERequest", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
-            kw["pname"] = ("http://ar.gov.afip.dif.facturaelectronica/","FEConsultaCAERequest")
-            kw["aname"] = "_FEConsultaCAERequest"
+            ns = ns0.FECAEASolicitar_Dec.schema
+            TClist = [GTD("http://ar.gov.afip.dif.FEV1/","FEAuthRequest",lazy=False)(pname=(ns,"Auth"), aname="_Auth", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.Iint(pname=(ns,"Periodo"), aname="_Periodo", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.Ishort(pname=(ns,"Orden"), aname="_Orden", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            kw["pname"] = ("http://ar.gov.afip.dif.FEV1/","FECAEASolicitar")
+            kw["aname"] = "_FECAEASolicitar"
             self.attribute_typecode_dict = {}
             ZSI.TCcompound.ComplexType.__init__(self,None,TClist,inorder=0,**kw)
             class Holder:
@@ -677,20 +1833,21 @@ class ns0:
                 typecode = self
                 def __init__(self):
                     # pyclass
-                    self._argAuth = None
-                    self._argCAERequest = None
+                    self._Auth = None
+                    self._Periodo = None
+                    self._Orden = None
                     return
-            Holder.__name__ = "FEConsultaCAERequest_Holder"
+            Holder.__name__ = "FECAEASolicitar_Holder"
             self.pyclass = Holder
 
-    class FEConsultaCAERequestResponse_Dec(ZSI.TCcompound.ComplexType, ElementDeclaration):
-        literal = "FEConsultaCAERequestResponse"
-        schema = "http://ar.gov.afip.dif.facturaelectronica/"
+    class FECAEASolicitarResponse_Dec(ZSI.TCcompound.ComplexType, ElementDeclaration):
+        literal = "FECAEASolicitarResponse"
+        schema = "http://ar.gov.afip.dif.FEV1/"
         def __init__(self, **kw):
-            ns = ns0.FEConsultaCAERequestResponse_Dec.schema
-            TClist = [GTD("http://ar.gov.afip.dif.facturaelectronica/","FEConsultaCAEResponse",lazy=False)(pname=(ns,"FEConsultaCAERequestResult"), aname="_FEConsultaCAERequestResult", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
-            kw["pname"] = ("http://ar.gov.afip.dif.facturaelectronica/","FEConsultaCAERequestResponse")
-            kw["aname"] = "_FEConsultaCAERequestResponse"
+            ns = ns0.FECAEASolicitarResponse_Dec.schema
+            TClist = [GTD("http://ar.gov.afip.dif.FEV1/","FECAEAGetResponse",lazy=False)(pname=(ns,"FECAEASolicitarResult"), aname="_FECAEASolicitarResult", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            kw["pname"] = ("http://ar.gov.afip.dif.FEV1/","FECAEASolicitarResponse")
+            kw["aname"] = "_FECAEASolicitarResponse"
             self.attribute_typecode_dict = {}
             ZSI.TCcompound.ComplexType.__init__(self,None,TClist,inorder=0,**kw)
             class Holder:
@@ -698,24 +1855,496 @@ class ns0:
                 typecode = self
                 def __init__(self):
                     # pyclass
-                    self._FEConsultaCAERequestResult = None
+                    self._FECAEASolicitarResult = None
                     return
-            Holder.__name__ = "FEConsultaCAERequestResponse_Holder"
+            Holder.__name__ = "FECAEASolicitarResponse_Holder"
             self.pyclass = Holder
 
-    class DummyResponse_Dec(ElementDeclaration):
-        literal = "DummyResponse"
-        schema = "http://ar.gov.afip.dif.facturaelectronica/"
-        substitutionGroup = None
+    class FECAEASinMovimientoConsultar_Dec(ZSI.TCcompound.ComplexType, ElementDeclaration):
+        literal = "FECAEASinMovimientoConsultar"
+        schema = "http://ar.gov.afip.dif.FEV1/"
         def __init__(self, **kw):
-            kw["pname"] = ("http://ar.gov.afip.dif.facturaelectronica/","DummyResponse")
-            kw["aname"] = "_DummyResponse"
-            if ns0.DummyResponse_Def not in ns0.DummyResponse_Dec.__bases__:
-                bases = list(ns0.DummyResponse_Dec.__bases__)
-                bases.insert(0, ns0.DummyResponse_Def)
-                ns0.DummyResponse_Dec.__bases__ = tuple(bases)
+            ns = ns0.FECAEASinMovimientoConsultar_Dec.schema
+            TClist = [GTD("http://ar.gov.afip.dif.FEV1/","FEAuthRequest",lazy=False)(pname=(ns,"Auth"), aname="_Auth", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"CAEA"), aname="_CAEA", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.Iint(pname=(ns,"PtoVta"), aname="_PtoVta", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            kw["pname"] = ("http://ar.gov.afip.dif.FEV1/","FECAEASinMovimientoConsultar")
+            kw["aname"] = "_FECAEASinMovimientoConsultar"
+            self.attribute_typecode_dict = {}
+            ZSI.TCcompound.ComplexType.__init__(self,None,TClist,inorder=0,**kw)
+            class Holder:
+                __metaclass__ = pyclass_type
+                typecode = self
+                def __init__(self):
+                    # pyclass
+                    self._Auth = None
+                    self._CAEA = None
+                    self._PtoVta = None
+                    return
+            Holder.__name__ = "FECAEASinMovimientoConsultar_Holder"
+            self.pyclass = Holder
 
-            ns0.DummyResponse_Def.__init__(self, **kw)
-            if self.pyclass is not None: self.pyclass.__name__ = "DummyResponse_Dec_Holder"
+    class FECAEASinMovimientoConsultarResponse_Dec(ZSI.TCcompound.ComplexType, ElementDeclaration):
+        literal = "FECAEASinMovimientoConsultarResponse"
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        def __init__(self, **kw):
+            ns = ns0.FECAEASinMovimientoConsultarResponse_Dec.schema
+            TClist = [GTD("http://ar.gov.afip.dif.FEV1/","FECAEASinMovConsResponse",lazy=False)(pname=(ns,"FECAEASinMovimientoConsultarResult"), aname="_FECAEASinMovimientoConsultarResult", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            kw["pname"] = ("http://ar.gov.afip.dif.FEV1/","FECAEASinMovimientoConsultarResponse")
+            kw["aname"] = "_FECAEASinMovimientoConsultarResponse"
+            self.attribute_typecode_dict = {}
+            ZSI.TCcompound.ComplexType.__init__(self,None,TClist,inorder=0,**kw)
+            class Holder:
+                __metaclass__ = pyclass_type
+                typecode = self
+                def __init__(self):
+                    # pyclass
+                    self._FECAEASinMovimientoConsultarResult = None
+                    return
+            Holder.__name__ = "FECAEASinMovimientoConsultarResponse_Holder"
+            self.pyclass = Holder
 
-# end class ns0 (tns: http://ar.gov.afip.dif.facturaelectronica/)
+    class FECAEASinMovimientoInformar_Dec(ZSI.TCcompound.ComplexType, ElementDeclaration):
+        literal = "FECAEASinMovimientoInformar"
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        def __init__(self, **kw):
+            ns = ns0.FECAEASinMovimientoInformar_Dec.schema
+            TClist = [GTD("http://ar.gov.afip.dif.FEV1/","FEAuthRequest",lazy=False)(pname=(ns,"Auth"), aname="_Auth", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.Iint(pname=(ns,"PtoVta"), aname="_PtoVta", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"CAEA"), aname="_CAEA", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            kw["pname"] = ("http://ar.gov.afip.dif.FEV1/","FECAEASinMovimientoInformar")
+            kw["aname"] = "_FECAEASinMovimientoInformar"
+            self.attribute_typecode_dict = {}
+            ZSI.TCcompound.ComplexType.__init__(self,None,TClist,inorder=0,**kw)
+            class Holder:
+                __metaclass__ = pyclass_type
+                typecode = self
+                def __init__(self):
+                    # pyclass
+                    self._Auth = None
+                    self._PtoVta = None
+                    self._CAEA = None
+                    return
+            Holder.__name__ = "FECAEASinMovimientoInformar_Holder"
+            self.pyclass = Holder
+
+    class FECAEASinMovimientoInformarResponse_Dec(ZSI.TCcompound.ComplexType, ElementDeclaration):
+        literal = "FECAEASinMovimientoInformarResponse"
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        def __init__(self, **kw):
+            ns = ns0.FECAEASinMovimientoInformarResponse_Dec.schema
+            TClist = [GTD("http://ar.gov.afip.dif.FEV1/","FECAEASinMovResponse",lazy=False)(pname=(ns,"FECAEASinMovimientoInformarResult"), aname="_FECAEASinMovimientoInformarResult", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            kw["pname"] = ("http://ar.gov.afip.dif.FEV1/","FECAEASinMovimientoInformarResponse")
+            kw["aname"] = "_FECAEASinMovimientoInformarResponse"
+            self.attribute_typecode_dict = {}
+            ZSI.TCcompound.ComplexType.__init__(self,None,TClist,inorder=0,**kw)
+            class Holder:
+                __metaclass__ = pyclass_type
+                typecode = self
+                def __init__(self):
+                    # pyclass
+                    self._FECAEASinMovimientoInformarResult = None
+                    return
+            Holder.__name__ = "FECAEASinMovimientoInformarResponse_Holder"
+            self.pyclass = Holder
+
+    class FECAEAConsultar_Dec(ZSI.TCcompound.ComplexType, ElementDeclaration):
+        literal = "FECAEAConsultar"
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        def __init__(self, **kw):
+            ns = ns0.FECAEAConsultar_Dec.schema
+            TClist = [GTD("http://ar.gov.afip.dif.FEV1/","FEAuthRequest",lazy=False)(pname=(ns,"Auth"), aname="_Auth", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.Iint(pname=(ns,"Periodo"), aname="_Periodo", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TCnumbers.Ishort(pname=(ns,"Orden"), aname="_Orden", minOccurs=1, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            kw["pname"] = ("http://ar.gov.afip.dif.FEV1/","FECAEAConsultar")
+            kw["aname"] = "_FECAEAConsultar"
+            self.attribute_typecode_dict = {}
+            ZSI.TCcompound.ComplexType.__init__(self,None,TClist,inorder=0,**kw)
+            class Holder:
+                __metaclass__ = pyclass_type
+                typecode = self
+                def __init__(self):
+                    # pyclass
+                    self._Auth = None
+                    self._Periodo = None
+                    self._Orden = None
+                    return
+            Holder.__name__ = "FECAEAConsultar_Holder"
+            self.pyclass = Holder
+
+    class FECAEAConsultarResponse_Dec(ZSI.TCcompound.ComplexType, ElementDeclaration):
+        literal = "FECAEAConsultarResponse"
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        def __init__(self, **kw):
+            ns = ns0.FECAEAConsultarResponse_Dec.schema
+            TClist = [GTD("http://ar.gov.afip.dif.FEV1/","FECAEAGetResponse",lazy=False)(pname=(ns,"FECAEAConsultarResult"), aname="_FECAEAConsultarResult", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            kw["pname"] = ("http://ar.gov.afip.dif.FEV1/","FECAEAConsultarResponse")
+            kw["aname"] = "_FECAEAConsultarResponse"
+            self.attribute_typecode_dict = {}
+            ZSI.TCcompound.ComplexType.__init__(self,None,TClist,inorder=0,**kw)
+            class Holder:
+                __metaclass__ = pyclass_type
+                typecode = self
+                def __init__(self):
+                    # pyclass
+                    self._FECAEAConsultarResult = None
+                    return
+            Holder.__name__ = "FECAEAConsultarResponse_Holder"
+            self.pyclass = Holder
+
+    class FEParamGetCotizacion_Dec(ZSI.TCcompound.ComplexType, ElementDeclaration):
+        literal = "FEParamGetCotizacion"
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        def __init__(self, **kw):
+            ns = ns0.FEParamGetCotizacion_Dec.schema
+            TClist = [GTD("http://ar.gov.afip.dif.FEV1/","FEAuthRequest",lazy=False)(pname=(ns,"Auth"), aname="_Auth", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded")), ZSI.TC.String(pname=(ns,"MonId"), aname="_MonId", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            kw["pname"] = ("http://ar.gov.afip.dif.FEV1/","FEParamGetCotizacion")
+            kw["aname"] = "_FEParamGetCotizacion"
+            self.attribute_typecode_dict = {}
+            ZSI.TCcompound.ComplexType.__init__(self,None,TClist,inorder=0,**kw)
+            class Holder:
+                __metaclass__ = pyclass_type
+                typecode = self
+                def __init__(self):
+                    # pyclass
+                    self._Auth = None
+                    self._MonId = None
+                    return
+            Holder.__name__ = "FEParamGetCotizacion_Holder"
+            self.pyclass = Holder
+
+    class FEParamGetCotizacionResponse_Dec(ZSI.TCcompound.ComplexType, ElementDeclaration):
+        literal = "FEParamGetCotizacionResponse"
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        def __init__(self, **kw):
+            ns = ns0.FEParamGetCotizacionResponse_Dec.schema
+            TClist = [GTD("http://ar.gov.afip.dif.FEV1/","FECotizacionResponse",lazy=False)(pname=(ns,"FEParamGetCotizacionResult"), aname="_FEParamGetCotizacionResult", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            kw["pname"] = ("http://ar.gov.afip.dif.FEV1/","FEParamGetCotizacionResponse")
+            kw["aname"] = "_FEParamGetCotizacionResponse"
+            self.attribute_typecode_dict = {}
+            ZSI.TCcompound.ComplexType.__init__(self,None,TClist,inorder=0,**kw)
+            class Holder:
+                __metaclass__ = pyclass_type
+                typecode = self
+                def __init__(self):
+                    # pyclass
+                    self._FEParamGetCotizacionResult = None
+                    return
+            Holder.__name__ = "FEParamGetCotizacionResponse_Holder"
+            self.pyclass = Holder
+
+    class FEParamGetTiposTributos_Dec(ZSI.TCcompound.ComplexType, ElementDeclaration):
+        literal = "FEParamGetTiposTributos"
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        def __init__(self, **kw):
+            ns = ns0.FEParamGetTiposTributos_Dec.schema
+            TClist = [GTD("http://ar.gov.afip.dif.FEV1/","FEAuthRequest",lazy=False)(pname=(ns,"Auth"), aname="_Auth", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            kw["pname"] = ("http://ar.gov.afip.dif.FEV1/","FEParamGetTiposTributos")
+            kw["aname"] = "_FEParamGetTiposTributos"
+            self.attribute_typecode_dict = {}
+            ZSI.TCcompound.ComplexType.__init__(self,None,TClist,inorder=0,**kw)
+            class Holder:
+                __metaclass__ = pyclass_type
+                typecode = self
+                def __init__(self):
+                    # pyclass
+                    self._Auth = None
+                    return
+            Holder.__name__ = "FEParamGetTiposTributos_Holder"
+            self.pyclass = Holder
+
+    class FEParamGetTiposTributosResponse_Dec(ZSI.TCcompound.ComplexType, ElementDeclaration):
+        literal = "FEParamGetTiposTributosResponse"
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        def __init__(self, **kw):
+            ns = ns0.FEParamGetTiposTributosResponse_Dec.schema
+            TClist = [GTD("http://ar.gov.afip.dif.FEV1/","FETributoResponse",lazy=False)(pname=(ns,"FEParamGetTiposTributosResult"), aname="_FEParamGetTiposTributosResult", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            kw["pname"] = ("http://ar.gov.afip.dif.FEV1/","FEParamGetTiposTributosResponse")
+            kw["aname"] = "_FEParamGetTiposTributosResponse"
+            self.attribute_typecode_dict = {}
+            ZSI.TCcompound.ComplexType.__init__(self,None,TClist,inorder=0,**kw)
+            class Holder:
+                __metaclass__ = pyclass_type
+                typecode = self
+                def __init__(self):
+                    # pyclass
+                    self._FEParamGetTiposTributosResult = None
+                    return
+            Holder.__name__ = "FEParamGetTiposTributosResponse_Holder"
+            self.pyclass = Holder
+
+    class FEParamGetTiposMonedas_Dec(ZSI.TCcompound.ComplexType, ElementDeclaration):
+        literal = "FEParamGetTiposMonedas"
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        def __init__(self, **kw):
+            ns = ns0.FEParamGetTiposMonedas_Dec.schema
+            TClist = [GTD("http://ar.gov.afip.dif.FEV1/","FEAuthRequest",lazy=False)(pname=(ns,"Auth"), aname="_Auth", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            kw["pname"] = ("http://ar.gov.afip.dif.FEV1/","FEParamGetTiposMonedas")
+            kw["aname"] = "_FEParamGetTiposMonedas"
+            self.attribute_typecode_dict = {}
+            ZSI.TCcompound.ComplexType.__init__(self,None,TClist,inorder=0,**kw)
+            class Holder:
+                __metaclass__ = pyclass_type
+                typecode = self
+                def __init__(self):
+                    # pyclass
+                    self._Auth = None
+                    return
+            Holder.__name__ = "FEParamGetTiposMonedas_Holder"
+            self.pyclass = Holder
+
+    class FEParamGetTiposMonedasResponse_Dec(ZSI.TCcompound.ComplexType, ElementDeclaration):
+        literal = "FEParamGetTiposMonedasResponse"
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        def __init__(self, **kw):
+            ns = ns0.FEParamGetTiposMonedasResponse_Dec.schema
+            TClist = [GTD("http://ar.gov.afip.dif.FEV1/","MonedaResponse",lazy=False)(pname=(ns,"FEParamGetTiposMonedasResult"), aname="_FEParamGetTiposMonedasResult", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            kw["pname"] = ("http://ar.gov.afip.dif.FEV1/","FEParamGetTiposMonedasResponse")
+            kw["aname"] = "_FEParamGetTiposMonedasResponse"
+            self.attribute_typecode_dict = {}
+            ZSI.TCcompound.ComplexType.__init__(self,None,TClist,inorder=0,**kw)
+            class Holder:
+                __metaclass__ = pyclass_type
+                typecode = self
+                def __init__(self):
+                    # pyclass
+                    self._FEParamGetTiposMonedasResult = None
+                    return
+            Holder.__name__ = "FEParamGetTiposMonedasResponse_Holder"
+            self.pyclass = Holder
+
+    class FEParamGetTiposIva_Dec(ZSI.TCcompound.ComplexType, ElementDeclaration):
+        literal = "FEParamGetTiposIva"
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        def __init__(self, **kw):
+            ns = ns0.FEParamGetTiposIva_Dec.schema
+            TClist = [GTD("http://ar.gov.afip.dif.FEV1/","FEAuthRequest",lazy=False)(pname=(ns,"Auth"), aname="_Auth", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            kw["pname"] = ("http://ar.gov.afip.dif.FEV1/","FEParamGetTiposIva")
+            kw["aname"] = "_FEParamGetTiposIva"
+            self.attribute_typecode_dict = {}
+            ZSI.TCcompound.ComplexType.__init__(self,None,TClist,inorder=0,**kw)
+            class Holder:
+                __metaclass__ = pyclass_type
+                typecode = self
+                def __init__(self):
+                    # pyclass
+                    self._Auth = None
+                    return
+            Holder.__name__ = "FEParamGetTiposIva_Holder"
+            self.pyclass = Holder
+
+    class FEParamGetTiposIvaResponse_Dec(ZSI.TCcompound.ComplexType, ElementDeclaration):
+        literal = "FEParamGetTiposIvaResponse"
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        def __init__(self, **kw):
+            ns = ns0.FEParamGetTiposIvaResponse_Dec.schema
+            TClist = [GTD("http://ar.gov.afip.dif.FEV1/","IvaTipoResponse",lazy=False)(pname=(ns,"FEParamGetTiposIvaResult"), aname="_FEParamGetTiposIvaResult", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            kw["pname"] = ("http://ar.gov.afip.dif.FEV1/","FEParamGetTiposIvaResponse")
+            kw["aname"] = "_FEParamGetTiposIvaResponse"
+            self.attribute_typecode_dict = {}
+            ZSI.TCcompound.ComplexType.__init__(self,None,TClist,inorder=0,**kw)
+            class Holder:
+                __metaclass__ = pyclass_type
+                typecode = self
+                def __init__(self):
+                    # pyclass
+                    self._FEParamGetTiposIvaResult = None
+                    return
+            Holder.__name__ = "FEParamGetTiposIvaResponse_Holder"
+            self.pyclass = Holder
+
+    class FEParamGetTiposOpcional_Dec(ZSI.TCcompound.ComplexType, ElementDeclaration):
+        literal = "FEParamGetTiposOpcional"
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        def __init__(self, **kw):
+            ns = ns0.FEParamGetTiposOpcional_Dec.schema
+            TClist = [GTD("http://ar.gov.afip.dif.FEV1/","FEAuthRequest",lazy=False)(pname=(ns,"Auth"), aname="_Auth", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            kw["pname"] = ("http://ar.gov.afip.dif.FEV1/","FEParamGetTiposOpcional")
+            kw["aname"] = "_FEParamGetTiposOpcional"
+            self.attribute_typecode_dict = {}
+            ZSI.TCcompound.ComplexType.__init__(self,None,TClist,inorder=0,**kw)
+            class Holder:
+                __metaclass__ = pyclass_type
+                typecode = self
+                def __init__(self):
+                    # pyclass
+                    self._Auth = None
+                    return
+            Holder.__name__ = "FEParamGetTiposOpcional_Holder"
+            self.pyclass = Holder
+
+    class FEParamGetTiposOpcionalResponse_Dec(ZSI.TCcompound.ComplexType, ElementDeclaration):
+        literal = "FEParamGetTiposOpcionalResponse"
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        def __init__(self, **kw):
+            ns = ns0.FEParamGetTiposOpcionalResponse_Dec.schema
+            TClist = [GTD("http://ar.gov.afip.dif.FEV1/","OpcionalTipoResponse",lazy=False)(pname=(ns,"FEParamGetTiposOpcionalResult"), aname="_FEParamGetTiposOpcionalResult", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            kw["pname"] = ("http://ar.gov.afip.dif.FEV1/","FEParamGetTiposOpcionalResponse")
+            kw["aname"] = "_FEParamGetTiposOpcionalResponse"
+            self.attribute_typecode_dict = {}
+            ZSI.TCcompound.ComplexType.__init__(self,None,TClist,inorder=0,**kw)
+            class Holder:
+                __metaclass__ = pyclass_type
+                typecode = self
+                def __init__(self):
+                    # pyclass
+                    self._FEParamGetTiposOpcionalResult = None
+                    return
+            Holder.__name__ = "FEParamGetTiposOpcionalResponse_Holder"
+            self.pyclass = Holder
+
+    class FEParamGetTiposConcepto_Dec(ZSI.TCcompound.ComplexType, ElementDeclaration):
+        literal = "FEParamGetTiposConcepto"
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        def __init__(self, **kw):
+            ns = ns0.FEParamGetTiposConcepto_Dec.schema
+            TClist = [GTD("http://ar.gov.afip.dif.FEV1/","FEAuthRequest",lazy=False)(pname=(ns,"Auth"), aname="_Auth", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            kw["pname"] = ("http://ar.gov.afip.dif.FEV1/","FEParamGetTiposConcepto")
+            kw["aname"] = "_FEParamGetTiposConcepto"
+            self.attribute_typecode_dict = {}
+            ZSI.TCcompound.ComplexType.__init__(self,None,TClist,inorder=0,**kw)
+            class Holder:
+                __metaclass__ = pyclass_type
+                typecode = self
+                def __init__(self):
+                    # pyclass
+                    self._Auth = None
+                    return
+            Holder.__name__ = "FEParamGetTiposConcepto_Holder"
+            self.pyclass = Holder
+
+    class FEParamGetTiposConceptoResponse_Dec(ZSI.TCcompound.ComplexType, ElementDeclaration):
+        literal = "FEParamGetTiposConceptoResponse"
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        def __init__(self, **kw):
+            ns = ns0.FEParamGetTiposConceptoResponse_Dec.schema
+            TClist = [GTD("http://ar.gov.afip.dif.FEV1/","ConceptoTipoResponse",lazy=False)(pname=(ns,"FEParamGetTiposConceptoResult"), aname="_FEParamGetTiposConceptoResult", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            kw["pname"] = ("http://ar.gov.afip.dif.FEV1/","FEParamGetTiposConceptoResponse")
+            kw["aname"] = "_FEParamGetTiposConceptoResponse"
+            self.attribute_typecode_dict = {}
+            ZSI.TCcompound.ComplexType.__init__(self,None,TClist,inorder=0,**kw)
+            class Holder:
+                __metaclass__ = pyclass_type
+                typecode = self
+                def __init__(self):
+                    # pyclass
+                    self._FEParamGetTiposConceptoResult = None
+                    return
+            Holder.__name__ = "FEParamGetTiposConceptoResponse_Holder"
+            self.pyclass = Holder
+
+    class FEParamGetPtosVenta_Dec(ZSI.TCcompound.ComplexType, ElementDeclaration):
+        literal = "FEParamGetPtosVenta"
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        def __init__(self, **kw):
+            ns = ns0.FEParamGetPtosVenta_Dec.schema
+            TClist = [GTD("http://ar.gov.afip.dif.FEV1/","FEAuthRequest",lazy=False)(pname=(ns,"Auth"), aname="_Auth", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            kw["pname"] = ("http://ar.gov.afip.dif.FEV1/","FEParamGetPtosVenta")
+            kw["aname"] = "_FEParamGetPtosVenta"
+            self.attribute_typecode_dict = {}
+            ZSI.TCcompound.ComplexType.__init__(self,None,TClist,inorder=0,**kw)
+            class Holder:
+                __metaclass__ = pyclass_type
+                typecode = self
+                def __init__(self):
+                    # pyclass
+                    self._Auth = None
+                    return
+            Holder.__name__ = "FEParamGetPtosVenta_Holder"
+            self.pyclass = Holder
+
+    class FEParamGetPtosVentaResponse_Dec(ZSI.TCcompound.ComplexType, ElementDeclaration):
+        literal = "FEParamGetPtosVentaResponse"
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        def __init__(self, **kw):
+            ns = ns0.FEParamGetPtosVentaResponse_Dec.schema
+            TClist = [GTD("http://ar.gov.afip.dif.FEV1/","FEPtoVentaResponse",lazy=False)(pname=(ns,"FEParamGetPtosVentaResult"), aname="_FEParamGetPtosVentaResult", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            kw["pname"] = ("http://ar.gov.afip.dif.FEV1/","FEParamGetPtosVentaResponse")
+            kw["aname"] = "_FEParamGetPtosVentaResponse"
+            self.attribute_typecode_dict = {}
+            ZSI.TCcompound.ComplexType.__init__(self,None,TClist,inorder=0,**kw)
+            class Holder:
+                __metaclass__ = pyclass_type
+                typecode = self
+                def __init__(self):
+                    # pyclass
+                    self._FEParamGetPtosVentaResult = None
+                    return
+            Holder.__name__ = "FEParamGetPtosVentaResponse_Holder"
+            self.pyclass = Holder
+
+    class FEParamGetTiposCbte_Dec(ZSI.TCcompound.ComplexType, ElementDeclaration):
+        literal = "FEParamGetTiposCbte"
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        def __init__(self, **kw):
+            ns = ns0.FEParamGetTiposCbte_Dec.schema
+            TClist = [GTD("http://ar.gov.afip.dif.FEV1/","FEAuthRequest",lazy=False)(pname=(ns,"Auth"), aname="_Auth", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            kw["pname"] = ("http://ar.gov.afip.dif.FEV1/","FEParamGetTiposCbte")
+            kw["aname"] = "_FEParamGetTiposCbte"
+            self.attribute_typecode_dict = {}
+            ZSI.TCcompound.ComplexType.__init__(self,None,TClist,inorder=0,**kw)
+            class Holder:
+                __metaclass__ = pyclass_type
+                typecode = self
+                def __init__(self):
+                    # pyclass
+                    self._Auth = None
+                    return
+            Holder.__name__ = "FEParamGetTiposCbte_Holder"
+            self.pyclass = Holder
+
+    class FEParamGetTiposCbteResponse_Dec(ZSI.TCcompound.ComplexType, ElementDeclaration):
+        literal = "FEParamGetTiposCbteResponse"
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        def __init__(self, **kw):
+            ns = ns0.FEParamGetTiposCbteResponse_Dec.schema
+            TClist = [GTD("http://ar.gov.afip.dif.FEV1/","CbteTipoResponse",lazy=False)(pname=(ns,"FEParamGetTiposCbteResult"), aname="_FEParamGetTiposCbteResult", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            kw["pname"] = ("http://ar.gov.afip.dif.FEV1/","FEParamGetTiposCbteResponse")
+            kw["aname"] = "_FEParamGetTiposCbteResponse"
+            self.attribute_typecode_dict = {}
+            ZSI.TCcompound.ComplexType.__init__(self,None,TClist,inorder=0,**kw)
+            class Holder:
+                __metaclass__ = pyclass_type
+                typecode = self
+                def __init__(self):
+                    # pyclass
+                    self._FEParamGetTiposCbteResult = None
+                    return
+            Holder.__name__ = "FEParamGetTiposCbteResponse_Holder"
+            self.pyclass = Holder
+
+    class FEParamGetTiposDoc_Dec(ZSI.TCcompound.ComplexType, ElementDeclaration):
+        literal = "FEParamGetTiposDoc"
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        def __init__(self, **kw):
+            ns = ns0.FEParamGetTiposDoc_Dec.schema
+            TClist = [GTD("http://ar.gov.afip.dif.FEV1/","FEAuthRequest",lazy=False)(pname=(ns,"Auth"), aname="_Auth", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            kw["pname"] = ("http://ar.gov.afip.dif.FEV1/","FEParamGetTiposDoc")
+            kw["aname"] = "_FEParamGetTiposDoc"
+            self.attribute_typecode_dict = {}
+            ZSI.TCcompound.ComplexType.__init__(self,None,TClist,inorder=0,**kw)
+            class Holder:
+                __metaclass__ = pyclass_type
+                typecode = self
+                def __init__(self):
+                    # pyclass
+                    self._Auth = None
+                    return
+            Holder.__name__ = "FEParamGetTiposDoc_Holder"
+            self.pyclass = Holder
+
+    class FEParamGetTiposDocResponse_Dec(ZSI.TCcompound.ComplexType, ElementDeclaration):
+        literal = "FEParamGetTiposDocResponse"
+        schema = "http://ar.gov.afip.dif.FEV1/"
+        def __init__(self, **kw):
+            ns = ns0.FEParamGetTiposDocResponse_Dec.schema
+            TClist = [GTD("http://ar.gov.afip.dif.FEV1/","DocTipoResponse",lazy=False)(pname=(ns,"FEParamGetTiposDocResult"), aname="_FEParamGetTiposDocResult", minOccurs=0, maxOccurs=1, nillable=False, typed=False, encoded=kw.get("encoded"))]
+            kw["pname"] = ("http://ar.gov.afip.dif.FEV1/","FEParamGetTiposDocResponse")
+            kw["aname"] = "_FEParamGetTiposDocResponse"
+            self.attribute_typecode_dict = {}
+            ZSI.TCcompound.ComplexType.__init__(self,None,TClist,inorder=0,**kw)
+            class Holder:
+                __metaclass__ = pyclass_type
+                typecode = self
+                def __init__(self):
+                    # pyclass
+                    self._FEParamGetTiposDocResult = None
+                    return
+            Holder.__name__ = "FEParamGetTiposDocResponse_Holder"
+            self.pyclass = Holder
+
+# end class ns0 (tns: http://ar.gov.afip.dif.FEV1/)

@@ -19,8 +19,8 @@
 #
 ##############################################################################
 
+import wsafip_server
 import wsfe_error
-import document_class
 import invoice
 import journal
 import report

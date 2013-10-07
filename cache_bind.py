@@ -34,11 +34,14 @@ ServiceSoap=ServiceLocator().getServiceSoap
 _bind_cache = {}
 _bind_list  = []
 
-def get_bind(server):
+def get_bind(server, ssl=True):
+    transport = HTTPSConnectionSSLVersion if ssl else None
     if not server.id in _bind_cache:
         if len(_bind_list) > PROXY_SIZE:
             del _bind_cache[_bind_list.pop(0)]
-        _bind_cache[server.id] = ServiceSoap(url=server.url, transport=HTTPSConnectionSSLVersion, tracefile=TRACE_FILE)
+        _bind_cache[server.id] = ServiceSoap(url=server.url,
+                                             transport=transport,
+                                             tracefile=TRACE_FILE)
         _bind_list.append(server.id)
     return _bind_cache[server.id]
 

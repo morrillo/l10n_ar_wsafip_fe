@@ -33,7 +33,6 @@ API e GUI para acceder a las Web Services de Factura Electrónica de la AFIP
         'l10n_ar_invoice',
     ],
     'init_xml': [
-        'data/afip.document_class.csv',
         'data/afip.wsfe_error.csv',
     ],
     'demo_xml': [],
