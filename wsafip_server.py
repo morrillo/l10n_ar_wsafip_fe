@@ -86,10 +86,36 @@ class wsafip_server(osv.osv):
         AFIP Description: Recuperador de valores referenciales de códigos de Tipos de Tributos (FEParamGetTiposTributos)
         AFIP Description: Recuperador de los puntos de venta asignados a Facturación Electrónica que soporten CAE y CAEA vía Web Services (FEParamGetPtosVenta)
         AFIP Description: Recuperador de cotización de moneda (FEParamGetCotizacion)
-        AFIP Description: Método Dummy para verificación de funcionamiento de infraestructura (FEDummy)
         AFIP Description: Recuperador de cantidad máxima de registros FECAESolicitar / FECAEARegInformativo (FECompTotXRequest)
         AFIP Description: Método para consultar Comprobantes Emitidos y su código (FECompConsultar)
         """
+
+    def wsfe_get_status(self, cr, uid, ids, conn_id, context=None):
+        """
+        AFIP Description: Método Dummy para verificación de funcionamiento de infraestructura (FEDummy)
+        """
+        conn_obj = self.pool.get('wsafip.connection')
+        conn = conn_obj.browse(cr, uid, conn_id, context=context) 
+        conn.login() # Login if nescesary.
+
+        r = {}
+        for srv in self.browse(cr, uid, ids, context=context):
+            request = FEDummySoapIn()
+            try:
+                _logger.info('Query AFIP Web service status')
+                response = get_bind(conn.server_id).FEDummy(request)
+            except Exception as e:
+                _logger.error('AFIP Web service error!: (%i) %s' % (e[0], e[1]))
+                raise osv.except_osv(_(u'AFIP Web service error'),
+                                     _(u'System return error %i: %s\n'
+                                       u'Pueda que esté intente realizar esta operación'
+                                       u'desde el servidor de homologación.'
+                                       u'Intente desde el servidor de producción.') % (e[0], e[1]))
+            authserver = response.FEDummyResult.AuthServer
+            appserver = response.FEDummyResult.AppServer
+            dbserver = response.FEDummyResult.DbServer
+            r[srv.id] = (authserver, appserver, dbserver)
+        return r
 
     def wsfe_update_afip_concept_type(self, cr, uid, ids, conn_id, context=None):
         """
@@ -124,9 +150,13 @@ class wsafip_server(osv.osv):
                       'active': c.FchHasta  in [None, 'NULL']}
                     for c in response.FEParamGetTiposConceptoResult.ResultGet.ConceptoTipo
                 ]
-            except:
-                _logger.error('AFIP Web service error!')
-                return False
+            except Exception as e:
+                _logger.error('AFIP Web service error!: (%i) %s' % (e[0], e[1]))
+                raise osv.except_osv(_(u'AFIP Web service error'),
+                                     _(u'System return error %i: %s\n'
+                                       u'Pueda que esté intente realizar esta operación'
+                                       u'desde el servidor de homologación.'
+                                       u'Intente desde el servidor de producción.') % (e[0], e[1]))
 
             _update(self.pool, cr, uid,
                     'afip.concept_type',
@@ -171,9 +201,13 @@ class wsafip_server(osv.osv):
                       'active': c.FchHasta  in [None, 'NULL']}
                     for c in response.FEParamGetTiposCbteResult.ResultGet.CbteTipo
                 ]
-            except:
-                _logger.error('AFIP Web service error!')
-                return False
+            except Exception as e:
+                _logger.error('AFIP Web service error!: (%i) %s' % (e[0], e[1]))
+                raise osv.except_osv(_(u'AFIP Web service error'),
+                                     _(u'System return error %i: %s\n'
+                                       u'Pueda que esté intente realizar esta operación'
+                                       u'desde el servidor de homologación.'
+                                       u'Intente desde el servidor de producción.') % (e[0], e[1]))
 
             _update(self.pool, cr, uid,
                     'afip.journal_class',
@@ -218,9 +252,13 @@ class wsafip_server(osv.osv):
                       'active': c.FchHasta in [None, 'NULL'] }
                     for c in response.FEParamGetTiposDocResult.ResultGet.DocTipo
                 ]
-            except:
-                _logger.error('AFIP Web service error!')
-                return False
+            except Exception as e:
+                _logger.error('AFIP Web service error!: (%i) %s' % (e[0], e[1]))
+                raise osv.except_osv(_(u'AFIP Web service error'),
+                                     _(u'System return error %i: %s\n'
+                                       u'Pueda que esté intente realizar esta operación'
+                                       u'desde el servidor de homologación.'
+                                       u'Intente desde el servidor de producción.') % (e[0], e[1]))
 
             _update(self.pool, cr, uid,
                     'afip.document_type',
@@ -264,9 +302,13 @@ class wsafip_server(osv.osv):
                       'active': c.FchHasta in [None, 'NULL'] }
                     for c in response.FEParamGetTiposMonedasResult.ResultGet.Moneda
                 ]
-            except:
-                _logger.error('AFIP Web service error!')
-                return False
+            except Exception as e:
+                _logger.error('AFIP Web service error!: (%i) %s' % (e[0], e[1]))
+                raise osv.except_osv(_(u'AFIP Web service error'),
+                                     _(u'System return error %i: %s\n'
+                                       u'Pueda que esté intente realizar esta operación'
+                                       u'desde el servidor de homologación.'
+                                       u'Intente desde el servidor de producción.') % (e[0], e[1]))
 
             _update(self.pool, cr, uid,
                     'res.currency',
@@ -284,6 +326,8 @@ class wsafip_server(osv.osv):
         """
         conn_obj = self.pool.get('wsafip.connection')
 
+        r={}
+
         for srv in self.browse(cr, uid, ids, context=context):
             # Ignore servers without code WSFE.
             if srv.code != 'wsfe': continue
@@ -291,9 +335,9 @@ class wsafip_server(osv.osv):
             # Take the connection
             conn = conn_obj.browse(cr, uid, conn_id, context=context) 
             conn.login() # Login if nescesary.
-            if conn.state not in  [ 'connected', 'clockshifted' ]: continue
-
-            _logger.info('Get Last Invoice Number from AFIP Web service')
+            if conn.state not in  [ 'connected', 'clockshifted' ]:
+                r[srv.id] = False
+                continue
 
             request = FECompUltimoAutorizadoSoapIn()
             request = conn.set_auth_request(request, context=context)
@@ -303,11 +347,16 @@ class wsafip_server(osv.osv):
             try:
                 _logger.info('Take last invoice number from AFIP Web service')
                 response = get_bind(conn.server_id).FECompUltimoAutorizado(request)
+            except Exception as e:
+                _logger.error('AFIP Web service error!: (%i) %s' % (e[0], e[1]))
+                raise osv.except_osv(_(u'AFIP Web service error'),
+                                     _(u'System return error %i: %s\n'
+                                       u'Pueda que esté intente realizar esta operación'
+                                       u'desde el servidor de homologación.'
+                                       u'Intente desde el servidor de producción.') % (e[0], e[1]))
 
-                return int(response.FECompUltimoAutorizadoResult.CbteNro)
-            except:
-                _logger.error('AFIP Web service error!')
-                return False
+            r[srv.id] = int(response.FECompUltimoAutorizadoResult.CbteNro)
+        return r
 
     def wsfe_get_cae(self, cr, uid, ids, conn_id, invoice_request, context=None):
         """
@@ -405,15 +454,98 @@ class wsafip_server(osv.osv):
             request.FeCAEReq = Request
 
             try:
-                #Detail.set_element_CbtesAsoc(invoice['CbtesAsoc'])
-                #response = get_bind(conn.server_id).FECAESolicitar(request)
-                pass
-
-            except:
-                _logger.error('AFIP Web service error!')
-                return False
+                Detail.set_element_CbtesAsoc(invoice['CbtesAsoc'])
+                response = get_bind(conn.server_id).FECAESolicitar(request)
+                # https://www.afip.gob.ar/fe/documentos/manual_desarrollador_COMPG_v2.pdf
+                cae = response.FECAESolicitarResponse.FeDetResp.FEDetResponse.CAE
+                return cae
+            except Exception as e:
+                _logger.error('AFIP Web service error!: (%i) %s' % (e[0], e[1]))
+                raise osv.except_osv(_(u'AFIP Web service error'),
+                                     _(u'System return error %i: %s\n'
+                                       u'Pueda que esté intente realizar esta operación'
+                                       u'desde el servidor de homologación.'
+                                       u'Intente desde el servidor de producción.') % (e[0], e[1]))
 
         raise RuntimeError
+
+"""
+Codigo de respuesta de la version 6.0
+
+           if response._FEAutRequestResult._RError._percode == 0 and response._FEAutRequestResult._FecResp._resultado in [ 'P', 'A' ]:
+                # Not error
+                error_message = []
+                for i in range(response._FEAutRequestResult._FecResp._cantidadreg):
+                    response_id = response._FEAutRequestResult._FecResp._id # ID de lote.
+                    r = response._FEAutRequestResult._FedResp._FEDetalleResponse[i]
+
+                    afip_error_ids = wsfe_error_obj.search(cr, uid, [('code','in',r._motivo.split(';'))])
+                    afip_error = wsfe_error_obj.browse(cr, uid, afip_error_ids)
+                    afip_message = '; '.join([ err.description for err in afip_error ])
+                    error_message.append(_('Invoice %s: %s.') % (r._cbt_desde, afip_message))
+
+                    self.logger(netsvc.LOG_ERROR, _('Processed document %s-%s. AFIP message: %s.') % (r._cbt_desde, r._cbt_hasta, afip_message))
+
+                    if r._cbt_desde not in Invoice:
+                        self.logger(netsvc.LOG_ERROR, _('Document sequence is not syncronized with AFIP. Afip return %i as valid.') % r._cbt_desde)
+                        self.logger(netsvc.LOG_ERROR, _('Expected sequences: %s.') % repr(Invoice.keys()))
+                        continue
+
+                    if r._cae is None:
+                        self.logger(netsvc.LOG_ERROR, _('Document have not CAE assigned.'))
+                        return False 
+                    
+                    # Esto hay que pasarlo a invoice.py
+                    self.write(cr, uid, Invoice[r._cbt_desde].id, 
+                               {'afip_cae': r._cae,
+                                'afip_cae_due': r._fecha_vto,
+                                'afip_batch_number':response_id,
+                                'afip_result': r._resultado,
+                                'afip_error_id': afip_error_ids[0],
+                               })
+            elif response._FEAutRequestResult._FecResp is None:
+                raise osv.except_osv(_('AFIP error'),
+                                     _(u'Ocurrió un error en el AFIP (%i): %s') % 
+                                     (response._FEAutRequestResult._RError._percode,
+                                      response._FEAutRequestResult._RError._perrmsg,
+                                     ))
+            elif response._FEAutRequestResult._FecResp is not None:
+                response_id = response._FEAutRequestResult._FecResp._id # ID de lote.
+                response_cuit = response._FEAutRequestResult._FecResp._cuit
+                response_fecha_cae = response._FEAutRequestResult._FecResp._fecha_cae
+                response_cant_reg = response._FEAutRequestResult._FecResp._cantidadreg
+                response_resultado = response._FEAutRequestResult._FecResp._resultado
+                response_motivo = response._FEAutRequestResult._FecResp._motivo
+                response_reproceso = response._FEAutRequestResult._FecResp._reproceso
+
+                self.logger(netsvc.LOG_ERROR, _('AFIP dont approve some document. Global Reason: %s') % response_motivo)
+
+                error_message = []
+                for i in range(response._FEAutRequestResult._FecResp._cantidadreg):
+                    r = response._FEAutRequestResult._FedResp._FEDetalleResponse[i]
+
+                    afip_error_ids = wsfe_error_obj.search(cr, uid, [('code','in',r._motivo.split(';'))])
+                    afip_error = wsfe_error_obj.browse(cr, uid, afip_error_ids)
+                    afip_message = '; '.join([ err.description for err in afip_error ])
+                    error_message.append(_('Invoice %s: %s.') % (r._cbt_desde, afip_message))
+
+                    self.logger(netsvc.LOG_ERROR, _('AFIP dont approve the document %s-%s. Reason: %s.') % (r._cbt_desde, r._cbt_hasta, afip_message))
+
+                    if r._cbt_desde not in Invoice:
+                        self.logger(netsvc.LOG_ERROR, _('Document sequence is not syncronized with AFIP. Afip return %i as valid.') % r._cbt_desde)
+                        self.logger(netsvc.LOG_ERROR, _('Expected sequences: %s.') % repr(Invoice.keys()))
+                        return False
+
+                # Esto deberia ser un mensaje al usuario, asi termina de procesar todas las facturas.
+                raise osv.except_osv(_('AFIP error'),
+                                     _(u'Ocurriró un error en el AFIP (%i: %s).<br/>\n %s.\n') % 
+                                     (response._FEAutRequestResult._RError._percode,
+                                      response._FEAutRequestResult._RError._perrmsg,
+                                      '<br/>\n'.join(error_message),
+                                     ))
+        pass
+
+"""
 
 
 wsafip_server()

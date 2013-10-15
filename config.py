@@ -49,7 +49,7 @@ class l10n_ar_wsafip_fe_config(osv.osv_memory):
     def execute(self, cr, uid, ids, context=None):
         """
         """
-        auth_obj = self.pool.get('wsafip.authorization')
+        auth_obj = self.pool.get('wsafip.connection')
         journal_obj = self.pool.get('account.journal')
         afipserver_obj = self.pool.get('wsafip.server')
         sequence_obj = self.pool.get('ir.sequence')

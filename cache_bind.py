@@ -25,6 +25,9 @@ to the server.
 from sslhttps import HTTPSConnectionSSLVersion
 from stub.Service_client import *
 import sys
+import logging
+
+_logger = logging.getLogger(__name__)
 
 PROXY_SIZE=5
 TRACE_FILE=sys.stdout
@@ -39,6 +42,8 @@ def get_bind(server, ssl=True):
     if not server.id in _bind_cache:
         if len(_bind_list) > PROXY_SIZE:
             del _bind_cache[_bind_list.pop(0)]
+        import pdb; pdb.set_trace()
+        _logger.info("WSFE binding to %s", server.url)
         _bind_cache[server.id] = ServiceSoap(url=server.url,
                                              transport=transport,
                                              tracefile=TRACE_FILE)

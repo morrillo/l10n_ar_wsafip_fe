@@ -50,6 +50,11 @@ def _get_parents(child, parents=[]):
         return parents + [ child.name ] + _get_parents(child.parent_id)
 
 class invoice(osv.osv):
+    def afip_validation(self, cr, uid, ids, context=None):
+        r = super(invoice, self).afip_validation(cr, uid, ids, context=context)
+        if r: self.action_retrieve_cae(cr, uid, ids, context=context)
+        return r
+
     def _get_concept(self, cr, uid, ids, name, args, context=None):
         r = {}
         for inv in self.browse(cr, uid, ids):
@@ -167,7 +172,7 @@ class invoice(osv.osv):
 
         return r[ids] if isinstance(ids, int) else r
 
-    def action_retrieve_cae(self, cr, uid, ids, *args):
+    def action_retrieve_cae(self, cr, uid, ids, context=None):
         """
         Contact to the AFIP to get a CAE number.
         """
@@ -222,10 +227,12 @@ class invoice(osv.osv):
                 'Tributos': self.get_taxes(cr, uid, inv.id),
                 'IVA': self.get_vat(cr, uid, inv.id),
                 'Opcionales': self.get_optionals(cr, uid, inv.id),
+                '_inv_id_': inv.id,
             })
 
         for c_id, r in Requests.items():
-            conn_obj.wsfe_get_cae(cr, uid, [c_id], r)
+            cae = conn_obj.wsfe_get_cae(cr, uid, [c_id], r)
+            self.write(cr, uid, r[c_id]['_inv_id_'], {'cae': cae})
 
     def _do_request(self, request_dict):
 

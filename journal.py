@@ -34,54 +34,65 @@ class account_journal(osv.osv):
             context={}
         r={}
         for journal in self.browse(cr, uid, ids):
-            auth = journal.afip_connection_id
-            if not auth:
+            conn = journal.afip_connection_id
+            if not conn:
                 r[journal.id] = 'not available'
-            elif auth.server_id.code != 'wsfe':
+            elif conn.server_id.code != 'wsfe':
                 r[journal.id] = 'connection_service_error'
             else:
                 # Try to login just one time.
                 try:
-                    auth.login()
-                    if auth.state not in  [ 'connected', 'clockshifted' ]:
+                    conn.login()
+                    if conn.state not in  [ 'connected', 'clockshifted' ]:
                         r[journal.id] = 'connection_error'
                     else:
-                        request = FEDummySoapIn()
-                        response = get_bind(auth.server_id).FEDummy(request)
-                        if response._FEDummyResult._authserver == 'OK':
+                        authserver, appserver, dbserver = conn.server_id.wsfe_get_status(conn.id)[conn.server_id.id]
+                        if authserver == 'OK':
                             r[journal.id] = 'connected'
                         else:
-                            if response._FEDummyResult._appserver != 'OK':
+                            if appserver != 'OK':
                                 r[journal.id] = 'connected_but_appserver_error'
-                            elif response._FEDummyResult._dbserver != 'OK':
+                            elif dbserver != 'OK':
                                 r[journal.id] = 'connected_but_dbserver_error'
                             else:
                                 r[journal.id] = 'connected_but_servers_error'
                 except:
-                    pass
+                    r[journal.id] = 'something_wrong'
         return r
 
     def _get_afip_items_generated(self, cr, uid, ids, fields_name, arg, context=None):
         if context is None:
             context={}
+        glin = lambda conn, ps, jc: conn.server_id.wsfe_get_last_invoice_number(conn.id, ps, jc)[conn.server_id.id]
         r={}
         for journal in self.browse(cr, uid, ids):
             r[journal.id] = False
             conn = journal.afip_connection_id
             if conn and conn.server_id.code == 'wsfe':
-                cb = conn.get_callbacks()[conn.id]
-                r[journal.id] = cb.get_last_invoice_number(journal.point_of_sale, journal.journal_class_id.afip_code)
-                cb.update_afip_concepts()
+                try:
+                    r[journal.id] = glin(conn, journal.point_of_sale, journal.journal_class_id.afip_code)
+                except:
+                    r[journal.id] = False
         return r
 
     _inherit = "account.journal"
     _columns = {
         'afip_connection_id': fields.many2one('wsafip.connection', 'Web Service connection',
                             help="Which connection must be used to use AFIP services."),
-        'afip_state': fields.function(_get_afip_state, type='char', string='Connection state',method=True, 
-                            help="Connect to the AFIP and check is service is avilable."),
+        'afip_state': fields.function(_get_afip_state, type='selection', string='Connection state',
+                                      method=True, readonly=True,
+                                      selection=[
+                                          ('connected','Connected'),
+                                          ('connection_error','Connection Error'),
+                                          ('connected_but_appserver_error','Application service has troubles'),
+                                          ('connected_but_dbserver_error','Database service is down'),
+                                          ('connected_but_authserver_error','Authentication service is down'),
+                                          ('connected_but_servers_error','Services are down'),
+                                          ('something_wrong','Not identified error'),
+                                      ],
+                            help="Connect to the AFIP and check service status."),
         'afip_items_generated': fields.function(_get_afip_items_generated, type='integer', string='Number of Invoices Generated',method=True, 
-                            help="Connect to the AFIP and check how many invoices was generated."),
+                            help="Connect to the AFIP and check how many invoices was generated.", readonly=True),
     }
 account_journal()
 
