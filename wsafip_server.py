@@ -270,28 +270,22 @@ class wsafip_server(osv.osv):
             conn.login() # Login if nescesary.
             if conn.state not in  [ 'connected', 'clockshifted' ]: continue
 
-            # Build request
-            request = FEParamGetTiposMonedasSoapIn()
-            request = conn.set_auth_request(request, context=context)
-
             try:
                 _logger.info('Updating currency from AFIP Web service')
-                response = get_bind(conn.server_id).FEParamGetTiposMonedas(request)
+                srvclient = Client(srv.url+'?WSDL', transport=HttpsTransport())
+                response = srvclient.service.FEParamGetTiposMonedas(Auth=conn.get_auth())
 
                 # Take list of currency
                 currency_list = [
                     { 'afip_code': c.Id,
                       'name': c.Desc,
                       'active': c.FchHasta in [None, 'NULL'] }
-                    for c in response.FEParamGetTiposMonedasResult.ResultGet.Moneda
+                    for c in response.ResultGet.Moneda
                 ]
             except Exception as e:
                 _logger.error('AFIP Web service error!: (%i) %s' % (e[0], e[1]))
                 raise osv.except_osv(_(u'AFIP Web service error'),
-                                     _(u'System return error %i: %s\n'
-                                       u'Pueda que esté intente realizar esta operación'
-                                       u'desde el servidor de homologación.'
-                                       u'Intente desde el servidor de producción.') % (e[0], e[1]))
+                                     _(u'System return error %i: %s') % (e[0], e[1]))
 
             _update(self.pool, cr, uid,
                     'res.currency',
