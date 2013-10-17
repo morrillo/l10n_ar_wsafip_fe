@@ -19,7 +19,6 @@
 #
 ##############################################################################
 from openerp.osv import fields, osv
-from cache_bind import get_bind
 from stub.Service_client import *
 from stub.Service_types import *
 from openerp.tools.translate import _

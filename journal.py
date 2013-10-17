@@ -22,8 +22,8 @@ from openerp.osv import fields, osv
 from stub.Service_client import *
 from stub.Service_types import *
 from openerp.tools.translate import _
-from cache_bind import get_bind
 import logging
+import urllib2
 
 _logger = logging.getLogger(__name__)
 _schema = logging.getLogger(__name__ + '.schema')
@@ -56,8 +56,18 @@ class account_journal(osv.osv):
                                 r[journal.id] = 'connected_but_dbserver_error'
                             else:
                                 r[journal.id] = 'connected_but_servers_error'
-                except:
+                except urllib2.URLError as e:
+                    if e[0][0] == 101:
+                        r[journal.id] = 'network_down'
+                    if e[0][0] == 104:
+                        r[journal.id] = 'connection_rejected'
+                    elif e[0][0] == -2:
+                        r[journal.id] = 'unknown_service'
+                    else:
+                        import pdb; pdb.set_trace()
+                except Exception as e:
                     r[journal.id] = 'something_wrong'
+                _logger.debug("Connection return: %s" % r[journal.id])
         return r
 
     def _get_afip_items_generated(self, cr, uid, ids, fields_name, arg, context=None):
@@ -88,6 +98,9 @@ class account_journal(osv.osv):
                                           ('connected_but_dbserver_error','Database service is down'),
                                           ('connected_but_authserver_error','Authentication service is down'),
                                           ('connected_but_servers_error','Services are down'),
+                                          ('network_down','Network is down'),
+                                          ('unknown_service','Unknown service'),
+                                          ('connection_rejection','Connection reseted by host'),
                                           ('something_wrong','Not identified error'),
                                       ],
                             help="Connect to the AFIP and check service status."),

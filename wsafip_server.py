@@ -19,12 +19,13 @@
 #
 ##############################################################################
 from openerp.osv import fields, osv
-from cache_bind import get_bind
-from stub.Service_client import *
-from stub.Service_types import *
 from openerp.tools.translate import _
+from suds.client import Client
 import logging
 import sys
+from sslhttps import HttpsTransport
+
+logging.getLogger('suds.transport').setLevel(logging.DEBUG)
 
 _logger = logging.getLogger(__name__)
 
@@ -95,15 +96,19 @@ class wsafip_server(osv.osv):
         AFIP Description: Método Dummy para verificación de funcionamiento de infraestructura (FEDummy)
         """
         conn_obj = self.pool.get('wsafip.connection')
-        conn = conn_obj.browse(cr, uid, conn_id, context=context) 
-        conn.login() # Login if nescesary.
 
         r = {}
         for srv in self.browse(cr, uid, ids, context=context):
-            request = FEDummySoapIn()
+            # Ignore servers without code WSFE.
+            if srv.code != 'wsfe': continue
+
+            conn = conn_obj.browse(cr, uid, conn_id, context=context) 
+            conn.login() # Login if nescesary.
+
             try:
-                _logger.info('Query AFIP Web service status')
-                response = get_bind(conn.server_id).FEDummy(request)
+                _logger.debug('Query AFIP Web service status')
+                srvclient = Client(srv.url+'?WSDL', transport=HttpsTransport())
+                response = srvclient.service.FEDummy()
             except Exception as e:
                 _logger.error('AFIP Web service error!: (%i) %s' % (e[0], e[1]))
                 raise osv.except_osv(_(u'AFIP Web service error'),
@@ -111,10 +116,9 @@ class wsafip_server(osv.osv):
                                        u'Pueda que esté intente realizar esta operación'
                                        u'desde el servidor de homologación.'
                                        u'Intente desde el servidor de producción.') % (e[0], e[1]))
-            authserver = response.FEDummyResult.AuthServer
-            appserver = response.FEDummyResult.AppServer
-            dbserver = response.FEDummyResult.DbServer
-            r[srv.id] = (authserver, appserver, dbserver)
+            r[srv.id] = (response.AuthServer,
+                         response.AppServer,
+                         response.DbServer)
         return r
 
     def wsfe_update_afip_concept_type(self, cr, uid, ids, conn_id, context=None):
@@ -140,7 +144,7 @@ class wsafip_server(osv.osv):
             request = conn.set_auth_request(request, context=context)
 
             try:
-                _logger.info('Updating concept class from AFIP Web service')
+                _logger.debug('Updating concept class from AFIP Web service')
                 response = get_bind(conn.server_id).FEParamGetTiposConcepto(request)
 
                 # Take list of concept type
@@ -339,14 +343,11 @@ class wsafip_server(osv.osv):
                 r[srv.id] = False
                 continue
 
-            request = FECompUltimoAutorizadoSoapIn()
-            request = conn.set_auth_request(request, context=context)
-            request.PtoVta = ptoVta
-            request.CbteTipo =  cbteTipo
-
             try:
                 _logger.info('Take last invoice number from AFIP Web service')
-                response = get_bind(conn.server_id).FECompUltimoAutorizado(request)
+                srvclient = Client(srv.url+'?WSDL', transport=HttpsTransport())
+                response = srvclient.service.FECompUltimoAutorizado(Auth=conn.get_auth(), PtoVta=ptoVta, CbteTipo=cbteTipo)
+
             except Exception as e:
                 _logger.error('AFIP Web service error!: (%i) %s' % (e[0], e[1]))
                 raise osv.except_osv(_(u'AFIP Web service error'),
@@ -355,7 +356,7 @@ class wsafip_server(osv.osv):
                                        u'desde el servidor de homologación.'
                                        u'Intente desde el servidor de producción.') % (e[0], e[1]))
 
-            r[srv.id] = int(response.FECompUltimoAutorizadoResult.CbteNro)
+            r[srv.id] = int(response.CbteNro)
         return r
 
     def wsfe_get_cae(self, cr, uid, ids, conn_id, invoice_request, context=None):

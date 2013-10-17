@@ -19,11 +19,19 @@
 #
 ##############################################################################
 
+import urllib2 as u2
+import urllib as u
 import socket
 import httplib
 import ssl
+import logging
+from suds.transport.http import HttpTransport, Reply, TransportError
 
-class HTTPSConnectionSSLVersion(httplib.HTTPConnection):
+logging.getLogger(__name__).setLevel(logging.DEBUG)
+
+_logger = logging.getLogger(__name__)
+
+class HTTPSConnection(httplib.HTTPConnection):
         "This class allows communication via SSL."
 
         default_port = httplib.HTTPS_PORT
@@ -31,6 +39,7 @@ class HTTPSConnectionSSLVersion(httplib.HTTPConnection):
         def __init__(self, host, port=None, key_file=None, cert_file=None,
                      strict=None, timeout=socket._GLOBAL_DEFAULT_TIMEOUT,
                      source_address=None, ssl_version=ssl.PROTOCOL_TLSv1):
+            _logger.debug('HTTPSConnection')
             # Fix error for python 2.6
             try:
                 super(HTTPSConnectionSSLVersion, self).__init__(host, port, strict, timeout, source_address)
@@ -43,6 +52,7 @@ class HTTPSConnectionSSLVersion(httplib.HTTPConnection):
         def connect(self):
             "Connect to a host on a given (SSL) port."
             # Fix error for python 2.6
+            _logger.debug('connect')
             try:
                 sock = socket.create_connection((self.host, self.port),
                                             self.timeout, self.source_address)
@@ -53,5 +63,49 @@ class HTTPSConnectionSSLVersion(httplib.HTTPConnection):
                 self._tunnel()
             self.sock = ssl.wrap_socket(sock, self.key_file, self.cert_file, ssl_version=self.ssl_version)
 
+class HTTPS(httplib.HTTP):
+    """Compatibility with 1.5 httplib interface
+
+    Python 1.5.2 did not have an HTTPS class, but it defined an
+    interface for sending http requests that is also useful for
+    https.
+    """
+
+    _connection_class = HTTPSConnection
+
+    def __init__(self, host='', port=None, key_file=None, cert_file=None,
+                 strict=None, ssl_version=ssl.PROTOCOL_SSLv3):
+        _logger.debug('HTTPS')
+        # provide a default host, pass the X509 cert info
+
+        # urf. compensate for bad input.
+        if port == 0:
+            port = None
+        self._setup(self._connection_class(host, port, key_file,
+                                           cert_file, strict, ssl_version=ssl_version))
+
+        # we never actually use these for anything, but we keep them
+        # here for compatibility with post-1.5.2 CVS.
+        self.key_file = key_file
+        self.cert_file = cert_file
+
+class HTTPSHandler(u2.HTTPSHandler):
+
+    def https_open(self, req):
+        _logger.debug('http_open')
+        return self.do_open(HTTPSConnection, req)
+
+    https_request = u2.AbstractHTTPHandler.do_request_
+
+class HttpsTransport(HttpTransport):
+    def __init__(self, *args, **kwargs):
+        _logger.debug('HttpsTransport')
+        HttpTransport.__init__(self, *args, **kwargs)
+
+    def u2handlers(self):
+        _logger.debug('u2handlers')
+        r = HttpTransport.u2handlers(self)
+        r.append(HTTPSHandler())
+        return r
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
