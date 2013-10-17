@@ -140,20 +140,17 @@ class wsafip_server(osv.osv):
             if conn.state not in  [ 'connected', 'clockshifted' ]: continue
 
             # Build request
-            request = FEParamGetTiposConceptoSoapIn()
-            request = conn.set_auth_request(request, context=context)
-
             try:
                 _logger.debug('Updating concept class from AFIP Web service')
-                response = get_bind(conn.server_id).FEParamGetTiposConcepto(request)
+                srvclient = Client(srv.url+'?WSDL', transport=HttpsTransport())
+                response = srvclient.service.FEParamGetTiposConcepto(Auth=conn.get_auth())
 
                 # Take list of concept type
                 concepttype_list = [
-                    { 'afip_code': c.Id,
-                      'name': c.Desc,
-                      'active': c.FchHasta  in [None, 'NULL']}
-                    for c in response.FEParamGetTiposConceptoResult.ResultGet.ConceptoTipo
-                ]
+                    {'afip_code': ct.Id,
+                     'name': ct.Desc,
+                     'active': ct.FchHasta in [None, 'NULL'] }
+                    for ct in response.ResultGet.ConceptoTipo ]
             except Exception as e:
                 _logger.error('AFIP Web service error!: (%i) %s' % (e[0], e[1]))
                 raise osv.except_osv(_(u'AFIP Web service error'),
@@ -190,20 +187,17 @@ class wsafip_server(osv.osv):
             conn.login() # Login if nescesary.
             if conn.state not in  [ 'connected', 'clockshifted' ]: continue
 
-            # Build request
-            request = FEParamGetTiposCbteSoapIn()
-            request = conn.set_auth_request(request, context=context)
-
             try:
                 _logger.info('Updating journal class from AFIP Web service')
-                response = get_bind(conn.server_id).FEParamGetTiposCbte(request)
+                srvclient = Client(srv.url+'?WSDL', transport=HttpsTransport())
+                response = srvclient.service.FEParamGetTiposCbte(Auth=conn.get_auth())
 
                 # Take list of journal class
                 journalclass_list = [
                     { 'afip_code': c.Id,
                       'name': c.Desc,
                       'active': c.FchHasta  in [None, 'NULL']}
-                    for c in response.FEParamGetTiposCbteResult.ResultGet.CbteTipo
+                    for c in response.ResultGet.CbteTipo
                 ]
             except Exception as e:
                 _logger.error('AFIP Web service error!: (%i) %s' % (e[0], e[1]))
