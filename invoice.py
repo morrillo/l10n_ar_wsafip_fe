@@ -19,8 +19,6 @@
 #
 ##############################################################################
 from openerp.osv import fields, osv
-from stub.Service_client import *
-from stub.Service_types import *
 from openerp.tools.translate import _
 import re
 import logging
