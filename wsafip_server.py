@@ -112,10 +112,7 @@ class wsafip_server(osv.osv):
             except Exception as e:
                 _logger.error('AFIP Web service error!: (%i) %s' % (e[0], e[1]))
                 raise osv.except_osv(_(u'AFIP Web service error'),
-                                     _(u'System return error %i: %s\n'
-                                       u'Pueda que esté intente realizar esta operación'
-                                       u'desde el servidor de homologación.'
-                                       u'Intente desde el servidor de producción.') % (e[0], e[1]))
+                                     _(u'System return error %i: %s') % (e[0], e[1]))
             r[srv.id] = (response.AuthServer,
                          response.AppServer,
                          response.DbServer)
@@ -154,10 +151,7 @@ class wsafip_server(osv.osv):
             except Exception as e:
                 _logger.error('AFIP Web service error!: (%i) %s' % (e[0], e[1]))
                 raise osv.except_osv(_(u'AFIP Web service error'),
-                                     _(u'System return error %i: %s\n'
-                                       u'Pueda que esté intente realizar esta operación'
-                                       u'desde el servidor de homologación.'
-                                       u'Intente desde el servidor de producción.') % (e[0], e[1]))
+                                     _(u'System return error %i: %s') % (e[0], e[1]))
 
             _update(self.pool, cr, uid,
                     'afip.concept_type',
@@ -202,10 +196,7 @@ class wsafip_server(osv.osv):
             except Exception as e:
                 _logger.error('AFIP Web service error!: (%i) %s' % (e[0], e[1]))
                 raise osv.except_osv(_(u'AFIP Web service error'),
-                                     _(u'System return error %i: %s\n'
-                                       u'Pueda que esté intente realizar esta operación'
-                                       u'desde el servidor de homologación.'
-                                       u'Intente desde el servidor de producción.') % (e[0], e[1]))
+                                     _(u'System return error %i: %s') % (e[0], e[1]))
 
             _update(self.pool, cr, uid,
                     'afip.journal_class',
@@ -234,13 +225,10 @@ class wsafip_server(osv.osv):
             conn.login() # Login if nescesary.
             if conn.state not in  [ 'connected', 'clockshifted' ]: continue
 
-            # Build request
-            request = FEParamGetTiposDocSoapIn()
-            request = conn.set_auth_request(request, context=context)
-
             try:
                 _logger.info('Updating document types from AFIP Web service')
-                response = get_bind(conn.server_id).FEParamGetTiposDoc(request)
+                srvclient = Client(srv.url+'?WSDL', transport=HttpsTransport())
+                response = srvclient.service.FEParamGetTiposDoc(Auth=conn.get_auth())
 
                 # Take list of document types
                 doctype_list = [
@@ -248,15 +236,12 @@ class wsafip_server(osv.osv):
                       'name': c.Desc,
                       'code': c.Desc,
                       'active': c.FchHasta in [None, 'NULL'] }
-                    for c in response.FEParamGetTiposDocResult.ResultGet.DocTipo
+                    for c in response.ResultGet.DocTipo
                 ]
             except Exception as e:
                 _logger.error('AFIP Web service error!: (%i) %s' % (e[0], e[1]))
                 raise osv.except_osv(_(u'AFIP Web service error'),
-                                     _(u'System return error %i: %s\n'
-                                       u'Pueda que esté intente realizar esta operación'
-                                       u'desde el servidor de homologación.'
-                                       u'Intente desde el servidor de producción.') % (e[0], e[1]))
+                                     _(u'System return error %i: %s') % (e[0], e[1]))
 
             _update(self.pool, cr, uid,
                     'afip.document_type',
