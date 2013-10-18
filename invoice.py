@@ -267,7 +267,6 @@ class invoice(osv.osv):
             res = serv_obj.wsfe_get_cae(cr, uid, [conn.server_id.id], c_id, req)
             for k, v in res.iteritems():
                 if 'CAE' in v:
-                    import pdb; pdb.set_trace()
                     self.write(cr, uid, Inv2id[k], {
                         'afip_cae': v['CAE'],
                         'afip_cae_due': v['CAEFchVto'],
