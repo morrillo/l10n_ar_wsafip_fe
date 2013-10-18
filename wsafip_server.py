@@ -76,6 +76,7 @@ class wsafip_server(osv.osv):
     _inherit = "wsafip.server"
 
     """
+    Ref: https://www.afip.gob.ar/fe/documentos/manual_desarrollador_COMPG_v2.pdf
     TODO:
         AFIP Description: Método de obtención de CAEA (FECAEASolicitar)
         AFIP Description: Método de consulta de CAEA (FECAEAConsultar)
@@ -83,8 +84,6 @@ class wsafip_server(osv.osv):
         AFIP Description: Método para informar comprobantes emitidos con CAEA (FECAEARegInformativo)
         AFIP Description: Método para consultar CAEA sin movimiento (FECAEASinMovimientoConsultar)
         AFIP Description: Recuperador de valores referenciales de códigos de Tipos de Alícuotas (FEParamGetTiposIva)
-        AFIP Description: Recuperador de valores referenciales de códigos de Tipos de datos Opcionales (FEParamGetTiposOpcional)
-        AFIP Description: Recuperador de valores referenciales de códigos de Tipos de Tributos (FEParamGetTiposTributos)
         AFIP Description: Recuperador de los puntos de venta asignados a Facturación Electrónica que soporten CAE y CAEA vía Web Services (FEParamGetPtosVenta)
         AFIP Description: Recuperador de cotización de moneda (FEParamGetCotizacion)
         AFIP Description: Recuperador de cantidad máxima de registros FECAESolicitar / FECAEARegInformativo (FECompTotXRequest)
@@ -252,13 +251,54 @@ class wsafip_server(osv.osv):
 
         return True
  
+    def wsfe_update_optional_types(self, cr, uid, ids, conn_id, context=None):
+        """
+        Update optional types. This function must be called from connection model.
+
+        AFIP Description: Recuperador de valores referenciales de códigos de Tipos de datos Opcionales (FEParamGetTiposOpcional)
+        """
+        conn_obj = self.pool.get('wsafip.connection')
+
+        for srv in self.browse(cr, uid, ids, context=context):
+            # Ignore servers without code WSFE.
+            if srv.code != 'wsfe': continue
+
+            # Take the connection, continue if connected or clockshifted
+            conn = conn_obj.browse(cr, uid, conn_id, context=context) 
+            conn.login() # Login if nescesary.
+            if conn.state not in  [ 'connected', 'clockshifted' ]: continue
+
+            try:
+                _logger.info('Updating currency from AFIP Web service')
+                srvclient = Client(srv.url+'?WSDL', transport=HttpsTransport())
+                response = srvclient.service.FEParamGetTiposOpcional(Auth=conn.get_auth())
+
+                # Take list of currency
+                currency_list = [
+                    { 'afip_code': c.Id,
+                      'name': c.Desc,
+                      'active': c.FchHasta in [None, 'NULL'] }
+                    for c in response.ResultGet.OpcionalTipo
+                ]
+            except Exception as e:
+                _logger.error('AFIP Web service error!: (%i) %s' % (e[0], e[1]))
+                raise osv.except_osv(_(u'AFIP Web service error'),
+                                     _(u'System return error %i: %s') % (e[0], e[1]))
+
+            _update(self.pool, cr, uid,
+                    'afip.optional_type',
+                    currency_list,
+                    can_create=True,
+                    domain=[]
+                   )
+        return True
+ 
     def wsfe_update_currency(self, cr, uid, ids, conn_id, context=None):
         """
         Update currency. This function must be called from connection model.
 
         AFIP Description: Recuperador de valores referenciales de códigos de Tipos de Monedas (FEParamGetTiposMonedas) 
         """
-        currency_obj = self.pool.get('res.currency')
         conn_obj = self.pool.get('wsafip.connection')
 
         for srv in self.browse(cr, uid, ids, context=context):
@@ -293,6 +333,58 @@ class wsafip_server(osv.osv):
                     can_create=False,
                     domain=[]
                    )
+        return True
+
+    def wsfe_update_tax(self, cr, uid, ids, conn_id, context=None):
+        """
+        Update taxes. This function must be called from connection model.
+
+        AFIP Description: Recuperador de valores referenciales de códigos de Tipos de Tributos (FEParamGetTiposTributos)
+        """
+        conn_obj = self.pool.get('wsafip.connection')
+
+        for srv in self.browse(cr, uid, ids, context=context):
+            # Ignore servers without code WSFE.
+            if srv.code != 'wsfe': continue
+
+            # Take the connection, continue if connected or clockshifted
+            conn = conn_obj.browse(cr, uid, conn_id, context=context) 
+            conn.login() # Login if nescesary.
+            if conn.state not in  [ 'connected', 'clockshifted' ]: continue
+
+            try:
+                _logger.info('Updating currency from AFIP Web service')
+                srvclient = Client(srv.url+'?WSDL', transport=HttpsTransport())
+                response = srvclient.service.FEParamGetTiposTributos(Auth=conn.get_auth())
+
+                # Take list of currency
+                tax_list = [
+                    { 'afip_code': c.Id,
+                      'name': c.Desc }
+                    for c in response.ResultGet.TributoTipo
+                ]
+
+                # Take IVA codes
+                response = srvclient.service.FEParamGetTiposIva(Auth=conn.get_auth())
+                import pdb; pdb.set_trace()
+                tax_list.extend([
+                    { 'afip_code': c.Id,
+                      'name': c.Desc }
+                    for c in response.ResultGet.IvaTipo
+                ])
+
+            except Exception as e:
+                _logger.error('AFIP Web service error!: (%i) %s' % (e[0], e[1]))
+                raise osv.except_osv(_(u'AFIP Web service error'),
+                                     _(u'System return error %i: %s') % (e[0], e[1]))
+
+            tax_code_obj = self.pool.get('account.tax.code')
+
+            for tc in tax_list:
+                tax_code_id = tax_code_obj.search(cr, uid, [('name','ilike',tc['name'])])
+                if tax_code_id:
+                    tax_code_obj.write(cr, uid, tax_code_id, tc)
+
         return True
 
     def wsfe_get_last_invoice_number(self, cr, uid, ids, conn_id, ptoVta, cbteTipo, context=None):
@@ -339,8 +431,11 @@ class wsafip_server(osv.osv):
         AFIP Description: Método de autorización de comprobantes electrónicos por CAE (FECAESolicitar)
         """
         conn_obj = self.pool.get('wsafip.connection')
+        r = {}
 
         for srv in self.browse(cr, uid, ids, context=context):
+            r[srv.id] = []
+
             # Ignore servers without code WSFE.
             if srv.code != 'wsfe': continue
 
@@ -351,175 +446,46 @@ class wsafip_server(osv.osv):
 
             _logger.info('Get CAE from AFIP Web service')
 
-            request = FECAESolicitarSoapIn()
-            request = conn.set_auth_request(request, context=context)
-            Request = request.new_FeCAEReq()
-
-            # Set Request Header
-            Header  = Request.new_FeCabReq()
-            Header.set_element_CantReg(len(invoice_request))
-            Header.set_element_CbteTipo(invoice_request[0]['CbteTipo'])
-            Header.set_element_PtoVta(invoice_request[0]['PtoVta'])
-            Request.FeCabReq = Header
-
-            # Set Request Details
-            Details = Request.new_FeDetReq()
-            for invoice in invoice_request:
-                Detail  = Details.new_FECAEDetRequest()
-                Detail.set_element_Concepto(invoice['Concepto'])
-                Detail.set_element_DocTipo(invoice['DocTipo'])
-                Detail.set_element_DocNro(invoice['DocNro'])
-                Detail.set_element_CbteDesde(invoice['CbteDesde'])
-                Detail.set_element_CbteHasta(invoice['CbteHasta'])
-                Detail.set_element_CbteFch(invoice.get('CbteFch', None))
-                Detail.set_element_ImpTotal(invoice['ImpTotal'])
-                Detail.set_element_ImpTotConc(invoice['ImpTotConc'])
-                Detail.set_element_ImpNeto(invoice['ImpNeto'])
-                Detail.set_element_ImpOpEx(invoice['ImpOpEx'])
-                Detail.set_element_ImpIVA(invoice['ImpIVA'])
-                Detail.set_element_ImpTrib(invoice['ImpTrib'])
-                Detail.set_element_FchServDesde(invoice.get('FchServDesde', None))
-                Detail.set_element_FchServHasta(invoice.get('FchServHasta', None))
-                Detail.set_element_FchVtoPago(invoice.get('FchVtoPago', None))
-                Detail.set_element_MonId(invoice['MonId'])
-                Detail.set_element_MonCotiz(invoice['MonCotiz'])
-
-                Associateds = Detail.new_CbtesAsoc()
-                for associated in invoice.get('CbtesAsoc',[]):
-                    Associated = Associateds.new_CbteAsoc()
-                    Associated.set_element_Tipo(associated['Tipo'])
-                    Associated.set_element_PtoVta(associated['PtoVta'])
-                    Associated.set_element_Nro(associated['Nro'])
-                    Associateds.CbteAssoc.append(Associated)
-                Detail.CbtesAsoc = Associateds
-
-                Taxes = Detail.new_Tributos()
-                for tax in invoice.get('Tributos', []):
-                    Tax = Taxes.new_Tributo()
-                    Tax.set_element_Id(tax['Id'])
-                    Tax.set_element_Desc(tax.get('Desc',None))
-                    Tax.set_element_BaseImp(tax['BaseImp'])
-                    Tax.set_element_Alic(tax['Alic'])
-                    Tax.set_element_Importe(tax['Importe'])
-                    Taxes.Tributo.append(Tax)
-                Detail.Taxes = Taxes
-
-                VAT = Detail.new_Iva()
-                for vat in invoice.get('IVA', []):
-                    Alic = VAT.new_AlicIva()
-                    Alic.set_element_Id(vat['Id'])
-                    Alic.set_element_BaseImp(vat['BaseImp'])
-                    Alic.set_element_Importe(vat['Importe'])
-                    VAT.AlicIva.append(Alic)
-                Detail.IVA = VAT
-
-                Optionals = Detail.new_Opcionales()
-                for optional in invoice.get('Opcionales',[]):
-                    Optional = Optionals.new_Optional()
-                    Optional.set_element_Id(optional['Id'])
-                    Optional.set_element_Valor(optional['Valor'])
-                    Optionals.Opcional.append(Optional)
-                Detail.Opcionales = Optionals
-
-                Details.FECAEDetRequest.append(Detail)
-
-            Request.FeDetReq = Details
-
-            request.FeCAEReq = Request
-
             try:
-                Detail.set_element_CbtesAsoc(invoice['CbtesAsoc'])
-                response = get_bind(conn.server_id).FECAESolicitar(request)
-                # https://www.afip.gob.ar/fe/documentos/manual_desarrollador_COMPG_v2.pdf
-                cae = response.FECAESolicitarResponse.FeDetResp.FEDetResponse.CAE
-                return cae
+                srvclient = Client(srv.url+'?WSDL', transport=HttpsTransport())
+                response = srvclient.service.FECAESolicitar(Auth=conn.get_auth(),
+                    FeCAEReq = [{
+                        'FeCabReq':{
+                            'CantReg': len(invoice_request),
+                            'PtoVta': invoice_request[0]['PtoVta'],
+                            'CbteTipo': invoice_request[0]['CbteTipo'],
+                        },
+                        'FeDetReq': [ { 'FECAEDetRequest': { k: v for k,v in req.iteritems() if k not in ['CantReg', 'PtoVta', 'CbteTipo','_inv_id_'] } }
+                                     for req in invoice_request ],
+
+                    }]
+                )
             except Exception as e:
                 _logger.error('AFIP Web service error!: (%i) %s' % (e[0], e[1]))
                 raise osv.except_osv(_(u'AFIP Web service error'),
-                                     _(u'System return error %i: %s\n'
-                                       u'Pueda que esté intente realizar esta operación'
-                                       u'desde el servidor de homologación.'
-                                       u'Intente desde el servidor de producción.') % (e[0], e[1]))
+                                     _(u'System return error %i: %s') % (e[0], e[1]))
 
-        raise RuntimeError
+            for resp in response.FeDetResp.FECAEDetResponse:
+                if resp.Resultado == 'R':
+                    # Existe Error!
+                    _logger.error('Rejected invoice: %s' % (resp,))
+                    r[srv.id].append({
+                        'CbteDesde': resp.CbteDesde,
+                        'CbteHasta': resp.CbteHasta,
+                        'Observaciones': hasattr(resp,'Observaciones') and resp.Observaciones,
+                        'Errores': [ (e.Code, unicode(e.Msg)) for e in response.Errors.Err ],
+                    })
+                else:
+                    # Todo bien!
+                    r[srv.id].append({
+                        'CbteDesde': resp.CbteDesde,
+                        'CbteHasta': resp.CbteHasta,
+                        'CAE': resp.CAE,
+                        'CAEFchVto': resp.CAEFchVto,
+                    })
 
-"""
-Codigo de respuesta de la version 6.0
-
-           if response._FEAutRequestResult._RError._percode == 0 and response._FEAutRequestResult._FecResp._resultado in [ 'P', 'A' ]:
-                # Not error
-                error_message = []
-                for i in range(response._FEAutRequestResult._FecResp._cantidadreg):
-                    response_id = response._FEAutRequestResult._FecResp._id # ID de lote.
-                    r = response._FEAutRequestResult._FedResp._FEDetalleResponse[i]
-
-                    afip_error_ids = wsfe_error_obj.search(cr, uid, [('code','in',r._motivo.split(';'))])
-                    afip_error = wsfe_error_obj.browse(cr, uid, afip_error_ids)
-                    afip_message = '; '.join([ err.description for err in afip_error ])
-                    error_message.append(_('Invoice %s: %s.') % (r._cbt_desde, afip_message))
-
-                    self.logger(netsvc.LOG_ERROR, _('Processed document %s-%s. AFIP message: %s.') % (r._cbt_desde, r._cbt_hasta, afip_message))
-
-                    if r._cbt_desde not in Invoice:
-                        self.logger(netsvc.LOG_ERROR, _('Document sequence is not syncronized with AFIP. Afip return %i as valid.') % r._cbt_desde)
-                        self.logger(netsvc.LOG_ERROR, _('Expected sequences: %s.') % repr(Invoice.keys()))
-                        continue
-
-                    if r._cae is None:
-                        self.logger(netsvc.LOG_ERROR, _('Document have not CAE assigned.'))
-                        return False 
-                    
-                    # Esto hay que pasarlo a invoice.py
-                    self.write(cr, uid, Invoice[r._cbt_desde].id, 
-                               {'afip_cae': r._cae,
-                                'afip_cae_due': r._fecha_vto,
-                                'afip_batch_number':response_id,
-                                'afip_result': r._resultado,
-                                'afip_error_id': afip_error_ids[0],
-                               })
-            elif response._FEAutRequestResult._FecResp is None:
-                raise osv.except_osv(_('AFIP error'),
-                                     _(u'Ocurrió un error en el AFIP (%i): %s') % 
-                                     (response._FEAutRequestResult._RError._percode,
-                                      response._FEAutRequestResult._RError._perrmsg,
-                                     ))
-            elif response._FEAutRequestResult._FecResp is not None:
-                response_id = response._FEAutRequestResult._FecResp._id # ID de lote.
-                response_cuit = response._FEAutRequestResult._FecResp._cuit
-                response_fecha_cae = response._FEAutRequestResult._FecResp._fecha_cae
-                response_cant_reg = response._FEAutRequestResult._FecResp._cantidadreg
-                response_resultado = response._FEAutRequestResult._FecResp._resultado
-                response_motivo = response._FEAutRequestResult._FecResp._motivo
-                response_reproceso = response._FEAutRequestResult._FecResp._reproceso
-
-                self.logger(netsvc.LOG_ERROR, _('AFIP dont approve some document. Global Reason: %s') % response_motivo)
-
-                error_message = []
-                for i in range(response._FEAutRequestResult._FecResp._cantidadreg):
-                    r = response._FEAutRequestResult._FedResp._FEDetalleResponse[i]
-
-                    afip_error_ids = wsfe_error_obj.search(cr, uid, [('code','in',r._motivo.split(';'))])
-                    afip_error = wsfe_error_obj.browse(cr, uid, afip_error_ids)
-                    afip_message = '; '.join([ err.description for err in afip_error ])
-                    error_message.append(_('Invoice %s: %s.') % (r._cbt_desde, afip_message))
-
-                    self.logger(netsvc.LOG_ERROR, _('AFIP dont approve the document %s-%s. Reason: %s.') % (r._cbt_desde, r._cbt_hasta, afip_message))
-
-                    if r._cbt_desde not in Invoice:
-                        self.logger(netsvc.LOG_ERROR, _('Document sequence is not syncronized with AFIP. Afip return %i as valid.') % r._cbt_desde)
-                        self.logger(netsvc.LOG_ERROR, _('Expected sequences: %s.') % repr(Invoice.keys()))
-                        return False
-
-                # Esto deberia ser un mensaje al usuario, asi termina de procesar todas las facturas.
-                raise osv.except_osv(_('AFIP error'),
-                                     _(u'Ocurriró un error en el AFIP (%i: %s).<br/>\n %s.\n') % 
-                                     (response._FEAutRequestResult._RError._percode,
-                                      response._FEAutRequestResult._RError._perrmsg,
-                                      '<br/>\n'.join(error_message),
-                                     ))
-        pass
-
-"""
+        import pdb; pdb.set_trace()
+        return r
 
 
 wsafip_server()

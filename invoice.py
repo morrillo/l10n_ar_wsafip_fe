@@ -77,7 +77,7 @@ class invoice(osv.osv):
                                                    ('3','Mixted')],
                                         method=True,
                                         string="AFIP concept",
-                                        readonly="1"),
+                                        readonly=1),
         'afip_result': fields.selection([
             ('', 'No CAE'),
             ('A', 'Accepted'),
@@ -130,8 +130,9 @@ class invoice(osv.osv):
         _ids = [ids] if isinstance(ids, int) else ids
 
         for inv in self.browse(cr, uid, _ids):
-            rel_inv_ids = self.search(cr, uid, [('origin','=',inv.number)])
-            r[inv.id] = {}
+            r[inv.id] = []
+            rel_inv_ids = self.search(cr, uid, [('number','=',inv.origin),
+                                                ('state','not in',['draft','proforma','proforma2','cancel'])])
             for rel_inv in self.browse(cr, uid, rel_inv_ids):
                 journal = rel_inv.journal_id
                 r[inv.id].append({
@@ -147,7 +148,19 @@ class invoice(osv.osv):
         _ids = [ids] if isinstance(ids, int) else ids
 
         for inv in self.browse(cr, uid, _ids):
-            pass
+            r[inv.id] = []
+
+            for tax in inv.tax_line:
+                if tax.account_id.name == 'IVA a pagar':
+                    continue
+                r[inv.id].append({
+                    'Id': tax.tax_code_id.parent_afip_code,
+                    'Desc': tax.tax_code_id.name,
+                    'BaseImp': tax.base_amount,
+                    'Alic': (tax.tax_amount / tax.base_amount),
+                    'Importe': tax.tax_amount,
+                })
+
 
         return r[ids] if isinstance(ids, int) else r
 
@@ -156,16 +169,37 @@ class invoice(osv.osv):
         _ids = [ids] if isinstance(ids, int) else ids
 
         for inv in self.browse(cr, uid, _ids):
-            pass
+            r[inv.id] = []
+
+            for tax in inv.tax_line:
+                if tax.account_id.name != 'IVA a pagar':
+                    continue
+                r[inv.id].append({
+                    'Id': tax.tax_code_id.parent_afip_code,
+                    'BaseImp': tax.base_amount,
+                    'Importe': tax.tax_amount,
+                })
 
         return r[ids] if isinstance(ids, int) else r
 
     def get_optionals(self, cr, uid, ids, *args):
+        optional_type_obj = self.pool.get('afip.optional_type')
+
         r = {}
         _ids = [ids] if isinstance(ids, int) else ids
+        optional_type_ids = optional_type_obj.search(cr, uid, [])
 
         for inv in self.browse(cr, uid, _ids):
-            pass
+            r[inv.id] = []
+            for optional_type in optional_type_obj.browse(cr, uid, optional_type_ids):
+                if optional_type.apply_rule and optional_type.value_computation:
+                    """
+                    Debería evaluar apply_rule para saber si esta opción se computa
+                    para esta factura. Y si se computa, se evalua value_computation
+                    sobre la factura y se obtiene el valor que le corresponda.
+                    Luego se debe agregar al output r.
+                    """
+                    raise NotImplemented
 
         return r[ids] if isinstance(ids, int) else r
 
@@ -173,6 +207,11 @@ class invoice(osv.osv):
         """
         Contact to the AFIP to get a CAE number.
         """
+        if context is None:
+            context = {}
+        #TODO: not correct fix but required a frech values before reading it.
+        self.write(cr, uid, ids, {})
+
         wsfe_error_obj = self.pool.get('afip.wsfe_error')
         conn_obj = self.pool.get('wsafip.connection')
         serv_obj = self.pool.get('wsafip.server')
@@ -180,7 +219,7 @@ class invoice(osv.osv):
 
         Servers = {}
         Requests = {}
-        for inv in self.browse(cr, uid, ids):
+        for inv in self.browse(cr, uid, ids, context=context):
             journal = inv.journal_id
             conn = journal.afip_connection_id
 
@@ -192,9 +231,16 @@ class invoice(osv.osv):
 
             Servers[conn.id] = conn.server_id.id
 
+            # Esto no deberia pasar!!!
+            if not inv.date_invoice:
+                import pdb; pdb.set_trace()
+
             # Take the last number of the "number".
             # Could not work if your number have not 8 digits.
-            invoice_number = int(re_number.search(inv.number).group())
+            if inv.number or inv.internal_number:
+                invoice_number = int(re_number.search(inv.number or inv.internal_number).group())
+            else:
+                invoice_number = inv.journal_id.sequence_id.number_next
 
             _f_date = lambda d: d and d.replace('-','')
 
@@ -204,8 +250,8 @@ class invoice(osv.osv):
                 'CbteTipo': journal.journal_class_id.afip_code,
                 'PtoVta': journal.point_of_sale,
                 'Concepto': inv.afip_concept,
-                'DocTipo': inv.partner_id.document_type.afip_code,
-                'DocNro': int(inv.partner_id.document_number),
+                'DocTipo': inv.partner_id.document_type_id.afip_code or '99',
+                'DocNro': int(inv.partner_id.document_type_id.afip_code is not None and inv.partner_id.document_number),
                 'CbteDesde': invoice_number,
                 'CbteHasta': invoice_number,
                 'CbteFch': _f_date(inv.date_invoice),
@@ -220,16 +266,27 @@ class invoice(osv.osv):
                 'FchVtoPago': _f_date(inv.date_due),
                 'MonId': inv.currency_id.afip_code,
                 'MonCotiz': currency_obj.compute(cr, uid, inv.currency_id.id, inv.company_id.currency_id.id, 1.),
-                'CbtesAsoc': get_related_invoices(cr, uid, inv.id),
-                'Tributos': self.get_taxes(cr, uid, inv.id),
-                'IVA': self.get_vat(cr, uid, inv.id),
-                'Opcionales': self.get_optionals(cr, uid, inv.id),
+                'CbtesAsoc': [ {'CbteAsoc': c} for c in self.get_related_invoices(cr, uid, inv.id) ],
+                'Tributos': [ {'Tributo': t} for t in self.get_taxes(cr, uid, inv.id) ],
+                'Iva': [ {'AlicIva': a} for a in self.get_vat(cr, uid, inv.id) ],
+                'Opcionales': [ {'Opcional': o} for o in self.get_optionals(cr, uid, inv.id) ],
                 '_inv_id_': inv.id,
             })
 
         for c_id, r in Requests.items():
-            cae = conn_obj.wsfe_get_cae(cr, uid, [c_id], r)
-            self.write(cr, uid, r[c_id]['_inv_id_'], {'cae': cae})
+            conn = conn_obj.browse(cr, uid, c_id)
+            r = serv_obj.wsfe_get_cae(cr, uid, [conn.server_id.id], c_id, r)
+            if 'CAE' in r:
+                self.write(cr, uid, r[c_id]['_inv_id_'], {
+                    'afip_cae': r['CAE'],
+                    'afip_cae_due': r['CAEFchVto'],
+                })
+            else:
+                msg = '\n'.join([ u'(%s) %s' % e for k,v in r.iteritems() for i in v for e in i['Errores']])
+                raise osv.except_osv(_(u'AFIP Validation Error'), msg)
+
+        return True
+
 
     def _do_request(self, request_dict):
 
