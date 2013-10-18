@@ -366,7 +366,6 @@ class wsafip_server(osv.osv):
 
                 # Take IVA codes
                 response = srvclient.service.FEParamGetTiposIva(Auth=conn.get_auth())
-                import pdb; pdb.set_trace()
                 tax_list.extend([
                     { 'afip_code': c.Id,
                       'name': c.Desc }
@@ -434,8 +433,6 @@ class wsafip_server(osv.osv):
         r = {}
 
         for srv in self.browse(cr, uid, ids, context=context):
-            r[srv.id] = []
-
             # Ignore servers without code WSFE.
             if srv.code != 'wsfe': continue
 
@@ -448,16 +445,18 @@ class wsafip_server(osv.osv):
 
             try:
                 srvclient = Client(srv.url+'?WSDL', transport=HttpsTransport())
+                first = invoice_request.keys()[0]
                 response = srvclient.service.FECAESolicitar(Auth=conn.get_auth(),
                     FeCAEReq = [{
                         'FeCabReq':{
                             'CantReg': len(invoice_request),
-                            'PtoVta': invoice_request[0]['PtoVta'],
-                            'CbteTipo': invoice_request[0]['CbteTipo'],
+                            'PtoVta': invoice_request[first]['PtoVta'],
+                            'CbteTipo': invoice_request[first]['CbteTipo'],
                         },
-                        'FeDetReq': [ { 'FECAEDetRequest': { k: v for k,v in req.iteritems() if k not in ['CantReg', 'PtoVta', 'CbteTipo','_inv_id_'] } }
-                                     for req in invoice_request ],
-
+                        'FeDetReq': [
+                            { 'FECAEDetRequest': { k: v for k,v in req.iteritems() if k not in ['CantReg', 'PtoVta', 'CbteTipo'] } }
+                            for req in invoice_request.itervalues()
+                        ],
                     }]
                 )
             except Exception as e:
@@ -469,22 +468,22 @@ class wsafip_server(osv.osv):
                 if resp.Resultado == 'R':
                     # Existe Error!
                     _logger.error('Rejected invoice: %s' % (resp,))
-                    r[srv.id].append({
+                    r[int(resp.CbteDesde)]={
                         'CbteDesde': resp.CbteDesde,
                         'CbteHasta': resp.CbteHasta,
-                        'Observaciones': hasattr(resp,'Observaciones') and resp.Observaciones,
-                        'Errores': [ (e.Code, unicode(e.Msg)) for e in response.Errors.Err ],
-                    })
+                        'Observaciones': [ (o.Code, unicode(o.Msg)) for o in resp.Observaciones.Obs ]
+                                if hasattr(resp,'Observaciones') else [],
+                        'Errores': [ (e.Code, unicode(e.Msg)) for e in response.Errors.Err ]
+                                if hasattr(response, 'Errors') else [],
+                    }
                 else:
                     # Todo bien!
-                    r[srv.id].append({
+                    r[int(resp.CbteDesde)]={
                         'CbteDesde': resp.CbteDesde,
                         'CbteHasta': resp.CbteHasta,
                         'CAE': resp.CAE,
                         'CAEFchVto': resp.CAEFchVto,
-                    })
-
-        import pdb; pdb.set_trace()
+                    }
         return r
 
 

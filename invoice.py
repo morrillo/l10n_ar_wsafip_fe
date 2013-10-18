@@ -47,11 +47,6 @@ def _get_parents(child, parents=[]):
         return parents + [ child.name ] + _get_parents(child.parent_id)
 
 class invoice(osv.osv):
-    def afip_validation(self, cr, uid, ids, context=None):
-        r = super(invoice, self).afip_validation(cr, uid, ids, context=context)
-        if r: self.action_retrieve_cae(cr, uid, ids, context=context)
-        return r
-
     def _get_concept(self, cr, uid, ids, name, args, context=None):
         r = {}
         for inv in self.browse(cr, uid, ids):
@@ -219,6 +214,7 @@ class invoice(osv.osv):
 
         Servers = {}
         Requests = {}
+        Inv2id = {}
         for inv in self.browse(cr, uid, ids, context=context):
             journal = inv.journal_id
             conn = journal.afip_connection_id
@@ -231,22 +227,15 @@ class invoice(osv.osv):
 
             Servers[conn.id] = conn.server_id.id
 
-            # Esto no deberia pasar!!!
-            if not inv.date_invoice:
-                import pdb; pdb.set_trace()
-
             # Take the last number of the "number".
             # Could not work if your number have not 8 digits.
-            if inv.number or inv.internal_number:
-                invoice_number = int(re_number.search(inv.number or inv.internal_number).group())
-            else:
-                invoice_number = inv.journal_id.sequence_id.number_next
+            invoice_number = int(re_number.search(inv.number).group())
 
             _f_date = lambda d: d and d.replace('-','')
 
             # Build request dictionary
-            if conn.id not in Requests: Requests[conn.id] = []
-            Requests[conn.id].append({
+            if conn.id not in Requests: Requests[conn.id] = {}
+            Requests[conn.id][inv.id]={
                 'CbteTipo': journal.journal_class_id.afip_code,
                 'PtoVta': journal.point_of_sale,
                 'Concepto': inv.afip_concept,
@@ -256,7 +245,7 @@ class invoice(osv.osv):
                 'CbteHasta': invoice_number,
                 'CbteFch': _f_date(inv.date_invoice),
                 'ImpTotal': inv.amount_total,
-                'ImpTotConc': inv.amount_untaxed,
+                'ImpTotConc': 0, # TODO: Averiguar como calcular el Importe Neto no Gravado
                 'ImpNeto': inv.amount_untaxed,
                 'ImpOpEx': inv.compute_all(line_filter=lambda line: len(line.invoice_line_tax_id)==0)['amount_total'],
                 'ImpIVA': inv.compute_all(tax_filter=lambda tax: 'IVA' in _get_parents(tax.tax_code_id))['amount_tax'],
@@ -270,20 +259,27 @@ class invoice(osv.osv):
                 'Tributos': [ {'Tributo': t} for t in self.get_taxes(cr, uid, inv.id) ],
                 'Iva': [ {'AlicIva': a} for a in self.get_vat(cr, uid, inv.id) ],
                 'Opcionales': [ {'Opcional': o} for o in self.get_optionals(cr, uid, inv.id) ],
-                '_inv_id_': inv.id,
-            })
+            }
+            Inv2id[invoice_number] = inv.id
 
-        for c_id, r in Requests.items():
+        for c_id, req in Requests.iteritems():
             conn = conn_obj.browse(cr, uid, c_id)
-            r = serv_obj.wsfe_get_cae(cr, uid, [conn.server_id.id], c_id, r)
-            if 'CAE' in r:
-                self.write(cr, uid, r[c_id]['_inv_id_'], {
-                    'afip_cae': r['CAE'],
-                    'afip_cae_due': r['CAEFchVto'],
-                })
-            else:
-                msg = '\n'.join([ u'(%s) %s' % e for k,v in r.iteritems() for i in v for e in i['Errores']])
-                raise osv.except_osv(_(u'AFIP Validation Error'), msg)
+            res = serv_obj.wsfe_get_cae(cr, uid, [conn.server_id.id], c_id, req)
+            for k, v in res.iteritems():
+                if 'CAE' in v:
+                    import pdb; pdb.set_trace()
+                    self.write(cr, uid, Inv2id[k], {
+                        'afip_cae': v['CAE'],
+                        'afip_cae_due': v['CAEFchVto'],
+                    })
+                else:
+                    # Muestra un mensaje de error por la factura con error.
+                    # Se cancelan todas las facturas del batch!
+                    msg = 'Factura %s:\n' % k + '\n'.join(
+                        [ u'(%s) %s\n' % e for e in v['Errores']] +
+                        [ u'(%s) %s\n' % e for e in v['Observaciones']]
+                    )
+                    raise osv.except_osv(_(u'AFIP Validation Error'), msg)
 
         return True
 
