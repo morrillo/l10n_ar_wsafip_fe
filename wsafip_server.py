@@ -457,7 +457,7 @@ class wsafip_server(osv.osv):
                         'FeDetReq': [
                             { 'FECAEDetRequest': dict(
                                 [ (k, v) for k,v in req.iteritems()
-                                 if k not in ['CantReg', 'PtoVta', 'CbteTipo'] ] )
+                                 if k not in ['CantReg', 'PtoVta', 'CbteTipo'] ] ) }
                             for req in invoice_request.itervalues()
                         ],
                     }]
