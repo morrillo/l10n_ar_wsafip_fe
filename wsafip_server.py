@@ -50,7 +50,8 @@ def _update(pool, cr, uid, model_name, remote_list, can_create=True, domain=[]):
 
     # Update active document types
     to_update = rem_afip_code_set & sto_afip_code_set
-    update_dict = { i['afip_code']:i['active'] for i in remote_list if i['afip_code'] in to_update }
+    update_dict = dict( [ (i['afip_code'], i['active']) for i in remote_list
+                         if i['afip_code'] in to_update ])
     to_active = [ k for k,v in update_dict.items() if v ]
     if to_active:
         model_ids = model_obj.search(cr, uid, [('afip_code','in',to_active),('active','in',['f',False])])
@@ -454,7 +455,9 @@ class wsafip_server(osv.osv):
                             'CbteTipo': invoice_request[first]['CbteTipo'],
                         },
                         'FeDetReq': [
-                            { 'FECAEDetRequest': { k: v for k,v in req.iteritems() if k not in ['CantReg', 'PtoVta', 'CbteTipo'] } }
+                            { 'FECAEDetRequest': dict(
+                                [ (k, v) for k,v in req.iteritems()
+                                 if k not in ['CantReg', 'PtoVta', 'CbteTipo'] ] )
                             for req in invoice_request.itervalues()
                         ],
                     }]
