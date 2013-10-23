@@ -44,11 +44,11 @@ class l10n_ar_wsafip_fe_config(osv.osv_memory):
 
     def _get_pos(self, cr, uid, context=None):
         cr.execute("""
-                  SELECT wsfe_point_of_sale
+                  SELECT point_of_sale
                   FROM account_journal
-                  WHERE wsfe_point_of_sale is not Null
-                  GROUP BY wsfe_point_of_sale
-                  ORDER BY wsfe_point_of_sale
+                  WHERE point_of_sale is not Null
+                  GROUP BY point_of_sale
+                  ORDER BY point_of_sale
                   """)
         items = [ ("%i" % i, _("Point of sale %i") % i) for i in cr.fetchall() ]
         return items
