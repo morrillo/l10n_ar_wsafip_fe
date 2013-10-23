@@ -44,11 +44,11 @@ class l10n_ar_wsafip_fe_config(osv.osv_memory):
 
     def _get_pos(self, cr, uid, context=None):
         cr.execute("""
-                  SELECT point_of_sale
+                  SELECT wsfe_point_of_sale
                   FROM account_journal
-                  WHERE point_of_sale is not Null
-                  GROUP BY point_of_sale
-                  ORDER BY point_of_sale
+                  WHERE wsfe_point_of_sale is not Null
+                  GROUP BY wsfe_point_of_sale
+                  ORDER BY wsfe_point_of_sale
                   """)
         items = [ ("%i" % i, _("Point of sale %i") % i) for i in cr.fetchall() ]
         return items
@@ -87,7 +87,7 @@ class l10n_ar_wsafip_fe_config(osv.osv_memory):
                     'partner_id': company.partner_id.id,
                     'logging_id': afipserver_obj.search(cr, uid, [('code','=','wsaa'),('class','=','production')])[0],
                     'server_id': afipserver_obj.search(cr, uid, [('code','=','wsfe'),('class','=','production')])[0],
-                    'certificate': ws.certificate_id.id,
+                    'certificate': ws.wsfe_certificate_id.id,
                     'batch_sequence_id': seq_id,
                 })
             else:
@@ -95,7 +95,7 @@ class l10n_ar_wsafip_fe_config(osv.osv_memory):
 
             # Asigno el conector al AFIP
             jou_ids = journal_obj.search(cr, uid, [('company_id','=',company.id),
-                                                   ('point_of_sale','=',ws.point_of_sale),
+                                                   ('wsfe_point_of_sale','=',ws.wsfe_point_of_sale),
                                                    ('type','=','sale')])
 
             journal_obj.write(cr, uid, jou_ids, { 'afip_connection_id': auth_id })
@@ -116,8 +116,8 @@ class l10n_ar_wsafip_fe_config(osv.osv_memory):
     _inherit = 'res.config'
     _columns = {
         'company_id': fields.many2one('res.company', 'Company', required=True),
-        'certificate_id': fields.many2one('crypto.certificate', 'Certificate', required=True),
-        'point_of_sale': fields.selection(_get_pos, 'Point of Sale', required=True),
+        'wsfe_certificate_id': fields.many2one('crypto.certificate', 'Certificate', required=True),
+        'wsfe_point_of_sale': fields.selection(_get_pos, 'Point of Sale', required=True),
     }
     _defaults= {
         'company_id': _default_company,
