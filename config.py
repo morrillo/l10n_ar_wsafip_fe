@@ -95,7 +95,7 @@ class l10n_ar_wsafip_fe_config(osv.osv_memory):
 
             # Asigno el conector al AFIP
             jou_ids = journal_obj.search(cr, uid, [('company_id','=',company.id),
-                                                   ('wsfe_point_of_sale','=',ws.wsfe_point_of_sale),
+                                                   ('point_of_sale','=',ws.wsfe_point_of_sale),
                                                    ('type','=','sale')])
 
             journal_obj.write(cr, uid, jou_ids, { 'afip_connection_id': auth_id })
