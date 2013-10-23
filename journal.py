@@ -81,6 +81,7 @@ class account_journal(osv.osv):
                     r[journal.id] = glin(conn, journal.point_of_sale, journal.journal_class_id.afip_code)
                 except:
                     r[journal.id] = False
+            _logger.debug("AFIP number of invoices in %s is %s" % (journal.name, r[journal.id]))
         return r
 
     _inherit = "account.journal"

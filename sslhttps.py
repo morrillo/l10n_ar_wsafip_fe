@@ -39,7 +39,6 @@ class HTTPSConnection(httplib.HTTPConnection):
         def __init__(self, host, port=None, key_file=None, cert_file=None,
                      strict=None, timeout=socket._GLOBAL_DEFAULT_TIMEOUT,
                      source_address=None, ssl_version=ssl.PROTOCOL_TLSv1):
-            _logger.debug('HTTPSConnection')
             # Fix error for python 2.6
             try:
                 super(HTTPSConnectionSSLVersion, self).__init__(host, port, strict, timeout, source_address)
@@ -52,7 +51,6 @@ class HTTPSConnection(httplib.HTTPConnection):
         def connect(self):
             "Connect to a host on a given (SSL) port."
             # Fix error for python 2.6
-            _logger.debug('connect')
             try:
                 sock = socket.create_connection((self.host, self.port),
                                             self.timeout, self.source_address)
@@ -75,7 +73,6 @@ class HTTPS(httplib.HTTP):
 
     def __init__(self, host='', port=None, key_file=None, cert_file=None,
                  strict=None, ssl_version=ssl.PROTOCOL_SSLv3):
-        _logger.debug('HTTPS')
         # provide a default host, pass the X509 cert info
 
         # urf. compensate for bad input.
@@ -92,18 +89,15 @@ class HTTPS(httplib.HTTP):
 class HTTPSHandler(u2.HTTPSHandler):
 
     def https_open(self, req):
-        _logger.debug('http_open')
         return self.do_open(HTTPSConnection, req)
 
     https_request = u2.AbstractHTTPHandler.do_request_
 
 class HttpsTransport(HttpTransport):
     def __init__(self, *args, **kwargs):
-        _logger.debug('HttpsTransport')
         HttpTransport.__init__(self, *args, **kwargs)
 
     def u2handlers(self):
-        _logger.debug('u2handlers')
         r = HttpTransport.u2handlers(self)
         r.append(HTTPSHandler())
         return r

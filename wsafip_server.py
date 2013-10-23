@@ -25,7 +25,7 @@ import logging
 import sys
 from sslhttps import HttpsTransport
 
-logging.getLogger('suds.transport').setLevel(logging.DEBUG)
+# logging.getLogger('suds.transport').setLevel(logging.DEBUG)
 
 _logger = logging.getLogger(__name__)
 
@@ -421,7 +421,13 @@ class wsafip_server(osv.osv):
                                        u'desde el servidor de homologación.'
                                        u'Intente desde el servidor de producción.') % (e[0], e[1]))
 
-            r[srv.id] = int(response.CbteNro)
+            if hasattr(response, 'Errors'):
+                for e in response.Errors.Err:
+                    code = e.Code
+                    _logger.error('AFIP Web service error!: (%i) %s' % (e.Code, e.Msg))
+                r[srv.id] = False
+            else:
+                r[srv.id] = int(response.CbteNro)
         return r
 
     def wsfe_get_cae(self, cr, uid, ids, conn_id, invoice_request, context=None):

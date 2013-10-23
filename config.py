@@ -93,12 +93,22 @@ class l10n_ar_wsafip_fe_config(osv.osv_memory):
             else:
                 auth_id = auth_ids[0]
 
+            # Asigno el conector al AFIP
             jou_ids = journal_obj.search(cr, uid, [('company_id','=',company.id),
                                                    ('point_of_sale','=',ws.point_of_sale),
                                                    ('type','=','sale')])
-            import pdb; pdb.set_trace()
 
-            journal_obj.write(cr, uid, jou_ids, { 'afip_authorization_id': auth_id })
+            journal_obj.write(cr, uid, jou_ids, { 'afip_connection_id': auth_id })
+
+            # Sincronizo el número de factura local con el remoto
+            for journal in journal_obj.browse(cr, uid, jou_ids):
+                remote_number = journal.afip_items_generated
+                seq_id = journal.sequence_id.id
+                if not type(remote_number) is bool:
+                    _logger.info("Journal '%s' syncronized." % journal.name)
+                    sequence_obj.write(cr, uid, seq_id, {'number_next_actual': remote_number + 1})
+                else:
+                    _logger.info("Journal '%s' cant be used." % journal.name)
             
         return True
 
