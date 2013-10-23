@@ -34,7 +34,7 @@
                     <group colspan="8">
                         <field name="company_id" widget="selection" on_change="update_data(company_id)"/>
                         <field name="certificate_id" widget="selection"/>
-                        <field name="journal_ids"/>
+                        <field name="point_of_sale"/>
                     </group>
                 </group>
               </data>

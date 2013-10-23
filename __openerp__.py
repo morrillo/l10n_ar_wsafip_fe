@@ -46,6 +46,7 @@ API e GUI para acceder a las Web Services de Factura Electrónica de la AFIP
         'test/invoice.yml',
     ],
     'update_xml': [
+        'data/res_config_view.xml',
         'data/wsafip_server.xml',
         'data/invoice_view.xml',
         'data/invoice_workflow.xml',

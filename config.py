@@ -19,6 +19,7 @@
 #
 ##############################################################################
 from openerp.osv import fields, osv
+from openerp.tools.translate import _
 import logging
 import base64
 from M2Crypto import X509
@@ -40,6 +41,17 @@ class l10n_ar_wsafip_fe_config(osv.osv_memory):
         journal_obj = self.pool.get('account.journal')
         result = dict( (id, self.items) for id in ids )
         return result
+
+    def _get_pos(self, cr, uid, context=None):
+        cr.execute("""
+                  SELECT point_of_sale
+                  FROM account_journal
+                  WHERE point_of_sale is not Null
+                  GROUP BY point_of_sale
+                  ORDER BY point_of_sale
+                  """)
+        items = [ ("%i" % i, _("Point of sale %i") % i) for i in cr.fetchall() ]
+        return items
 
     def _set_journals(self, cr, uid, ids, field_name, field_value, fnct_inv_arg, context=None):
         journal_obj = self.pool.get('account.journal')
@@ -81,7 +93,12 @@ class l10n_ar_wsafip_fe_config(osv.osv_memory):
             else:
                 auth_id = auth_ids[0]
 
-            journal_obj.write(cr, uid, self.items, { 'afip_authorization_id': auth_id })
+            jou_ids = journal_obj.search(cr, uid, [('company_id','=',company.id),
+                                                   ('point_of_sale','=',ws.point_of_sale),
+                                                   ('type','=','sale')])
+            import pdb; pdb.set_trace()
+
+            journal_obj.write(cr, uid, jou_ids, { 'afip_authorization_id': auth_id })
             
         return True
 
@@ -90,9 +107,7 @@ class l10n_ar_wsafip_fe_config(osv.osv_memory):
     _columns = {
         'company_id': fields.many2one('res.company', 'Company', required=True),
         'certificate_id': fields.many2one('crypto.certificate', 'Certificate', required=True),
-        'journal_ids': fields.function(_get_journals, method=True, type='many2many',
-                                       fnct_inv=_set_journals,
-                                       relation='account.journal', string='Journals'),
+        'point_of_sale': fields.selection(_get_pos, 'Point of Sale', required=True),
     }
     _defaults= {
         'company_id': _default_company,
