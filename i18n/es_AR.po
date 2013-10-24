@@ -108,7 +108,7 @@ msgstr "Localización Argentina de WebService"
 #. module: l10n_ar_wsafip
 #: model:ir.ui.menu,name:l10n_ar_wsafip.menu_action_wsafip_auth
 msgid "Sessions"
-msgstr "Seciones"
+msgstr "Sesiones"
 
 #. module: l10n_ar_wsafip
 #: field:l10n_ar_wsafip.loadcert_config,request_string:0

@@ -353,12 +353,14 @@ class wsafip_server(osv.osv):
             conn.login() # Login if nescesary.
             if conn.state not in  [ 'connected', 'clockshifted' ]: continue
 
+            _escape_ = lambda s: s.replace('%', '%%')
+
             try:
                 _logger.info('Updating currency from AFIP Web service')
                 srvclient = Client(srv.url+'?WSDL', transport=HttpsTransport())
                 response = srvclient.service.FEParamGetTiposTributos(Auth=conn.get_auth())
 
-                # Take list of currency
+                # Take list of taxes
                 tax_list = [
                     { 'afip_code': c.Id,
                       'name': c.Desc }
@@ -369,7 +371,7 @@ class wsafip_server(osv.osv):
                 response = srvclient.service.FEParamGetTiposIva(Auth=conn.get_auth())
                 tax_list.extend([
                     { 'afip_code': c.Id,
-                      'name': c.Desc }
+                      'name': "%s" % _escape_(c.Desc) }
                     for c in response.ResultGet.IvaTipo
                 ])
 
@@ -380,10 +382,14 @@ class wsafip_server(osv.osv):
 
             tax_code_obj = self.pool.get('account.tax.code')
 
+
             for tc in tax_list:
-                tax_code_id = tax_code_obj.search(cr, uid, [('name','ilike',tc['name'])])
-                if tax_code_id:
-                    tax_code_obj.write(cr, uid, tax_code_id, tc)
+                tax_code_ids = tax_code_obj.search(cr, uid, [('name','ilike', tc['name'])])
+                _logger.debug("Tax '%s' match with %s" % (tc['name'], tax_code_ids))
+                if tax_code_ids:
+                    w = dict(tc)
+                    del w['name']
+                    tax_code_obj.write(cr, uid, tax_code_ids, w)
 
         return True
 
