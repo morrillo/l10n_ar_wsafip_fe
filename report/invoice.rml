@@ -122,7 +122,7 @@
                 <para style="seller"><b>Ingresos Brutos: </b>[[ company.partner_id.iibb ]]</para>
                 <para style="seller"><b>Fecha de Inicio de Actividades: </b>[[ formatLang(company.partner_id.start_date, date=True) ]]</para>
                 <nextFrame name="docclass_section"/>
-                <para style="document_class"><b>[[ o.journal_id.journal_class_id.document_class ]]</b></para>
+                <para style="document_class"><b>[[ o.journal_id.journal_class_id.document_class_id.name ]]</b></para>
                 <para style="document_class_code">cod. [[ o.journal_id.journal_class_id.afip_code ]]</para>
                 <nextFrame name="date_section"/>
                 <blockTable rowHeights="0.750" colWidths="6cm,6cm,6cm">
