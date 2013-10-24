@@ -135,7 +135,7 @@
                 <nextFrame name="buyer_section"/>
                 <blockTable colWidths="9cm,9cm" style="Client">
                     <tr>
-                    <td><para style="seller"><b>[[ o.partner_id.document_type.name ]] : </b>[[ o.partner_id.document_number ]]</para></td>
+                    <td><para style="seller"><b>[[ o.partner_id.document_type_id.name ]] : </b>[[ o.partner_id.document_number ]]</para></td>
                     <td><para style="seller"><b>Nombre y Apellido / Razón Social: </b>[[ o.partner_id.name[:50] ]]</para></td>
                     </tr>
                     <tr>
