@@ -459,7 +459,7 @@ class invoice(osv.osv):
             'model': 'account.invoice',
             'form': self.read(cr, uid, ids[0], context=context)
         }
-        is_electronic = bool(self.browse(cr, uid, ids[0]).journal_id.afip_authorization_id)
+        is_electronic = bool(self.browse(cr, uid, ids[0]).journal_id.afip_connection_id)
         return {
             'type': 'ir.actions.report.xml',
             'report_name': 'account.invoice_fe' if is_electronic else 'account.invoice',
@@ -490,7 +490,7 @@ class invoice(osv.osv):
 
         for inv in self.browse(cr, uid, ids[:1], context=context):
             journal = inv.journal_id
-            auth = journal.afip_authorization_id
+            auth = journal.afip_connection_id
 
             # Only process if set to connect to afip
             if not auth: continue
