@@ -106,7 +106,7 @@ class l10n_ar_wsafip_fe_config(osv.osv_memory):
                 seq_id = journal.sequence_id.id
                 if not type(remote_number) is bool:
                     _logger.info("Journal '%s' syncronized." % journal.name)
-                    sequence_obj.write(cr, uid, seq_id, {'number_next_actual': remote_number + 1})
+                    sequence_obj.write(cr, uid, seq_id, {'number_next': remote_number + 1})
                 else:
                     _logger.info("Journal '%s' cant be used." % journal.name)
             
