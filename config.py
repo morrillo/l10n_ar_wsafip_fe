@@ -61,7 +61,7 @@ class l10n_ar_wsafip_fe_config(osv.osv_memory):
     def execute(self, cr, uid, ids, context=None):
         """
         """
-        auth_obj = self.pool.get('wsafip.connection')
+        conn_obj = self.pool.get('wsafip.connection')
         journal_obj = self.pool.get('account.journal')
         afipserver_obj = self.pool.get('wsafip.server')
         sequence_obj = self.pool.get('ir.sequence')
@@ -71,18 +71,18 @@ class l10n_ar_wsafip_fe_config(osv.osv_memory):
             company = ws.company_id
 
             # Hay que crear la autorizacion para el servicio si no existe.
-            auth_ids = auth_obj.search(cr, uid, [('partner_id','=',company.partner_id.id)])
+            conn_ids = conn_obj.search(cr, uid, [('partner_id','=',company.partner_id.id)])
 
-            if len(auth_ids) == 0:
+            if len(conn_ids) == 0:
                 # Hay que crear la secuencia de proceso en batch si no existe.
-                seq_ids = sequence_obj.search(cr, uid, [('code','=','wsafip_fe')])
+                seq_ids = sequence_obj.search(cr, uid, [('code','=','wsafip_fe_sequence')])
                 if seq_ids:
                     seq_id = seq_ids[0]
                 else:
                     seq_id = sequence_obj.create(cr, uid, {'name': 'Web Service AFIP Sequence for Invoices', 'code': 'ws_afip_sequence'})
 
                 # Crear el conector al AFIP
-                auth_id = auth_obj.create(cr, uid, {
+                conn_id = conn_obj.create(cr, uid, {
                     'name': 'AFIP Sequence Authorization Invoice: %s' % company.name,
                     'partner_id': company.partner_id.id,
                     'logging_id': afipserver_obj.search(cr, uid, [('code','=','wsaa'),('class','=','production')])[0],
@@ -91,14 +91,14 @@ class l10n_ar_wsafip_fe_config(osv.osv_memory):
                     'batch_sequence_id': seq_id,
                 })
             else:
-                auth_id = auth_ids[0]
+                conn_id = conn_ids[0]
 
             # Asigno el conector al AFIP
             jou_ids = journal_obj.search(cr, uid, [('company_id','=',company.id),
                                                    ('point_of_sale','=',ws.wsfe_point_of_sale),
                                                    ('type','=','sale')])
 
-            journal_obj.write(cr, uid, jou_ids, { 'afip_connection_id': auth_id })
+            journal_obj.write(cr, uid, jou_ids, { 'afip_connection_id': conn_id })
 
             # Sincronizo el número de factura local con el remoto
             for journal in journal_obj.browse(cr, uid, jou_ids):
