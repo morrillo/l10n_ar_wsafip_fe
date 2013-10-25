@@ -52,8 +52,10 @@
         </record>
 
         <record id="wsafip_fe_config_todo" model="ir.actions.todo">
+            <field name="name">AFIP Electronic Invoice Web service Configuration - Setting POS</field>
             <field name="action_id" ref="action_wsafip_fe_config"/>
             <field name="sequence">40</field>
+            <field name="type">automatic</field>
         </record>
 
     </data>
