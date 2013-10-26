@@ -69,6 +69,7 @@ class l10n_ar_wsafip_fe_config(osv.osv_memory):
         for ws in self.browse(cr, uid, ids):
             # Tomamos la compania
             company = ws.company_id
+            conn_class = 'homologation' if ws.wsfe_for_homologation else 'production'
 
             # Hay que crear la autorizacion para el servicio si no existe.
             conn_ids = conn_obj.search(cr, uid, [('partner_id','=',company.partner_id.id)])
@@ -85,8 +86,8 @@ class l10n_ar_wsafip_fe_config(osv.osv_memory):
                 conn_id = conn_obj.create(cr, uid, {
                     'name': 'AFIP Sequence Authorization Invoice: %s' % company.name,
                     'partner_id': company.partner_id.id,
-                    'logging_id': afipserver_obj.search(cr, uid, [('code','=','wsaa'),('class','=','production')])[0],
-                    'server_id': afipserver_obj.search(cr, uid, [('code','=','wsfe'),('class','=','production')])[0],
+                    'logging_id': afipserver_obj.search(cr, uid, [('code','=','wsaa'),('class','=',conn_class)])[0],
+                    'server_id': afipserver_obj.search(cr, uid, [('code','=','wsfe'),('class','=',conn_class)])[0],
                     'certificate': ws.wsfe_certificate_id.id,
                     'batch_sequence_id': seq_id,
                 })
@@ -116,11 +117,13 @@ class l10n_ar_wsafip_fe_config(osv.osv_memory):
     _inherit = 'res.config'
     _columns = {
         'company_id': fields.many2one('res.company', 'Company', required=True),
+        'wsfe_for_homologation': fields.boolean('Is for homologation'),
         'wsfe_certificate_id': fields.many2one('crypto.certificate', 'Certificate', required=True),
         'wsfe_point_of_sale': fields.selection(_get_pos, 'Point of Sale', required=True),
     }
     _defaults= {
         'company_id': _default_company,
+        'wsfe_for_homologation': False,
     }
 l10n_ar_wsafip_fe_config()
 
