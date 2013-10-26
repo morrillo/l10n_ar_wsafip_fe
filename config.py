@@ -117,8 +117,8 @@ class l10n_ar_wsafip_fe_config(osv.osv_memory):
     _inherit = 'res.config'
     _columns = {
         'company_id': fields.many2one('res.company', 'Company', required=True),
-        'wsfe_for_homologation': fields.boolean('Is for homologation'),
         'wsfe_certificate_id': fields.many2one('crypto.certificate', 'Certificate', required=True),
+        'wsfe_for_homologation': fields.boolean('Is for homologation'),
         'wsfe_point_of_sale': fields.selection(_get_pos, 'Point of Sale', required=True),
     }
     _defaults= {
