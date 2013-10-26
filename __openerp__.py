@@ -18,47 +18,33 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-{
-    'name':     'Argentina - Web Services de Factura Electrónica del AFIP',
-    'version':  '2.7.155',
-    'author':   'OpenERP - Team de Localización Argentina',
+{   'active': False,
+    'author': 'OpenERP - Team de Localizaci\xc3\xb3n Argentina',
     'category': 'Localization/Argentina',
-    'website':  'https://launchpad.net/~openerp-l10n-ar-localization',
-    'license':  'AGPL-3',
-    'description': """
-API e GUI para acceder a las Web Services de Factura Electrónica de la AFIP
-""",
-    'depends': [
-        'l10n_ar_wsafip',
-        'l10n_ar_invoice',
-    ],
-    'init_xml': [
-        'data/afip.wsfe_error.csv',
-    ],
     'demo_xml': [],
-    'test': [
-        'test/test_key.yml',
-        'test/partners.yml',
-        'test/com_ri1.yml',
-        'test/com_ri2.yml',
-        'test/com_mon.yml',
-        'test/journal.yml',
-        'test/invoice.yml',
-    ],
-    'update_xml': [
-        'data/wsafip_server.xml',
-        'data/invoice_view.xml',
-        'data/invoice_workflow.xml',
-        'data/journal_view.xml',
-        'data/wsfe_error_view.xml',
-        'data/reports.xml',
-        'data/wsafip_fe_config.xml',
-        'data/res_config_view.xml',
-        'security/wsafip_fe_security.xml',
-        'security/ir.model.access.csv',
-    ],
-    'active': False,
+    'depends': ['l10n_ar_wsafip', 'l10n_ar_invoice'],
+    'description': '\n\nAPI e GUI para acceder a las Web Services de Factura Electr\xc3\xb3nica de la AFIP\n\n',
+    'init_xml': ['data/afip.wsfe_error.csv'],
     'installable': True,
-}
-
+    'license': 'AGPL-3',
+    'name': 'Argentina - Web Services de Factura Electr\xc3\xb3nica del AFIP',
+    'test': [   'test/test_key.yml',
+                'test/partners.yml',
+                'test/com_ri1.yml',
+                'test/com_ri2.yml',
+                'test/com_mon.yml',
+                'test/journal.yml',
+                'test/invoice.yml'],
+    'update_xml': [   'data/wsafip_server.xml',
+                      'data/invoice_view.xml',
+                      'data/invoice_workflow.xml',
+                      'data/journal_view.xml',
+                      'data/wsfe_error_view.xml',
+                      'data/reports.xml',
+                      'data/wsafip_fe_config.xml',
+                      'data/res_config_view.xml',
+                      'security/wsafip_fe_security.xml',
+                      'security/ir.model.access.csv'],
+    'version': '2.7.246',
+    'website': 'https://launchpad.net/~openerp-l10n-ar-localization'}
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
