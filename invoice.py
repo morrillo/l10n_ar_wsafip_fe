@@ -41,10 +41,10 @@ re_number = re.compile(r'\d{8}')
 
 # Functions to list parents names.
 def _get_parents(child, parents=[]):
-    if child is None:
-        return parents
-    else:
+    if child and not isinstance(child, osv.orm.browse_null):
         return parents + [ child.name ] + _get_parents(child.parent_id)
+    else:
+        return parents
 
 class invoice(osv.osv):
     def _get_concept(self, cr, uid, ids, name, args, context=None):
@@ -235,7 +235,7 @@ class invoice(osv.osv):
 
             # Build request dictionary
             if conn.id not in Requests: Requests[conn.id] = {}
-            Requests[conn.id][inv.id]={
+            Requests[conn.id][inv.id]=dict( (k,v) for k,v in {
                 'CbteTipo': journal.journal_class_id.afip_code,
                 'PtoVta': journal.point_of_sale,
                 'Concepto': inv.afip_concept,
@@ -250,16 +250,16 @@ class invoice(osv.osv):
                 'ImpOpEx': inv.compute_all(line_filter=lambda line: len(line.invoice_line_tax_id)==0)['amount_total'],
                 'ImpIVA': inv.compute_all(tax_filter=lambda tax: 'IVA' in _get_parents(tax.tax_code_id))['amount_tax'],
                 'ImpTrib': inv.compute_all(tax_filter=lambda tax: 'IVA' not in _get_parents(tax.tax_code_id))['amount_tax'],
-                'FchServDesde': _f_date(inv.afip_service_start) if inv.afip_concept != 1 else None,
-                'FchServHasta': _f_date(inv.afip_service_end) if inv.afip_concept != 1 else None,
-                'FchVtoPago': _f_date(inv.date_due),
+                'FchServDesde': _f_date(inv.afip_service_start) if inv.afip_concept != '1' else None,
+                'FchServHasta': _f_date(inv.afip_service_end) if inv.afip_concept != '1' else None,
+                'FchVtoPago': _f_date(inv.date_due) if inv.afip_concept != '1' else None,
                 'MonId': inv.currency_id.afip_code,
                 'MonCotiz': currency_obj.compute(cr, uid, inv.currency_id.id, inv.company_id.currency_id.id, 1.),
                 'CbtesAsoc': [ {'CbteAsoc': c} for c in self.get_related_invoices(cr, uid, inv.id) ],
                 'Tributos': [ {'Tributo': t} for t in self.get_taxes(cr, uid, inv.id) ],
                 'Iva': [ {'AlicIva': a} for a in self.get_vat(cr, uid, inv.id) ],
                 'Opcionales': [ {'Opcional': o} for o in self.get_optionals(cr, uid, inv.id) ],
-            }
+            }.iteritems() if v is not None)
             Inv2id[invoice_number] = inv.id
 
         for c_id, req in Requests.iteritems():
