@@ -474,6 +474,8 @@ class wsafip_server(osv.osv):
                         ],
                     }]
                 )
+            except WebFault as e:
+                import pdb; pdb.set_trace()
             except Exception as e:
                 _logger.error('AFIP Web service error!: (%i) %s' % (e[0], e[1]))
                 raise osv.except_osv(_(u'AFIP Web service error'),

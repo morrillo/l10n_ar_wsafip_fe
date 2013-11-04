@@ -30,9 +30,10 @@
     'name': 'Argentina - Web Services de Factura Electr\xc3\xb3nica del AFIP',
     'test': [   'test/test_key.yml',
                 'test/partners.yml',
+                'test/products.yml',
                 'test/com_ri1.yml',
                 'test/com_ri2.yml',
-                'test/com_mon.yml',
+                'test/com_rm1.yml',
                 'test/journal.yml',
                 'test/invoice.yml'],
     'update_xml': [   'data/wsafip_server.xml',
@@ -45,6 +46,6 @@
                       'data/res_config_view.xml',
                       'security/wsafip_fe_security.xml',
                       'security/ir.model.access.csv'],
-    'version': '2.7.206',
+    'version': '2.7.207',
     'website': 'https://launchpad.net/~openerp-l10n-ar-localization'}
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
