@@ -46,21 +46,24 @@ def _get_parents(child, parents=[]):
     else:
         return parents
 
+def _calc_concept(product_types):
+    if product_types == set(['consu']):
+        concept = '1'
+    elif product_types == set(['service']):
+        concept = '2'
+    elif product_types == set(['consu','service']):
+        concept = '3'
+    else:
+        concept = False
+    return concept
+
 class invoice(osv.osv):
     def _get_concept(self, cr, uid, ids, name, args, context=None):
         r = {}
         for inv in self.browse(cr, uid, ids):
             concept = False
             product_types = set([ line.product_id.type for line in inv.invoice_line ])
-            if product_types == set(['consu']):
-                concept = '1'
-            elif product_types == set(['service']):
-                concept = '2'
-            elif product_types == set(['consu','service']):
-                concept = '3'
-            else:
-                concept = False
-            r[inv.id] = concept
+            r[inv.id] = _calc_concept(product_types)
         return r
 
     _inherit = "account.invoice"
@@ -510,6 +513,19 @@ class invoice(osv.osv):
             response = get_bind(auth.server_id).FEParamGetTiposMonedas(request)
 
         pass
+    
+    def onchange_invoice_line(self, cr, uid, ids, invoice_line):
+        product_obj = self.pool.get('product.product')
+        res = {}
+        product_types = set()
+
+        for act, opt, data in invoice_line:
+            product_id = data.get('product_id', False)
+            if product_id:
+                product_types.add(product_obj.read(cr, uid, product_id, ['type'])['type'])
+                
+        res['value'] = { 'afip_concept': _calc_concept(product_types) }
+        return res
 
 invoice()
 
