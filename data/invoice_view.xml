@@ -55,10 +55,10 @@
                     </group>
                 </notebook>
                 <field name="move_id" position="after">
-                    <field name='afip_batch_number' invisible="1"/>
-                    <field name='afip_cae' attrs="{'readonly': [('state','!=','draft')]}"/>
-                    <field name='afip_cae_due' attrs="{'readonly': [('state','!=','draft')]}"/>
-                    <field name='afip_error_id'/>
+                    <field name='afip_batch_number' invisible="1" readonly="1"/>
+                    <field name='afip_cae' readonly="1"/>
+                    <field name='afip_cae_due' readonly="1"/>
+                    <field name='afip_error_id' readonly="1"/>
                 </field>
             </field>
         </record>
