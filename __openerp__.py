@@ -46,6 +46,6 @@
                       'data/res_config_view.xml',
                       'security/wsafip_fe_security.xml',
                       'security/ir.model.access.csv'],
-    'version': '2.7.208',
+    'version': '2.7.211',
     'website': 'https://launchpad.net/~openerp-l10n-ar-localization'}
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
