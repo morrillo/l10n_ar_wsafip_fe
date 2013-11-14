@@ -47,6 +47,6 @@
                 'test/com_rm1.yml',
                 'test/journal.yml',
                 'test/invoice.yml'],
-    'version': '2.7.216',
+    'version': '2.7.223',
     'website': 'https://launchpad.net/~openerp-l10n-ar-localization'}
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
