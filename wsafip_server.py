@@ -110,7 +110,6 @@ class wsafip_server(osv.osv):
                 srvclient = Client(srv.url+'?WSDL', transport=HttpsTransport())
                 response = srvclient.service.FEDummy()
             except Exception as e:
-                _logger.error('AFIP Web service error!: (%i) %s' % (e[0], e[1]))
                 raise osv.except_osv(_(u'AFIP Web service error'),
                                      _(u'System return error %i: %s') % (e[0], e[1]))
             r[srv.id] = (response.AuthServer,
@@ -149,7 +148,6 @@ class wsafip_server(osv.osv):
                      'active': ct.FchHasta in [None, 'NULL'] }
                     for ct in response.ResultGet.ConceptoTipo ]
             except Exception as e:
-                _logger.error('AFIP Web service error!: (%i) %s' % (e[0], e[1]))
                 raise osv.except_osv(_(u'AFIP Web service error'),
                                      _(u'System return error %i: %s') % (e[0], e[1]))
 
@@ -194,7 +192,6 @@ class wsafip_server(osv.osv):
                     for c in response.ResultGet.CbteTipo
                 ]
             except Exception as e:
-                _logger.error('AFIP Web service error!: (%i) %s' % (e[0], e[1]))
                 raise osv.except_osv(_(u'AFIP Web service error'),
                                      _(u'System return error %i: %s') % (e[0], e[1]))
 
@@ -239,7 +236,6 @@ class wsafip_server(osv.osv):
                     for c in response.ResultGet.DocTipo
                 ]
             except Exception as e:
-                _logger.error('AFIP Web service error!: (%i) %s' % (e[0], e[1]))
                 raise osv.except_osv(_(u'AFIP Web service error'),
                                      _(u'System return error %i: %s') % (e[0], e[1]))
 
@@ -282,7 +278,6 @@ class wsafip_server(osv.osv):
                     for c in response.ResultGet.OpcionalTipo
                 ]
             except Exception as e:
-                _logger.error('AFIP Web service error!: (%i) %s' % (e[0], e[1]))
                 raise osv.except_osv(_(u'AFIP Web service error'),
                                      _(u'System return error %i: %s') % (e[0], e[1]))
 
@@ -324,7 +319,6 @@ class wsafip_server(osv.osv):
                     for c in response.ResultGet.Moneda
                 ]
             except Exception as e:
-                _logger.error('AFIP Web service error!: (%i) %s' % (e[0], e[1]))
                 raise osv.except_osv(_(u'AFIP Web service error'),
                                      _(u'System return error %i: %s') % (e[0], e[1]))
 
@@ -376,7 +370,6 @@ class wsafip_server(osv.osv):
                 ])
 
             except Exception as e:
-                _logger.error('AFIP Web service error!: (%i) %s' % (e[0], e[1]))
                 raise osv.except_osv(_(u'AFIP Web service error'),
                                      _(u'System return error %i: %s') % (e[0], e[1]))
 
@@ -420,7 +413,6 @@ class wsafip_server(osv.osv):
                 response = srvclient.service.FECompUltimoAutorizado(Auth=conn.get_auth(), PtoVta=ptoVta, CbteTipo=cbteTipo)
 
             except Exception as e:
-                _logger.error('AFIP Web service error!: (%i) %s' % (e[0], e[1]))
                 raise osv.except_osv(_(u'AFIP Web service error'),
                                      _(u'System return error %i: %s\n'
                                        u'Pueda que esté intente realizar esta operación'
@@ -477,7 +469,6 @@ class wsafip_server(osv.osv):
             except WebFault as e:
                 import pdb; pdb.set_trace()
             except Exception as e:
-                _logger.error('AFIP Web service error!: (%i) %s' % (e[0], e[1]))
                 raise osv.except_osv(_(u'AFIP Web service error'),
                                      _(u'System return error %i: %s') % (e[0], e[1]))
 
