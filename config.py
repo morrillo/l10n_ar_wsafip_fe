@@ -25,7 +25,6 @@ import base64
 from M2Crypto import X509
 
 _logger = logging.getLogger(__name__)
-_schema = logging.getLogger(__name__ + '.schema')
 
 class l10n_ar_wsafip_fe_config(osv.osv_memory):
     def _default_company(self, cr, uid, context=None):

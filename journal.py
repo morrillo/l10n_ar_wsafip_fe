@@ -24,7 +24,6 @@ import logging
 import urllib2
 
 _logger = logging.getLogger(__name__)
-_schema = logging.getLogger(__name__ + '.schema')
 
 class account_journal(osv.osv):
     def _get_afip_state(self, cr, uid, ids, fields_name, arg, context=None):
