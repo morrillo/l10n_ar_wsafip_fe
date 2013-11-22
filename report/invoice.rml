@@ -180,7 +180,14 @@
                     </blockTable>
                 </section>
                 <nextFrame name="comment_section"/>
-                <para style="seller">El presente documento expresa su monto en [[ o.currency_id.name ]].</para>
+                <para style="seller"><b>El presente documento expresa su monto en [[ o.currency_id.name ]].</b></para>
+                <section>
+                    <para style='foot' alignment='left'><b>Termino de pago:</b><i>[[ o.payment_term and o.payment_term.name or removeParentNode('section')]]</i></para>
+                </section>
+                <section>
+                            <para style='foot' alignment='left'><b>Información adicional</b></para>
+                            <para style='foot' alignment='left'>[[ o.comment or removeParentNode('section')]]</para>
+                </section>
                 <nextFrame name="total_section"/>
                 <blockTable rowHeights="2.9cm" colWidths="7.5cm">
                 <tr> <td vAlign="bottom" topPadding="0cm" bottomPadding="0cm" rightPadding="0cm" leftPadding="0cm">
