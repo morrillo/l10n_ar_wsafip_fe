@@ -142,13 +142,18 @@ class invoice(osv.osv):
             for tax in inv.tax_line:
                 if tax.account_id.name == 'IVA a pagar':
                     continue
-                r[inv.id].append({
-                    'Id': tax.tax_code_id.parent_afip_code,
-                    'Desc': tax.tax_code_id.name,
-                    'BaseImp': tax.base_amount,
-                    'Alic': (tax.tax_amount / tax.base_amount),
-                    'Importe': tax.tax_amount,
-                })
+                if tax.tax_code_id:
+                    r[inv.id].append({
+                        'Id': tax.tax_code_id.parent_afip_code,
+                        'Desc': tax.tax_code_id.name,
+                        'BaseImp': tax.base_amount,
+                        'Alic': (tax.tax_amount / tax.base_amount),
+                        'Importe': tax.tax_amount,
+                    })
+                else:
+                    raise osv.except_osv(_(u'TAX without tax-code'),
+                                         _(u'Please, check if you set tax code for invoice or refund to tax %s.') % tax.name)
+
 
 
         return r[ids] if isinstance(ids, int) else r
