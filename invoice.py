@@ -18,6 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
+from openerp import api
 from openerp.osv import fields, osv
 from openerp.tools.translate import _
 import re
@@ -303,21 +304,25 @@ class invoice(osv.osv):
             'nodestroy' : True
         }
 
-    def onchange_invoice_line(self, cr, uid, ids, invoice_line):
+    """
+    @api.multi
+    def onchange_invoice_line(self, lines,context=None):
         '''
         Set afip_concept by product type.
         '''
-        product_obj = self.pool.get('product.product')
         res = {}
         product_types = set()
 
-        for act, opt, data in invoice_line:
-            product_id = data.get('product_id', False)
-            if product_id:
-                product_types.add(product_obj.read(cr, uid, product_id, ['type'])['type'])
+        for act, opt, data in lines:
+		if data:
+	            product_id = data.get('product_id', False)
+        	    if product_id:
+			product_type = self.env['product.product'].browse(product_id).type
+			product_types.add(product_type)
                 
         res['value'] = { 'afip_concept': _calc_concept(product_types) }
         return res
+     """
 
 invoice()
 
