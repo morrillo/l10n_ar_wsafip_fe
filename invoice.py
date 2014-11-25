@@ -305,6 +305,7 @@ class invoice(osv.osv):
         }
 
 
+    """
     def create(self, cr, uid, vals, context=None):
         product_types = set()
 	if vals.get('invoice_line',False):
@@ -335,7 +336,21 @@ class invoice(osv.osv):
 	
         return super(invoice, self).write(cr, uid, ids, vals, context)
 
-    
+    """
+
+    @api.onchange('invoice_line')
+    def update_product_type(self):
+        product_types = set()
+	if self.invoice_line:
+	        for line in self.invoice_line:
+			product_id = line.product_id
+        		if product_id:
+				product_type = self.env['product.product'].browse(product_id).type
+				product_types.add(product_type)
+                self.afip_concept = _calc_concept(product_types)
+	
+        return {}
+	 
 
 invoice()
 

@@ -24,7 +24,7 @@
             <field name="inherit_id" ref="account.invoice_form" />
             <field name="arch" type="xml">
                 <notebook position="before">
-                    <field name='afip_concept' invisible="1"/>
+                    <field name='afip_concept' invisible="1" />
                     <group col="4" attrs="{'invisible':[('afip_concept','not in',['2','3'])]}">
                         <field name='afip_service_start' attrs="{'required':[('afip_concept','in',['2','3'])]}"/>
                         <field name='afip_service_end' attrs="{'required':[('afip_concept','in',['2','3'])]}"/>
