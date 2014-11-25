@@ -305,52 +305,19 @@ class invoice(osv.osv):
         }
 
 
-    """
-    def create(self, cr, uid, vals, context=None):
-        product_types = set()
-	if vals.get('invoice_line',False):
-		invoice_lines = vals['invoice_line']
-	        for line in invoice_lines:
-			data = line[2]		
-			if data:
-		            product_id = data.get('product_id', False)
-        		    if product_id:
-				product_type = self.pool.get('product.product').browse(cr,uid,product_id).type
-				product_types.add(product_type)
-                vals['afip_concept'] = _calc_concept(product_types)
-	
-        return super(invoice, self).create(cr, uid, vals, context)
-
-    def write(self, cr, uid, ids, vals, context=None):
-        product_types = set()
-	if vals.get('invoice_line',False):
-		invoice_lines = vals['invoice_line']
-	        for line in invoice_lines:
-			data = line[2]		
-			if data:
-		            product_id = data.get('product_id', False)
-        		    if product_id:
-				product_type = self.pool.get('product.product').browse(cr,uid,product_id).type
-				product_types.add(product_type)
-                vals['afip_concept'] = _calc_concept(product_types)
-	
-        return super(invoice, self).write(cr, uid, ids, vals, context)
-
-    """
 
     @api.onchange('invoice_line')
     def update_product_type(self):
         product_types = set()
-	if self.invoice_line:
-	        for line in self.invoice_line:
-			product_id = line.product_id
-        		if product_id:
-				product_type = self.env['product.product'].browse(product_id).type
-				product_types.add(product_type)
-                self.afip_concept = _calc_concept(product_types)
+	if self.type == 'out_invoice':	
+		if self.invoice_line:
+		        for line in self.invoice_line:
+				product_id = line.product_id
+        			if product_id:
+					product_type = self.env['product.product'].browse(product_id).type
+					product_types.add(product_type)
+        	        self.afip_concept = _calc_concept(product_types)
 	
-        return {}
-	 
 
 invoice()
 
